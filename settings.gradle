@@ -1,0 +1,2 @@
+rootProject.name='DotJoin'
+include ':app'
