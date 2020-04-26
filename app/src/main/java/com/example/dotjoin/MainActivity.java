@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     private Button multiPlayerOffline;
     private Button multiPlayerOnline;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +60,5 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 }
