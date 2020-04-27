@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "327250926134",
+    "firebase_url": "https://dotjoin-6c681.firebaseio.com",
+    "project_id": "dotjoin-6c681",
+    "storage_bucket": "dotjoin-6c681.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:327250926134:android:2201bc9c270f2bcc1f9697",
+        "android_client_info": {
+          "package_name": "com.example.dotjoin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "327250926134-06cb88b5aneg05aah8c6o35b6kln48tt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCVAn0X4J_9OGVUAict6isGNt1AJVBbmg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "327250926134-06cb88b5aneg05aah8c6o35b6kln48tt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
