@@ -14,46 +14,36 @@ import android.widget.ImageView;
 
 public class MultiPlayerOffline extends AppCompatActivity {
 
-    private View view;
-    private ImageView imageView;
-    private ImageView imageView2;
-    private float posX,posY;
-    private int a,b,c,d;
-    private ConstraintLayout constraintLayout;
+    private ImageView boardImage;
+    public float imageHeight,imageWidth;
+    private ConstraintLayout rootLayout;
+    private ViewTreeObserver.OnPreDrawListener onPreDrawListener;
+    private Board board;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_player_offline);
 
+        //Finding Layouts
+        boardImage=findViewById(R.id.boardImage);
+        rootLayout=findViewById(R.id.constraint);
 
-        imageView=findViewById(R.id.imagee);
-        constraintLayout=findViewById(R.id.constraint);
-
-
-
-
-
-        ViewTreeObserver vto = imageView.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        //Getting ViewTreeObserver of the board Image
+        ViewTreeObserver vto = boardImage.getViewTreeObserver();
+        onPreDrawListener = new ViewTreeObserver.OnPreDrawListener() {
+            @Override
             public boolean onPreDraw() {
-                imageView.getViewTreeObserver().removeOnPreDrawListener(this);
-                a = imageView.getMeasuredHeight();
-                b = imageView.getMeasuredWidth();
-                c = imageView.getHeight();
-                d = imageView.getWidth();
-                int h = (c-d)/2;
-
-                imageView2=new ImageView(getApplicationContext());
-                imageView2.setImageResource(R.drawable.line);
-                imageView2.setX(100);
-                imageView2.setY(100+h);
-                imageView2.setImageAlpha(70);
-                ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams(d,d);
-                constraintLayout.addView(imageView2,params);
+                imageHeight=boardImage.getHeight();
+                imageWidth=boardImage.getWidth();
+                board = new Board(3,3,100,100+((imageHeight-imageWidth)/2),imageWidth,0,0);
+                board.placeEdgeGivenEdgeNo(5,getApplicationContext());
+                Log.d("size",imageWidth+"");
                 return true;
             }
-        });
+        };
+        vto.addOnPreDrawListener(onPreDrawListener);
 //        view.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
 //            public boolean onTouch(View v, MotionEvent event) {
@@ -65,4 +55,5 @@ public class MultiPlayerOffline extends AppCompatActivity {
 //            }
 //        });
     }
+
 }

@@ -7,7 +7,7 @@
     tools:context=".MultiPlayerOffline"
     android:id="@+id/constraint">
     <ImageView
-        android:id="@+id/imagee"
+        android:id="@+id/boardImage"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"

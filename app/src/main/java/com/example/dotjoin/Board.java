@@ -1,6 +1,11 @@
 package com.example.dotjoin;
 
+import android.content.Context;
 import android.util.Log;
+import android.util.Pair;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import java.util.List;
 
@@ -15,16 +20,28 @@ public class Board {
 
     // assumption: Edge Length = Box Length
 
-    private int rows = 4, columns = 3;
-    private float boxLength = 100;
-    private float buffer = 5;
-    private float gridTopLeftX = 200, gridTopLeftY = 200;
-    private float gridMarginX = 50, gridMarginY = 50;
+    private int rows,columns;
+    private float boxLength,buffer,gridTopLeftX,gridTopLeftY,gridMarginX,gridMarginY;
     private float firstNodeX, firstNodeY;
     private float gridFirstCol, gridLastCol, gridFirstRow, gridLastRow;
     private boolean horizontalEdge = false, verticalEdge = false;
 
 //    float corX = 500, corY = 530;
+
+    public Board(int rows,int columns,float gridTopLeftX,float gridTopLeftY,float width, float gridMarginX,float gridMarginY){
+        this.rows=rows;
+        this.columns=columns;
+        this.gridTopLeftX =gridTopLeftX;
+        this.gridTopLeftY =gridTopLeftY;
+        this.boxLength=width/columns;
+        this.gridMarginX=gridMarginX;
+        this.gridMarginY=gridMarginY;
+        this.buffer=5;
+    }
+
+    public Board(){
+
+    }
 
 
     public void setFirstNodeCor(){
@@ -149,9 +166,9 @@ public class Board {
         else return false;
     }
 
-    public void findEdgeCordinates(int EdgeNo){
+    public Pair<Float,Float> findEdgeCordinates(int EdgeNo){
         float xCorStart,yCorStart,xCorEnd,yCorEnd,midx,midy;
-        if(EdgeNo<1 || EdgeNo>totalNoOfEdges()) return;
+        if(EdgeNo<1 || EdgeNo>totalNoOfEdges()) return null;
 
         if(isEdgeNoHorizontal(EdgeNo)){
             int rowNo = (EdgeNo/((2*this.columns)-1));
@@ -171,7 +188,24 @@ public class Board {
             xCorStart = this.gridFirstCol + (colNo*this.boxLength);
             xCorEnd = xCorStart;
         }
-        midx = (xCorStart+xCorEnd)/2;
-        midy = (yCorStart+yCorEnd)/2;
+
+        Pair<Float,Float> midCordinates= new Pair<Float,Float>((xCorStart+xCorEnd)/2,(yCorStart+yCorEnd)/2);
+        return midCordinates;
+    }
+
+    public void placeEdgeGivenEdgeNo(int EdgeNo, Context context){
+        ImageView lineImage=new ImageView(context);
+        lineImage.bringToFront();
+        lineImage.setVisibility(View.VISIBLE);
+        Pair<Float,Float> EdgeCordinates=findEdgeCordinates(EdgeNo);
+        if(isEdgeNoHorizontal(EdgeNo)){
+            lineImage.setImageResource(R.drawable.horizontalline1);
+            lineImage.layout(Math.round(EdgeCordinates.first)-(int)(boxLength/2),Math.round(EdgeCordinates.second)-5,Math.round(EdgeCordinates.first)+(int)(boxLength/2),Math.round(EdgeCordinates.second)+5);
+        }
+        else{
+            lineImage.setImageResource(R.drawable.verticalline1);
+            lineImage.layout(Math.round(EdgeCordinates.first)-5,Math.round(EdgeCordinates.second)-(int)(boxLength/2),Math.round(EdgeCordinates.first)+5,Math.round(EdgeCordinates.second)+(int)(boxLength/2));
+        }
+
     }
 }
