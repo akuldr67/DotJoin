@@ -17,7 +17,11 @@
         android:layout_margin="100px"
         android:src="@drawable/grid"
         android:visibility="visible"/>
-
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+/>
 
 
 

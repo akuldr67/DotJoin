@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import java.util.List;
 
 public class Board {
@@ -33,10 +35,12 @@ public class Board {
         this.columns=columns;
         this.gridTopLeftX =gridTopLeftX;
         this.gridTopLeftY =gridTopLeftY;
-        this.boxLength=width/columns;
+        this.boxLength=(width-(width/18))/(columns-1);
         this.gridMarginX=gridMarginX;
         this.gridMarginY=gridMarginY;
-        this.buffer=5;
+        this.buffer=40;
+        setFirstNodeCor();
+        setGridDimensions();
     }
 
     public Board(){
@@ -189,23 +193,35 @@ public class Board {
             xCorEnd = xCorStart;
         }
 
-        Pair<Float,Float> midCordinates= new Pair<Float,Float>((xCorStart+xCorEnd)/2,(yCorStart+yCorEnd)/2);
+        Pair<Float,Float> midCordinates= new Pair<Float,Float>(xCorStart,yCorStart);
         return midCordinates;
     }
 
-    public void placeEdgeGivenEdgeNo(int EdgeNo, Context context){
-        ImageView lineImage=new ImageView(context);
-        lineImage.bringToFront();
-        lineImage.setVisibility(View.VISIBLE);
-        Pair<Float,Float> EdgeCordinates=findEdgeCordinates(EdgeNo);
-        if(isEdgeNoHorizontal(EdgeNo)){
-            lineImage.setImageResource(R.drawable.horizontalline1);
-            lineImage.layout(Math.round(EdgeCordinates.first)-(int)(boxLength/2),Math.round(EdgeCordinates.second)-5,Math.round(EdgeCordinates.first)+(int)(boxLength/2),Math.round(EdgeCordinates.second)+5);
-        }
-        else{
-            lineImage.setImageResource(R.drawable.verticalline1);
-            lineImage.layout(Math.round(EdgeCordinates.first)-5,Math.round(EdgeCordinates.second)-(int)(boxLength/2),Math.round(EdgeCordinates.first)+5,Math.round(EdgeCordinates.second)+(int)(boxLength/2));
-        }
+    public void placeEdgeGivenEdgeNo(int EdgeNo, Context context, ConstraintLayout root){
+        if(EdgeNo!=-1) {
+            ImageView lineImage = new ImageView(context);
+            lineImage.bringToFront();
+            lineImage.setVisibility(View.VISIBLE);
+            ConstraintLayout.LayoutParams params;
+            Pair<Float, Float> EdgeCordinates = findEdgeCordinates(EdgeNo);
 
+            Log.d("cor", "Box Length = " + boxLength);
+            Log.d("cor", "x coordinate = " + EdgeCordinates.first);
+            Log.d("cor", "y coordinate = " + EdgeCordinates.second);
+            if (isEdgeNoHorizontal(EdgeNo)) {
+                lineImage.setImageResource(R.drawable.horizontalline1);
+                params = new ConstraintLayout.LayoutParams((int) boxLength, (int) (boxLength * 15 / 100));
+                lineImage.setX(EdgeCordinates.first);
+                lineImage.setY(EdgeCordinates.second);
+//            lineImage.layout(Math.round(EdgeCordinates.first)-(int)(boxLength/2),Math.round(EdgeCordinates.second)-5,Math.round(EdgeCordinates.first)+(int)(boxLength/2),Math.round(EdgeCordinates.second)+5);
+            } else {
+                lineImage.setImageResource(R.drawable.verticalline1);
+                params = new ConstraintLayout.LayoutParams((int) (boxLength * 15 / 100), (int) boxLength);
+                lineImage.setX(EdgeCordinates.first);
+                lineImage.setY(EdgeCordinates.second);
+//            lineImage.layout(Math.round(EdgeCordinates.first)-5,Math.round(EdgeCordinates.second)-(int)(boxLength/2),Math.round(EdgeCordinates.first)+5,Math.round(EdgeCordinates.second)+(int)(boxLength/2));
+            }
+            root.addView(lineImage, params);
+        }
     }
 }
