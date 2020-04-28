@@ -7,9 +7,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.util.Arrays;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.List;
+import java.util.Vector;
 
 public class Board {
     int size;
@@ -22,11 +24,13 @@ public class Board {
 
     // assumption: Edge Length = Box Length
 
-    private int rows,columns;
+    private int rows,columns,totalEdges,totalBoxes;
     private float boxLength,buffer,gridTopLeftX,gridTopLeftY,gridMarginX,gridMarginY;
     private float firstNodeX, firstNodeY;
     private float gridFirstCol, gridLastCol, gridFirstRow, gridLastRow;
     private boolean horizontalEdge = false, verticalEdge = false;
+    boolean[] edges;
+    boolean[] boxes;
 
 //    float corX = 500, corY = 530;
 
@@ -39,6 +43,10 @@ public class Board {
         this.gridMarginX=gridMarginX;
         this.gridMarginY=gridMarginY;
         this.buffer=40;
+        this.totalEdges = this.totalNoOfEdges();
+        edges = new boolean[this.totalEdges + 1];
+        this.totalBoxes = this.totalNoOfBoxes();
+        boxes = new boolean[this.totalBoxes + 1];
         setFirstNodeCor();
         setGridDimensions();
     }
@@ -61,7 +69,11 @@ public class Board {
         float gridLengthY = this.rows*(this.boxLength-1);
         this.gridLastCol = this.gridFirstCol + gridLengthX;
         this.gridLastRow = this.gridFirstRow + gridLengthY;
-        Log.d("nfnalk","sdfssaas");
+    }
+
+    public int totalNoOfBoxes(){
+        int totalBoxes = (this.columns-1)*(this.rows-1);
+        return totalBoxes;
     }
 
     public int totalNoOfEdges(){
@@ -172,7 +184,7 @@ public class Board {
 
     public Pair<Float,Float> findEdgeCordinates(int EdgeNo){
         float xCorStart,yCorStart,xCorEnd,yCorEnd,midx,midy;
-        if(EdgeNo<1 || EdgeNo>totalNoOfEdges()) return null;
+        if(EdgeNo<1 || EdgeNo>this.totalEdges) return null;
 
         if(isEdgeNoHorizontal(EdgeNo)){
             int rowNo = (EdgeNo/((2*this.columns)-1));
@@ -221,7 +233,139 @@ public class Board {
                 lineImage.setY(EdgeCordinates.second);
 //            lineImage.layout(Math.round(EdgeCordinates.first)-5,Math.round(EdgeCordinates.second)-(int)(boxLength/2),Math.round(EdgeCordinates.first)+5,Math.round(EdgeCordinates.second)+(int)(boxLength/2));
             }
+            edges[EdgeNo] = true;
+            this.isBoxCompleted(EdgeNo);
             root.addView(lineImage, params);
         }
     }
+
+    public void placeEdgesAccToGame(Context context, ConstraintLayout root){
+        for(int i=1;i<=this.totalEdges;i++){
+            if(edges[i]==true){
+                placeEdgeGivenEdgeNo(i,context, root);
+            }
+        }
+    }
+
+    //it assumes old game sticks available
+    public void updateGame(Context context, float newTapX, float newTapY, ConstraintLayout root){
+        int newEdgeNo = this.EdgeNoGivenCor(newTapX,newTapY);
+        if(newEdgeNo <=0 || newEdgeNo>this.totalEdges) return;
+        if(edges[newEdgeNo]==true) return;
+        placeEdgeGivenEdgeNo(newEdgeNo, context, root);
+        edges[newEdgeNo]=true;
+    }
+
+    //deploys every valid stick at every step
+    public void updateGame2(Context context, float newTapX, float newTapY, ConstraintLayout root){
+        int newEdgeNo = this.EdgeNoGivenCor(newTapX,newTapY);
+        if(newEdgeNo <=0 || newEdgeNo>this.totalEdges) return;
+        if(edges[newEdgeNo]==true) return;
+        edges[newEdgeNo]=true;
+        placeEdgesAccToGame(context, root);
+    }
+
+    public int NodeNoGivenEdgeNo(int EdgeNo){
+        if(EdgeNo<1 || EdgeNo>this.totalEdges) return -1;
+
+        if(isEdgeNoHorizontal(EdgeNo)){
+            int rowNo = (EdgeNo/((2*this.columns)-1)) + 1;
+            int colNo = EdgeNo%((2*this.columns)-1);
+            return NodeNoGivenRowCol(rowNo,colNo);
+        }
+        else {
+            int colNo = (EdgeNo%((2*this.columns)-1))-this.columns + 1;
+            if((EdgeNo%((2*this.columns)-1))==0)colNo=this.columns;
+            int rowNo = (EdgeNo/((2*this.columns)-1))+1;
+            if((EdgeNo%((2*this.columns)-1))==0)rowNo--;
+            return  NodeNoGivenRowCol(rowNo,colNo);
+        }
+    }
+
+    //a top left node represents its box!!
+
+    public int BoxNoGivenNodeNo(int NodeNo){
+        if(NodeNo%this.columns==0) return -1;
+        if(NodeNo>((this.columns*this.rows)-this.columns)) return -1;
+        int rowNo = (NodeNo/this.columns)+1;
+        int colNo = NodeNo%this.columns;
+        return ((rowNo-1)*(this.columns-1))+colNo;
+    }
+
+    public int NodeNoGivenBoxNo(int BoxNo){
+        int rowNo = (BoxNo/(this.columns-1))+1;
+        if(BoxNo%(this.columns-1)==0)rowNo--;
+        int colNo = BoxNo%(this.columns-1);
+        if(BoxNo%(this.columns-1)==0) colNo=this.columns-1;
+        return NodeNoGivenRowCol(rowNo,colNo);
+    }
+
+    public boolean ifLeftBoxExist(int EdgeNo){
+        if(EdgeNo<1 || EdgeNo>this.totalEdges) return false;
+        int nodeNo = NodeNoGivenEdgeNo(EdgeNo);
+        if((nodeNo-1)%this.columns==0) return false;
+        return true;
+    }
+
+    public boolean ifRightBoxExist(int EdgeNo){
+        if(EdgeNo<1 || EdgeNo>this.totalEdges) return false;
+        int nodeNo = NodeNoGivenEdgeNo(EdgeNo);
+        if(nodeNo%this.columns==0) return false;
+        return true;
+    }
+
+    public boolean ifTopBoxExist(int EdgeNo){
+        if(EdgeNo<this.columns || EdgeNo>this.totalEdges) return false;
+        return true;
+    }
+
+    public boolean ifBottomBoxExist(int EdgeNo){
+        if(EdgeNo<1 || EdgeNo>(this.totalEdges-this.columns)) return false;
+        return true;
+    }
+
+    public void isBoxCompleted(int EdgeNo){
+        int nodeNo = NodeNoGivenEdgeNo(EdgeNo);
+        int currBoxNo = BoxNoGivenNodeNo(nodeNo);
+        Vector<Integer> newBoxes = new Vector();
+
+        if(isEdgeNoHorizontal(EdgeNo)){             //if new edge is horizontal.. means top and bottom box possible
+            if(ifTopBoxExist(EdgeNo)){
+                if(edges[EdgeNo-this.columns] && edges[EdgeNo-this.columns+1] && edges[EdgeNo-(2*this.columns)+1]){
+                    if(currBoxNo == -1)currBoxNo = BoxNoGivenNodeNo(nodeNo-this.columns)+this.columns-1;
+                    boxes[currBoxNo-this.columns+1] = true;
+                    newBoxes.add(currBoxNo-this.columns+1);
+                }
+            }
+            if(ifBottomBoxExist(EdgeNo)){
+                if(edges[EdgeNo+this.columns-1] && edges[EdgeNo+this.columns] && edges[EdgeNo+(2*this.columns)-1]){
+                    boxes[currBoxNo] = true;
+                    newBoxes.add(currBoxNo);
+                }
+            }
+        }
+        else{                                       //if new edge is vertical.. means left and right box possible
+            if(ifLeftBoxExist(EdgeNo)){
+                if(edges[EdgeNo-1] && edges[EdgeNo-this.columns] && edges[EdgeNo+this.columns-1]){
+                    if(currBoxNo == -1) currBoxNo = BoxNoGivenNodeNo(nodeNo-1)+1;
+                    boxes[currBoxNo-1] = true;
+                    newBoxes.add(currBoxNo-1);
+                }
+            }
+            if(ifRightBoxExist(EdgeNo)){
+                if(edges[EdgeNo+1] && edges[EdgeNo-this.columns+1] && edges[EdgeNo+this.columns]){
+                    boxes[currBoxNo] = true;
+                    newBoxes.add(currBoxNo);
+                }
+            }
+        }
+
+        Log.d("New ","Box No: "+newBoxes.toString());
+        Vector<Integer> newBoxNodes = new Vector();
+        for(int i=0;i<newBoxes.size();i++){
+            newBoxNodes.add(NodeNoGivenBoxNo(newBoxes.get(i)));
+        }
+        Log.d("New ","Box Node No: "+newBoxNodes.toString());
+    }
+
 }
