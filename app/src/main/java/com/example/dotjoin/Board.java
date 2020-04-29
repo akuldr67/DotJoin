@@ -23,7 +23,7 @@ public class Board {
 
     // assumption: Edge Length = Box Length
 
-    private int rows,columns,totalEdges,totalBoxes;
+    private int rows,columns,totalEdges,totalBoxes,totalNodes;
     private float boxLength,buffer,gridTopLeftX,gridTopLeftY,gridMarginX,gridMarginY;
     private float firstNodeX, firstNodeY;
     private float gridFirstCol, gridLastCol, gridFirstRow, gridLastRow;
@@ -45,6 +45,7 @@ public class Board {
         edges = new boolean[this.totalEdges + 1];
         this.totalBoxes = this.totalNoOfBoxes();
         boxes = new boolean[this.totalBoxes + 1];
+        this.totalNodes = this.totalNoOfNodes();
         setFirstNodeCor();
         setGridDimensions();
     }
@@ -67,6 +68,11 @@ public class Board {
         float gridLengthY = this.rows*(this.boxLength-1);
         this.gridLastCol = this.gridFirstCol + gridLengthX;
         this.gridLastRow = this.gridFirstRow + gridLengthY;
+    }
+
+    public int totalNoOfNodes(){
+        int totalNodes = this.rows*this.columns;
+        return totalNodes;
     }
 
     public int totalNoOfBoxes(){
@@ -377,6 +383,21 @@ public class Board {
         return newBoxNodes;
     }
 
+    public float[] FindCoordinatesOfNode(int NodeNo){
+        if(NodeNo<1 || NodeNo>this.totalNodes) return null;
+        int rowNo = NodeNo/this.columns +1;
+        if(NodeNo%this.columns==0) rowNo--;
+        int colNo = NodeNo%this.columns;
+        if(NodeNo%this.columns==0) colNo=this.columns;
+        float x = this.gridFirstCol + (this.boxLength*(colNo-1));
+        float y = this.gridFirstRow + (this.boxLength*(rowNo-1));
+//        Vector<Float> coordinates = new Vector<Float>(2);
+//        coordinates.add(x);
+//        coordinates.add(y);
+        float[] coordinates = {x,y};
+        return coordinates;
+    }
+
     public int getTotalEdges(){ return this.totalEdges; }
 
     public int getTotalBoxes(){ return this.totalBoxes; }
@@ -386,5 +407,7 @@ public class Board {
     public int getRows(){ return this.rows; }
 
     public int getColumns(){ return this.columns; }
+
+    public float getBoxLength(){ return this.boxLength; }
 
 }
