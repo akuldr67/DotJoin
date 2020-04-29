@@ -233,10 +233,15 @@ public class Board {
                 lineImage.setY(EdgeCordinates.second);
 //            lineImage.layout(Math.round(EdgeCordinates.first)-5,Math.round(EdgeCordinates.second)-(int)(boxLength/2),Math.round(EdgeCordinates.first)+5,Math.round(EdgeCordinates.second)+(int)(boxLength/2));
             }
-            edges[EdgeNo] = true;
-            this.isBoxCompleted(EdgeNo);
+//            edges[EdgeNo] = true;
+//            this.isBoxCompleted(EdgeNo);
             root.addView(lineImage, params);
         }
+    }
+
+    public void makeMoveAt(int EdgeNo){
+        if(EdgeNo!=-1)
+            edges[EdgeNo]=true;
     }
 
     public void placeEdgesAccToGame(Context context, ConstraintLayout root){
@@ -324,7 +329,7 @@ public class Board {
         return true;
     }
 
-    public void isBoxCompleted(int EdgeNo){
+    public Vector<Integer> isBoxCompleted(int EdgeNo){
         int nodeNo = NodeNoGivenEdgeNo(EdgeNo);
         int currBoxNo = BoxNoGivenNodeNo(nodeNo);
         Vector<Integer> newBoxes = new Vector();
@@ -344,7 +349,7 @@ public class Board {
                 }
             }
         }
-        else{                                       //if new edge is vertical.. means left and right box possible
+        else{                                     //if new edge is vertical.. means left and right box possible
             if(ifLeftBoxExist(EdgeNo)){
                 if(edges[EdgeNo-1] && edges[EdgeNo-this.columns] && edges[EdgeNo+this.columns-1]){
                     if(currBoxNo == -1) currBoxNo = BoxNoGivenNodeNo(nodeNo-1)+1;
@@ -366,7 +371,6 @@ public class Board {
             newBoxNodes.add(NodeNoGivenBoxNo(newBoxes.get(i)));
         }
         Log.d("New ","Box Node No: "+newBoxNodes.toString());
+        return newBoxNodes;
     }
-
-    
 }
