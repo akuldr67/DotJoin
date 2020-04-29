@@ -4,10 +4,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -26,6 +29,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
     private View view;
     private float posX,posY;
     private TextView currentPlayerName;
+    private int noOfPlayers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,73 +41,118 @@ public class MultiPlayerOffline extends AppCompatActivity {
         rootLayout=findViewById(R.id.constraint);
         view =findViewById(R.id.view);
 
-
-        Log.d("size",boardImage.getMeasuredHeight()+"");
         //Getting ViewTreeObserver of the board Image
         ViewTreeObserver vto = boardImage.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                currentPlayerName=findViewById(R.id.current_player_name);
 
                 boardImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                imageHeight=boardImage.getHeight();
-                imageWidth=boardImage.getWidth();
-                board = new Board(4,4,100,100+((imageHeight-imageWidth)/2),imageWidth,imageWidth/128,imageWidth/128);
 
-                Vector<String>playerNames=new Vector<String>();
-                playerNames.add("Akul");
-                playerNames.add("Arpit");
+                //Dialog Box that accepts no. of players
 
-                game =new Game(0,2,playerNames,board);
-                currentPlayerName.setText(game.namesOfPlayers.get(game.currentPlayer)+"'s Turn");
+                CharSequence[] options = new CharSequence[]{"2","3","4"};
 
-                view.setOnTouchListener(new View.OnTouchListener() {
+                final AlertDialog.Builder noOfUsersDialog = new AlertDialog.Builder(MultiPlayerOffline.this);
+                noOfUsersDialog.setTitle("Number of Players");
+                noOfUsersDialog.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if(event.getAction()==MotionEvent.ACTION_DOWN) {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which==0)noOfPlayers=2;
+                        else if(which==1)noOfPlayers=3;
+                        else if(which==2)noOfPlayers=4;
 
-                            posX = event.getX();
-                            posY = event.getY();
+                        currentPlayerName=findViewById(R.id.current_player_name);
 
-                            int edgeNo = game.board.EdgeNoGivenCor(posX, posY);
-                            boolean[] edges = board.getEdgesArray();
+                        imageHeight=boardImage.getHeight();
+                        imageWidth=boardImage.getWidth();
+                        board = new Board(4,4,100,100+((imageHeight-imageWidth)/2),imageWidth,imageWidth/128,imageWidth/128);
 
-                            if(edgeNo!=-1 && !edges[edgeNo]) {
-                                game.setLastEdgeUpdated(edgeNo);
-                                game.board.makeMoveAt(edgeNo);
-                                game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);
-
-                                Log.d("pos", "Boxes made " + game.board.isBoxCompleted(game.lastEdgeUpdated).size());
-
-                                if (game.board.isBoxCompleted(game.lastEdgeUpdated).size() == 0) {
-                                    Log.d("pos", "Taking next turn");
-                                    game.nextTurn();
-                                } else {
-                                    game.increaseScore();
-                                }
-
-                                currentPlayerName.setText(game.namesOfPlayers.get(game.currentPlayer));
-                                if (game.isGameCompleted()) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(MultiPlayerOffline.this);
-                                    builder.setTitle("Game Over");
-                                    TextView textView = new TextView(getApplicationContext());
-                                    textView.setText(game.namesOfPlayers.get(0) + " - " + game.scoreBoard.get(0) + "\n" + game.namesOfPlayers.get(1) + " - " + game.scoreBoard.get(1));
-                                    builder.setView(textView);
-                                    builder.show();
-                                }
-                            }
-                            Log.d("pos", "current player " + game.currentPlayer + "\n");
+                        Vector<String>playerNames=new Vector<String>();
+                        for(int i=0;i<noOfPlayers;i++){
+                            playerNames.add("Player "+(i+1));
                         }
-                        return true;
+                        game =new Game(0,noOfPlayers,playerNames,board);
+                        currentPlayerName.setText(game.namesOfPlayers.get(game.currentPlayer)+"'s Turn");
+
+                        view.setOnTouchListener(new View.OnTouchListener() {
+                            @Override
+                            public boolean onTouch(View v, MotionEvent event) {
+                                if(event.getAction()==MotionEvent.ACTION_DOWN) {
+
+                                    posX = event.getX();
+                                    posY = event.getY();
+
+                                    int edgeNo = game.board.EdgeNoGivenCor(posX, posY);
+                                    boolean[] edges = board.getEdgesArray();
+
+                                    if(edgeNo!=-1 && !edges[edgeNo]) {
+                                        game.setLastEdgeUpdated(edgeNo);
+                                        game.board.makeMoveAt(edgeNo);
+                                        game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);
+
+
+                                        if (game.board.isBoxCompleted(game.lastEdgeUpdated).size() == 0) {
+                                            game.nextTurn();
+                                        } else {
+                                            game.increaseScore();
+                                        }
+
+                                        currentPlayerName.setText(game.namesOfPlayers.get(game.currentPlayer)+"'s turn");
+                                        if (game.isGameCompleted()) {
+
+                                            //Showing Final Dialog Box
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(MultiPlayerOffline.this);
+                                            builder.setTitle("Game Over");
+
+                                            //Showing final ScoreBoard
+                                            TextView textView = new TextView(getApplicationContext());
+                                            textView.setPadding(60,50,20,40);
+                                            textView.setLineSpacing(1.5f,1.5f);
+                                            textView.setTextSize(16);
+                                            String result="";
+                                            for(int i=0;i<noOfPlayers;i++){
+                                                if(i==noOfPlayers-1){
+                                                    result=result+game.namesOfPlayers.get(i)+" - "+game.scoreBoard.get(i);
+                                                }
+                                                else {
+                                                    result = result + game.namesOfPlayers.get(i) + " - " + game.scoreBoard.get(i) + "\n";
+                                                }
+                                            }
+                                            textView.setText(result);
+                                            builder.setView(textView);
+
+                                            //Replay Button
+                                            builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Intent intent = new Intent(MultiPlayerOffline.this,MultiPlayerOffline.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+
+                                            //Home Button
+                                            builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Intent intent = new Intent(MultiPlayerOffline.this,MainActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                            builder.show();
+                                        }
+                                    }
+                                    Log.d("pos", "current player " + game.currentPlayer + "\n");
+                                }
+                                return true;
+                            }
+                        });
                     }
                 });
-
-                Log.d("size",imageWidth+"");
+                AlertDialog alertDialog = noOfUsersDialog.create();
+                alertDialog.setCanceledOnTouchOutside(false);
+                alertDialog.show();
             }
         });
-
-
     }
-
 }
