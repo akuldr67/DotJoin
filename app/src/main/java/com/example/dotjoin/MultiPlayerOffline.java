@@ -50,36 +50,39 @@ public class MultiPlayerOffline extends AppCompatActivity {
                 imageHeight=boardImage.getHeight();
                 imageWidth=boardImage.getWidth();
                 board = new Board(4,4,100,100+((imageHeight-imageWidth)/2),imageWidth,imageWidth/128,imageWidth/128);
+
                 Vector<String>playerNames=new Vector<String>();
                 playerNames.add("Akul");
                 playerNames.add("Arpit");
-                game =new Game(0,2,9,playerNames,board);
+
+                game =new Game(0,2,playerNames,board);
                 currentPlayerName.setText(game.namesOfPlayers.get(game.currentPlayer)+"'s Turn");
+
                 view.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         if(event.getAction()==MotionEvent.ACTION_DOWN) {
 
-
                             posX = event.getX();
                             posY = event.getY();
-//                        int edgeNo=board.EdgeNoGivenCor(posX,posY);
-//                        Log.d("cor","edge no "+edgeNo);
-//                        board.placeEdgeGivenEdgeNo(edgeNo,getApplicationContext(),rootLayout);
-//                        Log.d("cor","x = "+posX);
-//                        Log.d("cor","y = "+posY);
+
                             int edgeNo = game.board.EdgeNoGivenCor(posX, posY);
-                            if(edgeNo!=-1) {
+                            boolean[] edges = board.getEdgesArray();
+
+                            if(edgeNo!=-1 && !edges[edgeNo]) {
                                 game.setLastEdgeUpdated(edgeNo);
                                 game.board.makeMoveAt(edgeNo);
                                 game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);
+
                                 Log.d("pos", "Boxes made " + game.board.isBoxCompleted(game.lastEdgeUpdated).size());
+
                                 if (game.board.isBoxCompleted(game.lastEdgeUpdated).size() == 0) {
                                     Log.d("pos", "Taking next turn");
                                     game.nextTurn();
                                 } else {
                                     game.increaseScore();
                                 }
+
                                 currentPlayerName.setText(game.namesOfPlayers.get(game.currentPlayer));
                                 if (game.isGameCompleted()) {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(MultiPlayerOffline.this);

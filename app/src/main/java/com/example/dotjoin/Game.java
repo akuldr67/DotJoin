@@ -21,12 +21,12 @@ public class Game {
     //*********************************
     //*Constructor with all parameters*
     //*********************************
-    public Game(int lastEdgeUpdated, int noOfPlayers, int totalBoxes,Vector<String> namesOfPlayers,Board board) {
+    public Game(int lastEdgeUpdated, int noOfPlayers, Vector<String> namesOfPlayers,Board board) {
         this.lastEdgeUpdated = lastEdgeUpdated;
         this.noOfPlayers = noOfPlayers;
         this.namesOfPlayers = namesOfPlayers;
         this.board=board;
-        this.totalBoxes=totalBoxes;
+        this.totalBoxes=board.getTotalBoxes();
         currentPlayer=0;
         boxesMade=0;
         //Initializing Empty ScoreBoard
@@ -106,19 +106,16 @@ public class Game {
 
     //Check if game is completed
     public boolean isGameCompleted(){
-        if(boxesMade==totalBoxes){
+        if(boxesMade==totalBoxes)
             return true;
-        }
-        else{
+        else
             return false;
-        }
     }
 
     //NextPlayersTurn
     public void nextTurn(){
-        if(currentPlayer==noOfPlayers-1){
+        if(currentPlayer==noOfPlayers-1)
             currentPlayer=0;
-        }
         else
             currentPlayer=currentPlayer+1;
     }

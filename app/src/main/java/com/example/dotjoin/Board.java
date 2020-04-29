@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Vector;
 
 public class Board {
-    int size;
     //TODO Decide of how to store board status
     //      *----*----*        1   2
     //      |    |    |      3   4   5
@@ -32,7 +31,6 @@ public class Board {
     boolean[] edges;
     boolean[] boxes;
 
-//    float corX = 500, corY = 530;
 
     public Board(int rows,int columns,float gridTopLeftX,float gridTopLeftY,float width, float gridMarginX,float gridMarginY){
         this.rows=rows;
@@ -42,7 +40,7 @@ public class Board {
         this.boxLength=(width-(width/18))/(columns-1);
         this.gridMarginX=gridMarginX;
         this.gridMarginY=gridMarginY;
-        this.buffer=40;
+        this.buffer=45;
         this.totalEdges = this.totalNoOfEdges();
         edges = new boolean[this.totalEdges + 1];
         this.totalBoxes = this.totalNoOfBoxes();
@@ -124,7 +122,11 @@ public class Board {
             RowNo = (int)(relY/this.boxLength)+2;
         }
 
-        if(onColumn){                                               //Preference Column > Row
+        //Preference Column > Row... means vertical edge > horizontal edge
+        // Can change.. if instead of else below changed to if(onRow && NodeNumber == -1) .. also change in fn edgeNoGivenCor.
+        // also can add possible change: in if below: if(NodeNumber!=-1) this.verticalEdge = true;
+
+        if(onColumn){
             int RowNumber;
             relY = y-this.gridFirstRow;
             RowNumber = (int)(relY/this.boxLength)+1;
@@ -290,6 +292,7 @@ public class Board {
     //a top left node represents its box!!
 
     public int BoxNoGivenNodeNo(int NodeNo){
+        if(NodeNo<1) return -1;
         if(NodeNo%this.columns==0) return -1;
         if(NodeNo>((this.columns*this.rows)-this.columns)) return -1;
         int rowNo = (NodeNo/this.columns)+1;
@@ -373,4 +376,15 @@ public class Board {
         Log.d("New ","Box Node No: "+newBoxNodes.toString());
         return newBoxNodes;
     }
+
+    public int getTotalEdges(){ return this.totalEdges; }
+
+    public int getTotalBoxes(){ return this.totalBoxes; }
+
+    public boolean[] getEdgesArray(){ return this.edges; }
+
+    public int getRows(){ return this.rows; }
+
+    public int getColumns(){ return this.columns; }
+
 }
