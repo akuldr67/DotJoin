@@ -14,8 +14,9 @@ public class Game {
     //*Declaring Variables*
     //*********************
     int lastEdgeUpdated,noOfPlayers,currentPlayer,totalBoxes,boxesMade;
-    Vector<String> namesOfPlayers;
-    Vector<Integer> scoreBoard;
+//    Vector<String> namesOfPlayers;
+//    Vector<Integer> scoreBoard;
+    Vector<Player> players;
     Board board;
 
     //*******************
@@ -27,20 +28,31 @@ public class Game {
     //*********************************
     //*Constructor with all parameters*
     //*********************************
-    public Game(int lastEdgeUpdated, int noOfPlayers, Vector<String> namesOfPlayers,Board board) {
+    public Game(int lastEdgeUpdated, int noOfPlayers,Board board) {
         this.lastEdgeUpdated = lastEdgeUpdated;
         this.noOfPlayers = noOfPlayers;
-        this.namesOfPlayers = namesOfPlayers;
+//        this.namesOfPlayers = namesOfPlayers;
         this.board=board;
         this.totalBoxes=board.getTotalBoxes();
         currentPlayer=0;
         boxesMade=0;
         //Initializing Empty ScoreBoard
-        scoreBoard=new Vector<Integer>();
-        scoreBoard.setSize(noOfPlayers);
+        players=new Vector<Player>();
+        players.setSize(noOfPlayers);
+        int color=0;
         for(int i=0;i<noOfPlayers;i++){
-            scoreBoard.set(i,0);
+            if(i==0)color=R.drawable.colour_box_blue;
+            else if(i==1)color=R.drawable.colour_box_red;
+            else if(i==2)color=R.drawable.colour_box_green;
+            else if(i==3)color=R.drawable.colour_box_yellow;
+            players.set(i,new Player("Player "+(i+1),color,0));
         }
+
+//        scoreBoard=new Vector<Integer>();
+//        scoreBoard.setSize(noOfPlayers);
+//        for(int i=0;i<noOfPlayers;i++){
+//            scoreBoard.set(i,0);
+//        }
     }
 
     //*********
@@ -55,12 +67,16 @@ public class Game {
         return noOfPlayers;
     }
 
-    public Vector<String> getNamesOfPlayers() {
-        return namesOfPlayers;
-    }
+//    public Vector<String> getNamesOfPlayers() {
+//        return namesOfPlayers;
+//    }
+//
+//    public Vector<Integer> getScoreBoard() {
+//        return scoreBoard;
+//    }
 
-    public Vector<Integer> getScoreBoard() {
-        return scoreBoard;
+    public Vector<Player> getPlayers(){
+        return players;
     }
 
     public Board getBoard() {
@@ -83,12 +99,16 @@ public class Game {
         this.noOfPlayers = noOfPlayers;
     }
 
-    public void setNamesOfPlayers(Vector<String> namesOfPlayers) {
-        this.namesOfPlayers = namesOfPlayers;
-    }
+//    public void setNamesOfPlayers(Vector<String> namesOfPlayers) {
+//        this.namesOfPlayers = namesOfPlayers;
+//    }
+//
+//    public void setScoreBoard(Vector<Integer> scoreBoard) {
+//        this.scoreBoard = scoreBoard;
+//    }
 
-    public void setScoreBoard(Vector<Integer> scoreBoard) {
-        this.scoreBoard = scoreBoard;
+    public void setPlayers(Vector<Player> players){
+        this.players=players;
     }
 
     public void setBoard(Board board) {
@@ -106,7 +126,8 @@ public class Game {
 
     //Function to increase score if the current player makes a box
     public void increaseScore(){
-        scoreBoard.set(currentPlayer,scoreBoard.get(currentPlayer)+board.isBoxCompleted(lastEdgeUpdated).size());
+        players.elementAt(currentPlayer).setScore(players.elementAt(currentPlayer).getScore()+board.isBoxCompleted(lastEdgeUpdated).size());
+//        scoreBoard.set(currentPlayer,scoreBoard.get(currentPlayer)+board.isBoxCompleted(lastEdgeUpdated).size());
         boxesMade=boxesMade+board.isBoxCompleted(lastEdgeUpdated).size();
     }
 
@@ -132,26 +153,30 @@ public class Game {
         if(NodeNo>(this.board.getTotalNodes()-this.board.getColumns())) return;
 
         ImageView colorImage = new ImageView(context);
-        colorImage.bringToFront();
+        colorImage.setTranslationZ(1f);
         colorImage.setVisibility(View.VISIBLE);
         ConstraintLayout.LayoutParams params;
 
         float[] cor = this.board.FindCoordinatesOfNode(NodeNo);
 
-        if(currentPlayer == 0)
-            colorImage.setImageResource(R.drawable.colour_box_blue);
-        else if(currentPlayer == 1)
-            colorImage.setImageResource(R.drawable.colour_box_red);
-        else if(currentPlayer == 2)
-            colorImage.setImageResource(R.drawable.colour_box_green);
-        else if(currentPlayer == 3)
-            colorImage.setImageResource(R.drawable.colour_box_yellow);
+        colorImage.setImageResource(players.elementAt(currentPlayer).getColor());
 
-        params = new ConstraintLayout.LayoutParams((int) (this.board.getBoxLength()*85 /100), (int) (this.board.getBoxLength()*85 /100));
+//        if(currentPlayer == 0)
+//            colorImage.setImageResource(R.drawable.colour_box_blue);
+//        else if(currentPlayer == 1)
+//            colorImage.setImageResource(R.drawable.colour_box_red);
+//        else if(currentPlayer == 2)
+//            colorImage.setImageResource(R.drawable.colour_box_green);
+//        else if(currentPlayer == 3)
+//            colorImage.setImageResource(R.drawable.colour_box_yellow);
 
-        colorImage.setX(cor[0]+(this.board.getBoxLength()*15 /100));
-        colorImage.setY(cor[1]+(this.board.getBoxLength()*15 /100));
+        params = new ConstraintLayout.LayoutParams((int) (this.board.getBoxLength()), (int) (this.board.getBoxLength()));
+
+        colorImage.setX(cor[0]);
+        colorImage.setY(cor[1]);
 
         root.addView(colorImage, params);
     }
+    //TODO
+    // Get Name of the winner or if it is a tie
 }

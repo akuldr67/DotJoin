@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Vector;
 
 public class Board {
-    //TODO Decide of how to store board status
+    //          Board status
     //      *----*----*        1   2
     //      |    |    |      3   4   5
     //      *----*----*        6   7
@@ -24,7 +24,7 @@ public class Board {
     // assumption: Edge Length = Box Length
 
     private int rows,columns,totalEdges,totalBoxes,totalNodes;
-    private float boxLength,buffer,gridTopLeftX,gridTopLeftY,gridMarginX,gridMarginY;
+    private float boxLength,dotDia,buffer,gridTopLeftX,gridTopLeftY,gridMarginX,gridMarginY;
     private float firstNodeX, firstNodeY;
     private float gridFirstCol, gridLastCol, gridFirstRow, gridLastRow;
     private boolean horizontalEdge = false, verticalEdge = false;
@@ -32,21 +32,26 @@ public class Board {
     boolean[] boxes;
 
 
-    public Board(int rows,int columns,float gridTopLeftX,float gridTopLeftY,float width, float gridMarginX,float gridMarginY){
+    public Board(int rows,int columns,float gridTopLeftX,float gridTopLeftY,float width){
         this.rows=rows;
         this.columns=columns;
         this.gridTopLeftX =gridTopLeftX;
         this.gridTopLeftY =gridTopLeftY;
-        this.boxLength=(width-(width/18))/(columns-1);
+        LayoutUtils layoutUtils = new LayoutUtils();
+        this.dotDia=layoutUtils.getDiaOfDot(width,columns);
+        this.boxLength=layoutUtils.getBoxLength(width,columns)-this.dotDia;
         this.gridMarginX=gridMarginX;
         this.gridMarginY=gridMarginY;
-        this.buffer=45;
+        this.buffer=layoutUtils.getBuffer(columns);
         this.totalEdges = this.totalNoOfEdges();
         edges = new boolean[this.totalEdges + 1];
         this.totalBoxes = this.totalNoOfBoxes();
         boxes = new boolean[this.totalBoxes + 1];
         this.totalNodes = this.totalNoOfNodes();
-        setFirstNodeCor();
+//        this.gridMarginX=0;
+//        this.gridMarginY=0;
+        this.gridMarginX=layoutUtils.getDiaOfDot(width, columns)/2;
+        this.gridMarginY=layoutUtils.getDiaOfDot(width,columns)/2;
         setGridDimensions();
     }
 
@@ -64,8 +69,8 @@ public class Board {
         this.setFirstNodeCor();
         this.gridFirstCol = this.firstNodeX;
         this.gridFirstRow = this.firstNodeY;
-        float gridLengthX = this.columns*(this.boxLength-1);
-        float gridLengthY = this.rows*(this.boxLength-1);
+        float gridLengthX = ((this.columns-1)*(this.boxLength));
+        float gridLengthY = ((this.rows-1)*(this.boxLength));
         this.gridLastCol = this.gridFirstCol + gridLengthX;
         this.gridLastRow = this.gridFirstRow + gridLengthY;
     }
@@ -196,20 +201,20 @@ public class Board {
 
         if(isEdgeNoHorizontal(EdgeNo)){
             int rowNo = (EdgeNo/((2*this.columns)-1));
-            yCorStart = this.gridFirstRow + (rowNo*this.boxLength);
+            yCorStart = this.gridFirstRow + (rowNo*(this.boxLength));
             yCorEnd = yCorStart;
             int EdgeNoInThatRow = (EdgeNo%((2*this.columns)-1))-1;
-            xCorStart = this.gridFirstCol + (EdgeNoInThatRow*this.boxLength);
+            xCorStart = this.gridFirstCol + (EdgeNoInThatRow*(this.boxLength));
             xCorEnd = xCorStart + this.boxLength;
         }
         else{
             int rowNoStart = (EdgeNo/((2*this.columns)-1));
             if((EdgeNo%((2*this.columns)-1))==0)rowNoStart--;
-            yCorStart = this.gridFirstRow + (rowNoStart*this.boxLength);
+            yCorStart = this.gridFirstRow + (rowNoStart*(this.boxLength));
             yCorEnd = yCorStart + this.boxLength;
             int colNo = (EdgeNo%((2*this.columns)-1))-this.columns;
             if((EdgeNo%((2*this.columns)-1))==0)colNo=this.columns-1;
-            xCorStart = this.gridFirstCol + (colNo*this.boxLength);
+            xCorStart = this.gridFirstCol + (colNo*(this.boxLength));
             xCorEnd = xCorStart;
         }
 
@@ -221,6 +226,7 @@ public class Board {
         if(EdgeNo!=-1) {
             ImageView lineImage = new ImageView(context);
             lineImage.bringToFront();
+            lineImage.setTranslationZ(2f);
             lineImage.setVisibility(View.VISIBLE);
             ConstraintLayout.LayoutParams params;
             Pair<Float, Float> EdgeCordinates = findEdgeCordinates(EdgeNo);
@@ -230,15 +236,15 @@ public class Board {
             Log.d("cor", "y coordinate = " + EdgeCordinates.second);
             if (isEdgeNoHorizontal(EdgeNo)) {
                 lineImage.setImageResource(R.drawable.horizontalline1);
-                params = new ConstraintLayout.LayoutParams((int) boxLength, (int) (boxLength * 15 / 100));
-                lineImage.setX(EdgeCordinates.first);
-                lineImage.setY(EdgeCordinates.second);
+                params = new ConstraintLayout.LayoutParams((int) (boxLength+dotDia), (int) dotDia);
+                lineImage.setX(EdgeCordinates.first-(dotDia/2));
+                lineImage.setY(EdgeCordinates.second-(dotDia/2));
 //            lineImage.layout(Math.round(EdgeCordinates.first)-(int)(boxLength/2),Math.round(EdgeCordinates.second)-5,Math.round(EdgeCordinates.first)+(int)(boxLength/2),Math.round(EdgeCordinates.second)+5);
             } else {
                 lineImage.setImageResource(R.drawable.verticalline1);
-                params = new ConstraintLayout.LayoutParams((int) (boxLength * 15 / 100), (int) boxLength);
-                lineImage.setX(EdgeCordinates.first);
-                lineImage.setY(EdgeCordinates.second);
+                params = new ConstraintLayout.LayoutParams((int) dotDia, (int)(boxLength+dotDia));
+                lineImage.setX(EdgeCordinates.first-(dotDia/2));
+                lineImage.setY(EdgeCordinates.second-(dotDia/2));
 //            lineImage.layout(Math.round(EdgeCordinates.first)-5,Math.round(EdgeCordinates.second)-(int)(boxLength/2),Math.round(EdgeCordinates.first)+5,Math.round(EdgeCordinates.second)+(int)(boxLength/2));
             }
 //            edges[EdgeNo] = true;
