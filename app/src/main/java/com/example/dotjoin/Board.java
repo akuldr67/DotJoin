@@ -402,6 +402,8 @@ public class Board {
 
     public int getTotalBoxes(){ return this.totalBoxes; }
 
+    public int getTotalNodes(){ return this.totalNodes; }
+
     public boolean[] getEdgesArray(){ return this.edges; }
 
     public int getRows(){ return this.rows; }

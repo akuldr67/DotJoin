@@ -1,5 +1,11 @@
 package com.example.dotjoin;
 
+import android.content.Context;
+import android.view.View;
+import android.widget.ImageView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import java.util.Vector;
 
 public class Game {
@@ -118,5 +124,34 @@ public class Game {
             currentPlayer=0;
         else
             currentPlayer=currentPlayer+1;
+    }
+
+    public void colourBox(int NodeNo, Context context, ConstraintLayout root){
+        if(NodeNo<1) return;
+        if(NodeNo%this.board.getColumns()==0) return;
+        if(NodeNo>(this.board.getTotalNodes()-this.board.getColumns())) return;
+
+        ImageView colorImage = new ImageView(context);
+        colorImage.bringToFront();
+        colorImage.setVisibility(View.VISIBLE);
+        ConstraintLayout.LayoutParams params;
+
+        float[] cor = this.board.FindCoordinatesOfNode(NodeNo);
+
+        if(currentPlayer == 0)
+            colorImage.setImageResource(R.drawable.colour_box_blue);
+        else if(currentPlayer == 1)
+            colorImage.setImageResource(R.drawable.colour_box_red);
+        else if(currentPlayer == 2)
+            colorImage.setImageResource(R.drawable.colour_box_green);
+        else if(currentPlayer == 3)
+            colorImage.setImageResource(R.drawable.colour_box_yellow);
+
+        params = new ConstraintLayout.LayoutParams((int) (this.board.getBoxLength()*85 /100), (int) (this.board.getBoxLength()*85 /100));
+
+        colorImage.setX(cor[0]+(this.board.getBoxLength()*15 /100));
+        colorImage.setY(cor[1]+(this.board.getBoxLength()*15 /100));
+
+        root.addView(colorImage, params);
     }
 }

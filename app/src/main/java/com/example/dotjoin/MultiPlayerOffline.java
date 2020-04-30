@@ -26,9 +26,6 @@ import java.util.Vector;
 
 public class MultiPlayerOffline extends AppCompatActivity {
 
-//    private View tryView;
-    DemoView demoView;
-
     private ImageView boardImage;
     public float imageHeight,imageWidth;
     private ConstraintLayout rootLayout;
@@ -44,9 +41,6 @@ public class MultiPlayerOffline extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_player_offline);
 
-//        tryView = new View(this);
-        demoView = new DemoView(this);
-
         //Finding Layouts
         boardImage=findViewById(R.id.boardImage);
         rootLayout=findViewById(R.id.constraint);
@@ -61,10 +55,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                 boardImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                 //Dialog Box that accepts no. of players
-
                 CharSequence[] options = new CharSequence[]{"2","3","4"};
-
-//                Paint paint = new Paint();
 
                 final AlertDialog.Builder noOfUsersDialog = new AlertDialog.Builder(MultiPlayerOffline.this);
                 noOfUsersDialog.setTitle("Number of Players");
@@ -80,8 +71,6 @@ public class MultiPlayerOffline extends AppCompatActivity {
                         imageHeight=boardImage.getHeight();
                         imageWidth=boardImage.getWidth();
                         board = new Board(4,4,100,100+((imageHeight-imageWidth)/2),imageWidth,imageWidth/128,imageWidth/128);
-
-                        final float boxLength = board.getBoxLength();
 
                         Vector<String>playerNames=new Vector<String>();
                         for(int i=0;i<noOfPlayers;i++){
@@ -106,22 +95,14 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                         game.board.makeMoveAt(edgeNo);
                                         game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);
 
-                                        int NoOfnewBox = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
-                                        if (NoOfnewBox == 0) {
+                                        int NoOfNewBox = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
+                                        if (NoOfNewBox == 0) {
                                             game.nextTurn();
                                         } else {
                                             Vector<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
-                                            for(int i=0;i<NoOfnewBox;i++){
-                                                float[] cor = game.board.FindCoordinatesOfNode(newBoxNodes.get(i));
-                                                if(cor!=null) {
-                                                    Rect r = new Rect((int)cor[0], (int)cor[1], (int)(cor[0]+boxLength), (int)(cor[1]+boxLength));
-//                                                    @Override
-//                                                    view.onDrawForeground(Canvas canvas);
-                                                    demoView.drawRect(r);
-//                                                    demoView.invalidate();
-                                                }
+                                            for(int i=0;i<NoOfNewBox;i++){
+                                                game.colourBox(newBoxNodes.get(i), getApplicationContext(), rootLayout);
                                             }
-
                                             game.increaseScore();
                                         }
 
@@ -181,39 +162,5 @@ public class MultiPlayerOffline extends AppCompatActivity {
                 alertDialog.show();
             }
         });
-    }
-
-//    @Override
-//    protected  void onDraw(Canvas canvas)
-
-    private class DemoView extends View{
-        public DemoView(Context context){
-            super(context);
-//            Canvas canvas = super(canvas);
-            setWillNotDraw(false);
-        }
-
-        public Rect square = new Rect(10, 10, 200, 100);
-
-        public void drawRect(Rect r){
-//            this.onDraw(canvas);
-//            this.invalidate();
-            Log.d("reached"," here !!!!!!");
-            this.square = r;
-            this.invalidate();
-        }
-
-//        @Override protected void onDraw(Canvas canvas){
-        @Override protected void dispatchDraw(Canvas canvas){
-//            super.onDraw(canvas);
-            super.dispatchDraw(canvas);
-
-            Paint paint = new Paint();
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.BLUE);
-//            Rect r = new Rect(10, 10, 200, 100);
-            canvas.drawRect(this.square,paint);
-            Log.d("reached"," here tooooo !!!!!!");  //not reaching here!!! :(
-        }
     }
 }
