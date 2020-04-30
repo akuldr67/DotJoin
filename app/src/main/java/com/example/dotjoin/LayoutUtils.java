@@ -15,11 +15,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 //Width - 15dp
 //Height- 100dp
 
-//Buffer for 3*3 (size=4) is 45
+//Buffer for 3*3 (size=4) is 60
 
 public class LayoutUtils {
 
-    private static float lineWidth=15,lineHeight=100,threeBuffer=45;
+    private static float lineWidth=15,lineHeight=100,threeBuffer=50;
 
 
     public LayoutUtils() {
@@ -30,6 +30,7 @@ public class LayoutUtils {
         for(i=0;i<rows;i++){
             for(j=0;j<columns;j++){
                 ImageView dotImage = new ImageView(context);
+                dotImage.setTranslationZ(3f);
                 dotImage.setImageResource(R.drawable.dot);
                 ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams((int)getDiaOfDot(width,columns),(int)getDiaOfDot(width,columns));
                 dotImage.setX(topLeftX+getXCoordinate(width,columns,j));
@@ -60,6 +61,6 @@ public class LayoutUtils {
     }
 
     public float getBuffer(int columns){
-        return((3*threeBuffer)/columns-1);
+        return((float) (Math.sqrt(3)*threeBuffer)/(float) Math.sqrt(columns-1));
     }
 }

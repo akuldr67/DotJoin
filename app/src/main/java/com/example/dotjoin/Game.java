@@ -14,8 +14,6 @@ public class Game {
     //*Declaring Variables*
     //*********************
     int lastEdgeUpdated,noOfPlayers,currentPlayer,totalBoxes,boxesMade;
-//    Vector<String> namesOfPlayers;
-//    Vector<Integer> scoreBoard;
     Vector<Player> players;
     Board board;
 
@@ -31,12 +29,10 @@ public class Game {
     public Game(int lastEdgeUpdated, int noOfPlayers,Board board) {
         this.lastEdgeUpdated = lastEdgeUpdated;
         this.noOfPlayers = noOfPlayers;
-//        this.namesOfPlayers = namesOfPlayers;
         this.board=board;
         this.totalBoxes=board.getTotalBoxes();
         currentPlayer=0;
         boxesMade=0;
-        //Initializing Empty ScoreBoard
         players=new Vector<Player>();
         players.setSize(noOfPlayers);
         int color=0;
@@ -47,12 +43,6 @@ public class Game {
             else if(i==3)color=R.drawable.colour_box_yellow;
             players.set(i,new Player("Player "+(i+1),color,0));
         }
-
-//        scoreBoard=new Vector<Integer>();
-//        scoreBoard.setSize(noOfPlayers);
-//        for(int i=0;i<noOfPlayers;i++){
-//            scoreBoard.set(i,0);
-//        }
     }
 
     //*********
@@ -66,14 +56,6 @@ public class Game {
     public int getNoOfPlayers() {
         return noOfPlayers;
     }
-
-//    public Vector<String> getNamesOfPlayers() {
-//        return namesOfPlayers;
-//    }
-//
-//    public Vector<Integer> getScoreBoard() {
-//        return scoreBoard;
-//    }
 
     public Vector<Player> getPlayers(){
         return players;
@@ -99,14 +81,6 @@ public class Game {
         this.noOfPlayers = noOfPlayers;
     }
 
-//    public void setNamesOfPlayers(Vector<String> namesOfPlayers) {
-//        this.namesOfPlayers = namesOfPlayers;
-//    }
-//
-//    public void setScoreBoard(Vector<Integer> scoreBoard) {
-//        this.scoreBoard = scoreBoard;
-//    }
-
     public void setPlayers(Vector<Player> players){
         this.players=players;
     }
@@ -127,7 +101,6 @@ public class Game {
     //Function to increase score if the current player makes a box
     public void increaseScore(){
         players.elementAt(currentPlayer).setScore(players.elementAt(currentPlayer).getScore()+board.isBoxCompleted(lastEdgeUpdated).size());
-//        scoreBoard.set(currentPlayer,scoreBoard.get(currentPlayer)+board.isBoxCompleted(lastEdgeUpdated).size());
         boxesMade=boxesMade+board.isBoxCompleted(lastEdgeUpdated).size();
     }
 
@@ -160,15 +133,6 @@ public class Game {
         float[] cor = this.board.FindCoordinatesOfNode(NodeNo);
 
         colorImage.setImageResource(players.elementAt(currentPlayer).getColor());
-
-//        if(currentPlayer == 0)
-//            colorImage.setImageResource(R.drawable.colour_box_blue);
-//        else if(currentPlayer == 1)
-//            colorImage.setImageResource(R.drawable.colour_box_red);
-//        else if(currentPlayer == 2)
-//            colorImage.setImageResource(R.drawable.colour_box_green);
-//        else if(currentPlayer == 3)
-//            colorImage.setImageResource(R.drawable.colour_box_yellow);
 
         params = new ConstraintLayout.LayoutParams((int) (this.board.getBoxLength()), (int) (this.board.getBoxLength()));
 

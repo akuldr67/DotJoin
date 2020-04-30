@@ -21,8 +21,6 @@ public class Board {
     //      |    |    |      8   9   10
     //      *----*----*       11   12
 
-    // assumption: Edge Length = Box Length
-
     private int rows,columns,totalEdges,totalBoxes,totalNodes;
     private float boxLength,dotDia,buffer,gridTopLeftX,gridTopLeftY,gridMarginX,gridMarginY;
     private float firstNodeX, firstNodeY;
@@ -40,16 +38,12 @@ public class Board {
         LayoutUtils layoutUtils = new LayoutUtils();
         this.dotDia=layoutUtils.getDiaOfDot(width,columns);
         this.boxLength=layoutUtils.getBoxLength(width,columns)-this.dotDia;
-        this.gridMarginX=gridMarginX;
-        this.gridMarginY=gridMarginY;
         this.buffer=layoutUtils.getBuffer(columns);
         this.totalEdges = this.totalNoOfEdges();
         edges = new boolean[this.totalEdges + 1];
         this.totalBoxes = this.totalNoOfBoxes();
         boxes = new boolean[this.totalBoxes + 1];
         this.totalNodes = this.totalNoOfNodes();
-//        this.gridMarginX=0;
-//        this.gridMarginY=0;
         this.gridMarginX=layoutUtils.getDiaOfDot(width, columns)/2;
         this.gridMarginY=layoutUtils.getDiaOfDot(width,columns)/2;
         setGridDimensions();
@@ -112,7 +106,7 @@ public class Board {
         this.horizontalEdge = false;
 
         float relX = x-this.gridFirstCol;
-        float tempX = relX % this.boxLength;                       // modulus on float!!!
+        float tempX = relX % this.boxLength;
         if(tempX <= this.buffer){
             onColumn=true;
             ColumnNo = (int)(relX/this.boxLength)+1;
@@ -218,8 +212,8 @@ public class Board {
             xCorEnd = xCorStart;
         }
 
-        Pair<Float,Float> midCordinates= new Pair<Float,Float>(xCorStart,yCorStart);
-        return midCordinates;
+        Pair<Float,Float> EdgeCordinates= new Pair<Float,Float>(xCorStart,yCorStart);
+        return EdgeCordinates;
     }
 
     public void placeEdgeGivenEdgeNo(int EdgeNo, Context context, ConstraintLayout root){
@@ -231,24 +225,17 @@ public class Board {
             ConstraintLayout.LayoutParams params;
             Pair<Float, Float> EdgeCordinates = findEdgeCordinates(EdgeNo);
 
-            Log.d("cor", "Box Length = " + boxLength);
-            Log.d("cor", "x coordinate = " + EdgeCordinates.first);
-            Log.d("cor", "y coordinate = " + EdgeCordinates.second);
             if (isEdgeNoHorizontal(EdgeNo)) {
                 lineImage.setImageResource(R.drawable.horizontalline1);
                 params = new ConstraintLayout.LayoutParams((int) (boxLength+dotDia), (int) dotDia);
                 lineImage.setX(EdgeCordinates.first-(dotDia/2));
                 lineImage.setY(EdgeCordinates.second-(dotDia/2));
-//            lineImage.layout(Math.round(EdgeCordinates.first)-(int)(boxLength/2),Math.round(EdgeCordinates.second)-5,Math.round(EdgeCordinates.first)+(int)(boxLength/2),Math.round(EdgeCordinates.second)+5);
             } else {
                 lineImage.setImageResource(R.drawable.verticalline1);
                 params = new ConstraintLayout.LayoutParams((int) dotDia, (int)(boxLength+dotDia));
                 lineImage.setX(EdgeCordinates.first-(dotDia/2));
                 lineImage.setY(EdgeCordinates.second-(dotDia/2));
-//            lineImage.layout(Math.round(EdgeCordinates.first)-5,Math.round(EdgeCordinates.second)-(int)(boxLength/2),Math.round(EdgeCordinates.first)+5,Math.round(EdgeCordinates.second)+(int)(boxLength/2));
             }
-//            edges[EdgeNo] = true;
-//            this.isBoxCompleted(EdgeNo);
             root.addView(lineImage, params);
         }
     }
@@ -385,7 +372,6 @@ public class Board {
         for(int i=0;i<newBoxes.size();i++){
             newBoxNodes.add(NodeNoGivenBoxNo(newBoxes.get(i)));
         }
-        Log.d("New ","Box Node No: "+newBoxNodes.toString());
         return newBoxNodes;
     }
 
@@ -397,9 +383,6 @@ public class Board {
         if(NodeNo%this.columns==0) colNo=this.columns;
         float x = this.gridFirstCol + (this.boxLength*(colNo-1));
         float y = this.gridFirstRow + (this.boxLength*(rowNo-1));
-//        Vector<Float> coordinates = new Vector<Float>(2);
-//        coordinates.add(x);
-//        coordinates.add(y);
         float[] coordinates = {x,y};
         return coordinates;
     }

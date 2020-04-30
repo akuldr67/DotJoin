@@ -71,7 +71,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                         else if (which == 2) noOfPlayers = 4;
 
 
-                        CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7", "8*8"};
+                        CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7"};
 
                         AlertDialog.Builder sizeDialog = new AlertDialog.Builder(MultiPlayerOffline.this);
                         sizeDialog.setTitle("Size");
@@ -83,7 +83,6 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                 else if (which == 2) boardSize = 6;
                                 else if (which == 3) boardSize = 7;
                                 else if (which == 4) boardSize = 8;
-                                else if (which == 5) boardSize = 9;
 
 
                                 currentPlayerName = findViewById(R.id.current_player_name);
@@ -93,10 +92,6 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                 layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2));
                                 board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
 
-//                                Vector<String> playerNames = new Vector<String>();
-//                                for (int i = 0; i < noOfPlayers; i++) {
-//                                    playerNames.add("Player " + (i + 1));
-//                                }
                                 game = new Game(0, noOfPlayers,  board);
                                 currentPlayerName.setText(game.players.get(game.currentPlayer).getName() + "'s Turn");
 
