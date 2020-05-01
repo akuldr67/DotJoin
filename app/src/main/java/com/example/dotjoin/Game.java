@@ -152,6 +152,36 @@ public class Game {
 
         root.addView(colorImage, params);
     }
-    //TODO
-    // Get Name of the winner or if it is a tie
+
+    public String getResult(){
+        //Finding Max
+        int max=0;
+        for(int i=0;i<noOfPlayers;i++){
+            if(players.elementAt(i).getScore()>max){
+                max=players.elementAt(i).getScore();
+            }
+        }
+        //Finding Name of Winners
+        Vector<String>winners=new Vector<String>();
+        for(int i=0;i<noOfPlayers;i++){
+            if(players.elementAt(i).getScore()==max){
+                winners.add(players.elementAt(i).getName());
+            }
+        }
+
+        if(winners.size()==1){
+            return winners.get(0)+" won";
+        }
+        else{
+            String ans="It's a tie between";
+            for(int i=0;i<winners.size();i++){
+                if(i==winners.size()-1)ans=ans+winners.get(i);
+                else if(i==winners.size()-2)ans=ans+" "+winners.get(i)+" and ";
+                else ans=ans+" "+winners.get(i)+",";
+            }
+            return ans;
+        }
+
+    }
+
 }

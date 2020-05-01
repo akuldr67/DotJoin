@@ -149,7 +149,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
 
                                                     //Showing Final Dialog Box
                                                     AlertDialog.Builder builder = new AlertDialog.Builder(MultiPlayerOffline.this);
-                                                    builder.setTitle("Game Over");
+                                                    builder.setTitle(game.getResult());
 
                                                     //Showing final ScoreBoard
                                                     TextView textView = new TextView(getApplicationContext());
@@ -206,5 +206,3 @@ public class MultiPlayerOffline extends AppCompatActivity {
         });
     }
 }
-//TODO
-// Create Views that display user Name and score and also indicate whose turn it is
