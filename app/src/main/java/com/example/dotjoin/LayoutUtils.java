@@ -17,7 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 //Width - 15dp
 //Height- 100dp
 
-//Buffer for 3*3 (size=4) is 60
+//Buffer for 3*3 (size=4) is 50
 
 public class LayoutUtils {
 

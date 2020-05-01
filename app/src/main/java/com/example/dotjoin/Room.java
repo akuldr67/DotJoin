@@ -1,44 +1,76 @@
 package com.example.dotjoin;
 
+import android.util.Log;
+
 import com.example.dotjoin.Board;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public class Room {
-    private String roomID;
-    private List<String> playersList;
-    private Board currBoardStatus;
+    public String roomID;
+    public Game game;
+    public int host;
+    public boolean isGameStarted;
+    public Date RoomstartTime,GameStartTime;
+
 
     public Room() {
+        this.roomID = generateRoomID();
+        this.host = 0;
+        this.isGameStarted = false;
+        this.RoomstartTime = new Date();
     }
 
-    public Room(String roomID, List<String> playersList, Board currBoardStatus) {
-        this.roomID = roomID;
-        this.playersList = playersList;
-        this.currBoardStatus = currBoardStatus;
+    private String generateRoomID(){
+        String id="";
+        String CHAR_LOWER = "abcdefghijklmnopqrstuvwxyz";
+        for(int i=0;i<8;i++){
+            int index = (int)(CHAR_LOWER.length()*Math.random());
+            id+=CHAR_LOWER.charAt(index);
+        }
+        Log.d("Room id ", " : "+id);
+        return id;
     }
 
+
+    //getters
     public String getRoomID() {
-        return roomID;
+        return this.roomID;
     }
 
-    public List<String> getPlayersList() {
-        return playersList;
+    public Game getGame() {
+        return this.game;
     }
 
-    public Board getCurrBoardStatus() {
-        return currBoardStatus;
+    public int getHost() {
+        return this.host;
     }
 
-    public void setRoomID(String roomID) {
-        this.roomID = roomID;
+    public boolean isGameStarted() {
+        return this.isGameStarted;
     }
 
-    public void setPlayersList(List<String> playersList) {
-        this.playersList = playersList;
+    public Date getRoomStartTime() {
+        return this.RoomstartTime;
     }
 
-    public void setCurrBoardStatus(Board currBoardStatus) {
-        this.currBoardStatus = currBoardStatus;
+    public Date getGameStartTime(){
+        return this.GameStartTime;
     }
+
+    //setters
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public void setHost(int host) {
+        this.host = host;
+    }
+
+    public void startGame() {
+        this.isGameStarted = true;
+    }
+
 }
