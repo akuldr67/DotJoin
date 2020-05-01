@@ -1,8 +1,10 @@
 package com.example.dotjoin;
 
 import android.content.Context;
+import android.os.Build;
 import android.widget.ImageView;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 //*************
@@ -25,7 +27,7 @@ public class LayoutUtils {
     public LayoutUtils() {
     }
 
-    public void drawBoard(int rows, int columns, Context context, ConstraintLayout root, float width,float topLeftX, float topLeftY){
+    public void drawBoard(int rows, int columns, Context context, ConstraintLayout root, float width, float topLeftX, float topLeftY){
         int i,j;
         for(i=0;i<rows;i++){
             for(j=0;j<columns;j++){

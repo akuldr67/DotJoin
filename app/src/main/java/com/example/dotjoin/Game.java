@@ -1,10 +1,15 @@
 package com.example.dotjoin;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import java.util.Vector;
 
@@ -113,11 +118,17 @@ public class Game {
     }
 
     //NextPlayersTurn
-    public void nextTurn(){
+    public void nextTurn(Vector<TextView> textViews,Context context){
+        textViews.elementAt(currentPlayer).setBackgroundResource(0);
+        textViews.elementAt(currentPlayer).setTypeface(Typeface.DEFAULT);
+        textViews.elementAt(currentPlayer).setTextColor(ContextCompat.getColor(context,R.color.grey));
         if(currentPlayer==noOfPlayers-1)
             currentPlayer=0;
         else
             currentPlayer=currentPlayer+1;
+        textViews.elementAt(currentPlayer).setBackgroundResource(R.drawable.border);
+        textViews.elementAt(currentPlayer).setTypeface(Typeface.DEFAULT_BOLD);
+        textViews.elementAt(currentPlayer).setTextColor(ContextCompat.getColor(context,R.color.black));
     }
 
     public void colourBox(int NodeNo, Context context, ConstraintLayout root){

@@ -1,6 +1,7 @@
 package com.example.dotjoin;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.util.Arrays;
+
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.List;

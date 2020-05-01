@@ -3,6 +3,8 @@ package com.example.dotjoin;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
@@ -18,6 +21,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,9 +37,9 @@ public class MultiPlayerOffline extends AppCompatActivity {
     private Game game;
     private View view;
     private float posX,posY;
-    private TextView currentPlayerName;
     private int noOfPlayers,boardSize;
     private LayoutUtils layoutUtils;
+    private Vector<TextView>scoreViewVector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +60,6 @@ public class MultiPlayerOffline extends AppCompatActivity {
                 boardImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 layoutUtils=new LayoutUtils();
 
-
-
                 //Dialog Box that accepts no. of players
                 CharSequence[] options = new CharSequence[]{"2","3","4"};
 
@@ -70,7 +72,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                         else if (which == 1) noOfPlayers = 3;
                         else if (which == 2) noOfPlayers = 4;
 
-
+                        //Dialog Box that accepts board size
                         CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7"};
 
                         AlertDialog.Builder sizeDialog = new AlertDialog.Builder(MultiPlayerOffline.this);
@@ -84,25 +86,45 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                 else if (which == 3) boardSize = 7;
                                 else if (which == 4) boardSize = 8;
 
+                                scoreViewVector=new Vector<TextView>();
+                                scoreViewVector.setSize(noOfPlayers);
 
-                                currentPlayerName = findViewById(R.id.current_player_name);
-
+                                //Getting width and height of the image view
                                 imageHeight = boardImage.getHeight();
                                 imageWidth = boardImage.getWidth();
+
+                                //Initializing Board, Game, and layoutUtils
                                 layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2));
                                 board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
-
                                 game = new Game(0, noOfPlayers,  board);
-                                currentPlayerName.setText(game.players.get(game.currentPlayer).getName() + "'s Turn");
 
+
+
+                                //Setting params for corner text Views that display score
+                                for(int i=0;i<noOfPlayers;i++){
+                                    if(i==0)       scoreViewVector.set(i,(TextView) findViewById(R.id.player1));
+                                    else if(i==1)  scoreViewVector.set(i,(TextView) findViewById(R.id.player2));
+                                    else if(i==2)  scoreViewVector.set(i,(TextView) findViewById(R.id.player3));
+                                    else if(i==3)  scoreViewVector.set(i,(TextView) findViewById(R.id.player4));
+
+                                    scoreViewVector.elementAt(i).setText(game.players.elementAt(i).getName()+" - "+game.players.elementAt(i).getScore());
+                                }
+
+                                //Highlighting the first Player TextView
+                                scoreViewVector.elementAt(0).setBackgroundResource(R.drawable.border);
+                                scoreViewVector.elementAt(0).setTypeface(Typeface.DEFAULT_BOLD);
+                                scoreViewVector.elementAt(0).setTextColor(ContextCompat.getColor(MultiPlayerOffline.this,R.color.black));
+
+                                //Touch Listener
                                 view.setOnTouchListener(new View.OnTouchListener() {
                                     @Override
                                     public boolean onTouch(View v, MotionEvent event) {
                                         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
+                                            //Getting Coordinates of Touch
                                             posX = event.getX();
                                             posY = event.getY();
 
+                                            //Getting Edge No touched
                                             int edgeNo = game.board.EdgeNoGivenCor(posX, posY);
                                             boolean[] edges = board.getEdgesArray();
 
@@ -113,7 +135,8 @@ public class MultiPlayerOffline extends AppCompatActivity {
 
                                                 int NoOfNewBox = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
                                                 if (NoOfNewBox == 0) {
-                                                    game.nextTurn();
+                                                    game.nextTurn(scoreViewVector,MultiPlayerOffline.this);
+//                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
                                                 } else {
                                                     Vector<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
                                                     for (int i = 0; i < NoOfNewBox; i++) {
@@ -121,8 +144,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     }
                                                     game.increaseScore();
                                                 }
-
-                                                currentPlayerName.setText(game.players.get(game.currentPlayer).getName() + "'s turn");
+                                                scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.elementAt(game.getCurrentPlayer()).getName()+" - "+game.players.elementAt(game.getCurrentPlayer()).getScore());
                                                 if (game.isGameCompleted()) {
 
                                                     //Showing Final Dialog Box
