@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mDatabaseRef= FirebaseDatabase.getInstance().getReference();
-        mDatabaseRef.child("Rooms").child("Key").setValue("Hello There");
+        mDatabaseRef.child("Rooms");
 
         //finding Layouts
         singlePlayer = findViewById(R.id.main_button_single_player);

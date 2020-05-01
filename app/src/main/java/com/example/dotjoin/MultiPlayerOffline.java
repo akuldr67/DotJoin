@@ -126,9 +126,10 @@ public class MultiPlayerOffline extends AppCompatActivity {
 
                                             //Getting Edge No touched
                                             int edgeNo = game.board.EdgeNoGivenCor(posX, posY);
-                                            boolean[] edges = board.getEdgesArray();
-
-                                            if (edgeNo != -1 && !edges[edgeNo]) {
+//                                            boolean[] edges = board.getEdgesArray();
+//                                            if (edgeNo != -1 && !edges[edgeNo]) {
+                                            Vector<Boolean> edges = board.getEdges();
+                                            if (edgeNo != -1 && !edges.get(edgeNo)) {
                                                 game.setLastEdgeUpdated(edgeNo);
                                                 game.board.makeMoveAt(edgeNo);
                                                 game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);

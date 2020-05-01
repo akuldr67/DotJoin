@@ -29,8 +29,11 @@ public class Board {
     private float firstNodeX, firstNodeY;
     private float gridFirstCol, gridLastCol, gridFirstRow, gridLastRow;
     private boolean horizontalEdge = false, verticalEdge = false;
-    boolean[] edges;
-    boolean[] boxes;
+//    boolean[] edges;
+//    boolean[] boxes;
+    private Vector<Boolean> edges;
+    private Vector<Boolean> boxes;
+    private float width;
 
 
     public Board(int rows,int columns,float gridTopLeftX,float gridTopLeftY,float width){
@@ -38,14 +41,21 @@ public class Board {
         this.columns=columns;
         this.gridTopLeftX =gridTopLeftX;
         this.gridTopLeftY =gridTopLeftY;
+        this.width = width;
         LayoutUtils layoutUtils = new LayoutUtils();
         this.dotDia=layoutUtils.getDiaOfDot(width,columns);
         this.boxLength=layoutUtils.getBoxLength(width,columns)-this.dotDia;
         this.buffer=layoutUtils.getBuffer(columns);
         this.totalEdges = this.totalNoOfEdges();
-        edges = new boolean[this.totalEdges + 1];
+        edges = new Vector<Boolean>();
+        edges.setSize(this.totalEdges + 1);
+        for(int i=0;i<edges.size();i++)edges.set(i,false);
+//        edges = new boolean[this.totalEdges + 1];
         this.totalBoxes = this.totalNoOfBoxes();
-        boxes = new boolean[this.totalBoxes + 1];
+        boxes = new Vector<Boolean>();
+        boxes.setSize(this.totalBoxes + 1);
+        for(int i=0;i<boxes.size();i++)boxes.set(i,false);
+//        boxes = new boolean[this.totalBoxes + 1];
         this.totalNodes = this.totalNoOfNodes();
         this.gridMarginX=layoutUtils.getDiaOfDot(width, columns)/2;
         this.gridMarginY=layoutUtils.getDiaOfDot(width,columns)/2;
@@ -245,12 +255,14 @@ public class Board {
 
     public void makeMoveAt(int EdgeNo){
         if(EdgeNo!=-1)
-            edges[EdgeNo]=true;
+            edges.set(EdgeNo,true);
+//            edges[EdgeNo]=true;
     }
 
     public void placeEdgesAccToGame(Context context, ConstraintLayout root){
         for(int i=1;i<=this.totalEdges;i++){
-            if(edges[i]==true){
+//            if(edges[i]==true){
+            if(edges.get(i)){
                 placeEdgeGivenEdgeNo(i,context, root);
             }
         }
@@ -260,17 +272,21 @@ public class Board {
     public void updateGame(Context context, float newTapX, float newTapY, ConstraintLayout root){
         int newEdgeNo = this.EdgeNoGivenCor(newTapX,newTapY);
         if(newEdgeNo <=0 || newEdgeNo>this.totalEdges) return;
-        if(edges[newEdgeNo]==true) return;
+        if(edges.get(newEdgeNo)) return;
+//        if(edges[newEdgeNo]==true) return;
         placeEdgeGivenEdgeNo(newEdgeNo, context, root);
-        edges[newEdgeNo]=true;
+//        edges[newEdgeNo]=true;
+        edges.set(newEdgeNo,true);
     }
 
     //deploys every valid stick at every step
     public void updateGame2(Context context, float newTapX, float newTapY, ConstraintLayout root){
         int newEdgeNo = this.EdgeNoGivenCor(newTapX,newTapY);
         if(newEdgeNo <=0 || newEdgeNo>this.totalEdges) return;
-        if(edges[newEdgeNo]==true) return;
-        edges[newEdgeNo]=true;
+//        if(edges[newEdgeNo]==true) return;
+//        edges[newEdgeNo]=true;
+        if(edges.get(newEdgeNo)) return;
+        edges.set(newEdgeNo,true);
         placeEdgesAccToGame(context, root);
     }
 
@@ -341,30 +357,38 @@ public class Board {
 
         if(isEdgeNoHorizontal(EdgeNo)){             //if new edge is horizontal.. means top and bottom box possible
             if(ifTopBoxExist(EdgeNo)){
-                if(edges[EdgeNo-this.columns] && edges[EdgeNo-this.columns+1] && edges[EdgeNo-(2*this.columns)+1]){
+//                if(edges[EdgeNo-this.columns] && edges[EdgeNo-this.columns+1] && edges[EdgeNo-(2*this.columns)+1]){
+                if(edges.get(EdgeNo-this.columns) && edges.get(EdgeNo-this.columns+1) && edges.get(EdgeNo-(2*this.columns)+1)){
                     if(currBoxNo == -1)currBoxNo = BoxNoGivenNodeNo(nodeNo-this.columns)+this.columns-1;
-                    boxes[currBoxNo-this.columns+1] = true;
+                    boxes.set(currBoxNo-this.columns+1,true);
+//                    boxes[currBoxNo-this.columns+1] = true;
                     newBoxes.add(currBoxNo-this.columns+1);
                 }
             }
             if(ifBottomBoxExist(EdgeNo)){
-                if(edges[EdgeNo+this.columns-1] && edges[EdgeNo+this.columns] && edges[EdgeNo+(2*this.columns)-1]){
-                    boxes[currBoxNo] = true;
+//                if(edges[EdgeNo+this.columns-1] && edges[EdgeNo+this.columns] && edges[EdgeNo+(2*this.columns)-1]){
+                if(edges.get(EdgeNo+this.columns-1) && edges.get(EdgeNo+this.columns) && edges.get(EdgeNo+(2*this.columns)-1)){
+                    boxes.set(currBoxNo,true);
+//                    boxes[currBoxNo] = true;
                     newBoxes.add(currBoxNo);
                 }
             }
         }
         else{                                     //if new edge is vertical.. means left and right box possible
             if(ifLeftBoxExist(EdgeNo)){
-                if(edges[EdgeNo-1] && edges[EdgeNo-this.columns] && edges[EdgeNo+this.columns-1]){
+//                if(edges[EdgeNo-1] && edges[EdgeNo-this.columns] && edges[EdgeNo+this.columns-1]){
+                if(edges.get(EdgeNo-1) && edges.get(EdgeNo-this.columns) && edges.get(EdgeNo+this.columns-1)){
                     if(currBoxNo == -1) currBoxNo = BoxNoGivenNodeNo(nodeNo-1)+1;
-                    boxes[currBoxNo-1] = true;
+                    boxes.set(currBoxNo-1,true);
+//                    boxes[currBoxNo-1] = true;
                     newBoxes.add(currBoxNo-1);
                 }
             }
             if(ifRightBoxExist(EdgeNo)){
-                if(edges[EdgeNo+1] && edges[EdgeNo-this.columns+1] && edges[EdgeNo+this.columns]){
-                    boxes[currBoxNo] = true;
+//                if(edges[EdgeNo+1] && edges[EdgeNo-this.columns+1] && edges[EdgeNo+this.columns]){
+                if(edges.get(EdgeNo+1) && edges.get(EdgeNo-this.columns+1) && edges.get(EdgeNo+this.columns)){
+                    boxes.set(currBoxNo,true);
+//                    boxes[currBoxNo] = true;
                     newBoxes.add(currBoxNo);
                 }
             }
@@ -396,7 +420,16 @@ public class Board {
 
     public int getTotalNodes(){ return this.totalNodes; }
 
-    public boolean[] getEdgesArray(){ return this.edges; }
+//    public boolean[] getEdgesArray(){ return this.edges; }
+    public  Vector<Boolean> getEdges(){
+    return this.edges;
+//        Vector<Boolean> Edges = new Vector();
+//        Edges.add(false);
+//        for(int i=1;i<this.totalEdges+1;i++){
+//            Edges.add(this.edges[i]);
+//        }
+//        return Edges;
+    }
 
     public int getRows(){ return this.rows; }
 
@@ -404,4 +437,56 @@ public class Board {
 
     public float getBoxLength(){ return this.boxLength; }
 
+    public float getDotDia() { return dotDia; }
+
+    public float getBuffer() { return buffer; }
+
+    public float getGridTopLeftX() { return gridTopLeftX; }
+
+    public float getGridTopLeftY() { return gridTopLeftY; }
+
+    public float getGridMarginX() { return gridMarginX; }
+
+    public float getGridMarginY() { return gridMarginY; }
+
+    public float getFirstNodeX() { return firstNodeX; }
+
+    public float getFirstNodeY() { return firstNodeY; }
+
+    public float getGridFirstCol() { return gridFirstCol; }
+
+    public float getGridLastCol() { return gridLastCol; }
+
+    public float getGridFirstRow() { return gridFirstRow; }
+
+    public float getGridLastRow() { return gridLastRow; }
+
+    public boolean isHorizontalEdge() { return horizontalEdge; }
+
+    public boolean isVerticalEdge() { return verticalEdge; }
+
+    public Vector<Boolean> getBoxes() {
+        return this.boxes;
+//        Vector<Boolean> Boxes = new Vector();
+//        for(int i=0;i<this.boxes.length;i++){
+//            Boxes.add(this.boxes[i]);
+//        }
+//        return Boxes;
+    }
+
+    public float getWidth() { return width; }
+
+
+
+
+    //setters
+
+
+    public void setEdges(Vector<Boolean> edges) {
+        this.edges = edges;
+    }
+
+    public void setBoxes(Vector<Boolean> boxes) {
+        this.boxes = boxes;
+    }
 }
