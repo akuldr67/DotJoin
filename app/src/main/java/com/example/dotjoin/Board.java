@@ -490,3 +490,6 @@ public class Board {
         this.boxes = boxes;
     }
 }
+//TODO This Branch is made to make two different classes from Board class
+// one which contains variable that are specific to users phone and other
+// contains variables that need to be shared in the room
