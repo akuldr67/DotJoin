@@ -105,7 +105,7 @@ public class MultiPlayerOnline extends AppCompatActivity {
                                             String name=mSharedPreferences.getString("UserName","");
                                             //TODO Get Name and Resource File of the player
                                             //Adding the user to the server
-                                            Player player = new Player(name,0,0);
+                                            Player player = new Player(name,0,0,0);
                                             ArrayList<Player> players=room.getPlayers();
                                             players.add(player);
                                             room.setPlayers(players);

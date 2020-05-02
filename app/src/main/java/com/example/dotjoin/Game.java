@@ -46,7 +46,7 @@ public class Game {
             else if(i==1)color=R.drawable.colour_box_red;
             else if(i==2)color=R.drawable.colour_box_green;
             else if(i==3)color=R.drawable.colour_box_yellow;
-            players.set(i,new Player("Player "+(i+1),color,0));
+            players.set(i,new Player("Player "+(i+1),color,0,i));
         }
     }
 

@@ -7,8 +7,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,9 @@ public class WaitingPlace extends AppCompatActivity {
     private static int maxPlayers=4;
     private DatabaseReference mDatabase;
     private ArrayList<Player>players;
+    private SharedPreferences mSharedPreferences;
+
+    private Button exitRoom,startGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +72,9 @@ public class WaitingPlace extends AppCompatActivity {
             }
         });
 
+        mSharedPreferences=getSharedPreferences("com.example.dotjoin.file",Context.MODE_PRIVATE);
+        final String name=mSharedPreferences.getString("UserName","");
+
         //Retrieving Players
         mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -77,6 +85,12 @@ public class WaitingPlace extends AppCompatActivity {
                     playerTextViews.elementAt(i).setText(players.get(i).getName());
                     playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
                 }
+
+                //setting start game visible for host
+                //todo: if host exits, change host no to someone else or change some player's number to hostnumber and give that no to new player
+                if(players.get(room.getHost()).getName().equals(name)) {
+                    findViewById(R.id.start_game).setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -84,6 +98,23 @@ public class WaitingPlace extends AppCompatActivity {
 
             }
         });
+
+        exitRoom = findViewById(R.id.exit_room);
+        startGame = findViewById(R.id.start_game);
+
+//        startGame.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+//
+//        exitRoom.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
 
     }
 }

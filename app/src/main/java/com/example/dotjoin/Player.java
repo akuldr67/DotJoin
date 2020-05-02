@@ -2,12 +2,13 @@ package com.example.dotjoin;
 
 public class Player {
     private String name;
-    private int score,color;
+    private int score,color,playerNumber;
 
-    public Player(String name, int color, int score) {
+    public Player(String name, int color, int score,int playerNumber) {
         this.name = name;
         this.color = color;
         this.score = score;
+        this.playerNumber = playerNumber;
     }
 
     public Player() {
@@ -27,6 +28,8 @@ public class Player {
         return score;
     }
 
+    public int getPlayerNumber() { return playerNumber; }
+
     //Setters
 
     public void setName(String name) {
@@ -40,4 +43,6 @@ public class Player {
     public void setScore(int score) {
         this.score = score;
     }
+
+    public void setPlayerNumber(int playerNumber) { this.playerNumber = playerNumber; }
 }
