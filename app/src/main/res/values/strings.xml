@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DotJoin</string>
+    <string name="create_a_room">Create A Room</string>
+    <string name="join_a_room">Join A Room</string>
 </resources>

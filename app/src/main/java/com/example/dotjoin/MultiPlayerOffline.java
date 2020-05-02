@@ -207,3 +207,4 @@ public class MultiPlayerOffline extends AppCompatActivity {
         });
     }
 }
+//TODO FIX LAYOUT ERROR (IF SCORE > 9 its going outside textView)

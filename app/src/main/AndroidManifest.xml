@@ -2,9 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.dotjoin">
 
-    <uses-sdk
-        android:minSdkVersion="16"
-        />
 
     <application
         android:allowBackup="true"
@@ -13,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MultiPlayerOnline"></activity>
+        <activity android:name=".WaitingPlace"></activity>
+        <activity android:name=".MultiPlayerOnline" />
         <activity android:name=".MultiPlayerOffline" />
         <activity android:name=".SinglePlayer" />
         <activity android:name=".MainActivity">

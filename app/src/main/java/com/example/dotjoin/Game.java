@@ -185,3 +185,8 @@ public class Game {
     }
 
 }
+//TODO
+// Turn Auto Rotate Off
+
+//TODO
+// Set Main Activity Parent of others
