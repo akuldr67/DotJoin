@@ -174,6 +174,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                         public void onClick(DialogInterface dialog, int which) {
                                                             Intent intent = new Intent(MultiPlayerOffline.this, MultiPlayerOffline.class);
                                                             startActivity(intent);
+                                                            finish();
                                                         }
                                                     });
 
@@ -183,9 +184,12 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                         public void onClick(DialogInterface dialog, int which) {
                                                             Intent intent = new Intent(MultiPlayerOffline.this, MainActivity.class);
                                                             startActivity(intent);
+                                                            finish();
                                                         }
                                                     });
-                                                    builder.show();
+                                                    AlertDialog alertDialog=builder.create();
+                                                    alertDialog.setCanceledOnTouchOutside(false);
+                                                    alertDialog.show();
                                                 }
                                             }
                                             Log.d("pos", "current player " + game.currentPlayer + "\n");

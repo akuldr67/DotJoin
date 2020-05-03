@@ -107,7 +107,14 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.setCanceledOnTouchOutside(false);
             alertDialog.show();
         }
-
+//        //Storing Player No in Shared Preferences
+//        int playerNo=mSharedPreferences.getInt("playerNo",-2);
+//        if(playerNo==-2){
+//            myEdit=mSharedPreferences.edit();
+//            playerNo=-1;
+//            myEdit.putInt("playerNo",playerNo);
+//            myEdit.apply();
+//        }
 
     }
 }

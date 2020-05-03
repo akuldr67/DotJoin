@@ -16,12 +16,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -85,7 +88,9 @@ public class MultiPlayerOnline extends AppCompatActivity {
                         else{
                             //Saving User input in this string
                             final String roomId = input.getText().toString();
-
+                            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                                @Override
+                                public void onSuccess(final InstanceIdResult instanceIdResult) {
                             mDatabaseRef.child("Rooms").addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -95,34 +100,38 @@ public class MultiPlayerOnline extends AppCompatActivity {
                                         //Getting room object from the server
                                         Room room = dataSnapshot.child(roomId).getValue(Room.class);
                                         //Checking if room is full
-                                        if(room.getPlayers().size()==4){
+                                        final int noOfPlayers=room.getPlayers().size();
+                                        if(noOfPlayers==4){
                                             Toast.makeText(getApplicationContext(),"This Room is full",Toast.LENGTH_SHORT).show();
                                         }
-                                        else{
+                                        else {
                                             //Removing Listener to avoid infinite loop because of recursion
                                             mDatabaseRef.child("Rooms").removeEventListener(this);
-                                            mSharedPreferences=getSharedPreferences("com.example.dotjoin.file",Context.MODE_PRIVATE);
-                                            String name=mSharedPreferences.getString("UserName","");
-                                            //TODO Get Name and Resource File of the player
+                                            mSharedPreferences = getSharedPreferences("com.example.dotjoin.file", Context.MODE_PRIVATE);
+                                            final String name = mSharedPreferences.getString("UserName", "");
                                             //Adding the user to the server
-                                            Player player = new Player(name,0,0,0);
-                                            ArrayList<Player> players=room.getPlayers();
-                                            players.add(player);
-                                            room.setPlayers(players);
-                                            mDatabaseRef.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if(task.isSuccessful()){
-                                                        //Starting Waiting Room Activity
-                                                        Intent waitingRoomIntent =new Intent(MultiPlayerOnline.this,WaitingPlace.class);
-                                                        waitingRoomIntent.putExtra("RoomId",roomId);
-                                                        startActivity(waitingRoomIntent);
-                                                    }
-                                                    else{
-                                                        Toast.makeText(getApplicationContext(),"Unable to join, try Later",Toast.LENGTH_LONG).show();
-                                                    }
-                                                }
-                                            });
+
+                                                    Player player = new Player(name, 0, 0, noOfPlayers,instanceIdResult.getToken());
+                                                    ArrayList<Player> players = room.getPlayers();
+                                                    players.add(player);
+                                                    room.setPlayers(players);
+                                                    mDatabaseRef.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                //Starting Waiting Room Activity
+                                                                Intent waitingRoomIntent = new Intent(MultiPlayerOnline.this, WaitingPlace.class);
+                                                                waitingRoomIntent.putExtra("RoomId", roomId);
+                                                                waitingRoomIntent.putExtra("PlayerNo", noOfPlayers);
+                                                                startActivity(waitingRoomIntent);
+                                                            } else {
+                                                                Toast.makeText(getApplicationContext(), "Unable to join, try Later", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        }
+                                                    });
+
+
+
                                         }
                                     }
                                     else{
@@ -133,6 +142,8 @@ public class MultiPlayerOnline extends AppCompatActivity {
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                                }
+                            });
                                 }
                             });
                         }
@@ -154,22 +165,30 @@ public class MultiPlayerOnline extends AppCompatActivity {
 
     protected void hostRoom(){
         mSharedPreferences=getSharedPreferences("com.example.dotjoin.file",Context.MODE_PRIVATE);
-        String name=mSharedPreferences.getString("UserName","");
-        final Room room = new Room(name);
-        mDatabaseRef.child("Rooms").child(room.getRoomID()).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+        final String name=mSharedPreferences.getString("UserName","");
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(getApplicationContext(),"Room Created Successfully", Toast.LENGTH_LONG).show();
-                    //Starting Waiting Room Activity
-                    Intent waitingRoomIntent =new Intent(MultiPlayerOnline.this,WaitingPlace.class);
-                    waitingRoomIntent.putExtra("RoomId",room.getRoomID());
-                    startActivity(waitingRoomIntent);
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),"Unable to Create Room", Toast.LENGTH_LONG).show();
-                }
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                Log.d("token",instanceIdResult.getToken());
+                final Room room = new Room(name,instanceIdResult.getToken());
+                mDatabaseRef.child("Rooms").child(room.getRoomID()).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(getApplicationContext(),"Room Created Successfully", Toast.LENGTH_LONG).show();
+                            //Starting Waiting Room Activity
+                            Intent waitingRoomIntent =new Intent(MultiPlayerOnline.this,WaitingPlace.class);
+                            waitingRoomIntent.putExtra("RoomId",room.getRoomID());
+                            waitingRoomIntent.putExtra("PlayerNo",0);
+                            startActivity(waitingRoomIntent);
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(),"Unable to Create Room", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
             }
         });
+
     }
 }

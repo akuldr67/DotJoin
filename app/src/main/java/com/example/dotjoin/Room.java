@@ -23,7 +23,7 @@ public class Room {
     }
 
     //Constructor to Host Room
-    public Room(String name) {
+    public Room(String name,String deviceToken) {
         this.roomID = generateRoomID();
         this.host = 0;
         this.isGameStarted = false;
@@ -31,7 +31,7 @@ public class Room {
         this.roomStartTime = new Date().toString();
         this.gameStartTime = null;
         players=new ArrayList<>();
-        Player player = new Player(name,0,0,0);
+        Player player = new Player(name,0,0,0,deviceToken);
         players.add(player);
     }
 
