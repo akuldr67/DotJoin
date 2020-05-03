@@ -25,10 +25,14 @@ public class BoardHelperForAI {
     public int giveNextEdgeNoEasy(){
         int edgeNo = findCompletingEdge();
         if(edgeNo!=-1)return edgeNo;
-        edgeNo = findSafeEdge();
-        if(edgeNo!=-1)return edgeNo;
-        for(int i=1;i<this.totalEdges+1;i++){
-            if(!this.edges.get(i))return i;
+        Vector<Integer> safeEdges = findSafeEdges();
+        if(safeEdges.size()==0) {
+            for (int i = 1; i < this.totalEdges + 1; i++) {
+                if (!this.edges.get(i)) return i;
+            }
+        }else {
+            int index = (int)(safeEdges.size()*Math.random());
+            return safeEdges.get(index);
         }
         return -1;
     }
@@ -36,10 +40,14 @@ public class BoardHelperForAI {
     public int giveNextEdgeNoHard(){
         int edgeNo = findCompletingEdge();
         if(edgeNo!=-1)return edgeNo;
-        edgeNo = findSafeEdge();
-        if(edgeNo!=-1)return edgeNo;
-        for(int i=1;i<this.totalEdges+1;i++){
-            if(!this.edges.get(i))return i;
+        Vector<Integer> safeEdges = findSafeEdges();
+        if(safeEdges.size()==0) {
+            for (int i = 1; i < this.totalEdges + 1; i++) {
+                if (!this.edges.get(i)) return i;
+            }
+        }else {
+            int index = (int)(safeEdges.size()*Math.random());
+            return safeEdges.get(index);
         }
         return -1;
     }
@@ -77,7 +85,8 @@ public class BoardHelperForAI {
         return -1;
     }
 
-    public int findSafeEdge(){
+    public Vector<Integer> findSafeEdges(){
+        Vector<Integer> safeEdges = new Vector<>();
         for(int i=1;i<this.totalEdges+1;i++){
             if(!this.edges.get(i)){
                 boolean flag1 = true, flag2 = true;
@@ -113,10 +122,10 @@ public class BoardHelperForAI {
                         if(count>1)flag2 = false;
                     }
                 }
-                if(flag1 && flag2) return i;
+                if(flag1 && flag2) safeEdges.add(i);
             }
         }
-        return -1;
+        return safeEdges;
     }
 
     public Board getBoard() { return board; }
