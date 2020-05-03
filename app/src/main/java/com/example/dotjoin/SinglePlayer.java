@@ -139,10 +139,9 @@ public class SinglePlayer extends AppCompatActivity {
 
                                                 Log.d("current "," player no "+game.currentPlayer);
 
-                                                int computerContinuousTurn = 0;
+//                                                int computerContinuousTurn = 0;
                                                 while(game.currentPlayer == 1){
-                                                    if(computerContinuousTurn > 0){
-                                                        //ToDo: sleep computer for some time in continuous manner after every consecutive turn, not in one go
+//                                                    if(computerContinuousTurn > 0){
 //                                                        try{
 //                                                            Log.d("Currently ","Sleeping!!!!");
 //                                                            Thread.sleep(1000);
@@ -155,7 +154,7 @@ public class SinglePlayer extends AppCompatActivity {
 //                                                                Log.d("Currently ","Sleeping!!!!");
 //                                                            }
 //                                                        }, 1000);
-                                                    }
+//                                                    }
                                                     BoardHelperForAI b = new BoardHelperForAI(game.board);
                                                     if(difficultyLevel == 1)
                                                         edgeNo = b.giveNextEdgeNoEasy();
@@ -177,7 +176,7 @@ public class SinglePlayer extends AppCompatActivity {
                                                     }
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.elementAt(game.getCurrentPlayer()).getName()+" - "+game.players.elementAt(game.getCurrentPlayer()).getScore());
 
-                                                    computerContinuousTurn++;
+//                                                    computerContinuousTurn++;
                                                     if (game.isGameCompleted()) {
                                                         endGame();
                                                     }
@@ -228,8 +227,9 @@ public class SinglePlayer extends AppCompatActivity {
         builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(SinglePlayer.this, MultiPlayerOffline.class);
+                Intent intent = new Intent(SinglePlayer.this, SinglePlayer.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -239,8 +239,13 @@ public class SinglePlayer extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(SinglePlayer.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
-        builder.show();
+        AlertDialog alertDialog=builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
     }
 }
+
+//ToDo: sleep (if required later) computer for some time in continuous manner after every consecutive turn of computer, not in one go

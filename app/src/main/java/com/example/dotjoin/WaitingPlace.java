@@ -96,6 +96,7 @@ public class WaitingPlace extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
+
                         for(int i=0;i<players.size();i++){
                             playerTextViews.elementAt(i).setText(players.get(i).getName());
                             playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
@@ -110,7 +111,7 @@ public class WaitingPlace extends AppCompatActivity {
                         //Making TextView invisible for the players who have left
                         for(int i=players.size();i<4;i++){
                             playerTextViews.elementAt(i).setText("");
-                            playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
+                            playerTextViews.elementAt(i).setVisibility(View.INVISIBLE);
                         }
 
                         //setting start game visible for host
@@ -187,3 +188,4 @@ public class WaitingPlace extends AppCompatActivity {
 //TODO - Disable back button when in this activity (Done)
 //TODO - Edit Player Class add id or no so that we can check if current player is host (Done)
 //TODO - Start Game Button
+//ToDo - Check after retrieving players, if players null/empty, if null go back to previous activity and delete room from database
