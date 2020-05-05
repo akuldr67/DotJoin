@@ -16,7 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import java.util.List;
 import java.util.Vector;
 
-public class Board {
+public class Board implements Cloneable{
     //          Board status
     //      *----*----*        1   2
     //      |    |    |      3   4   5
@@ -63,6 +63,10 @@ public class Board {
 
     }
 
+    @Override
+    protected Object clone() throws CloneNotSupportedException{
+        return super.clone();
+    }
 
     public void setFirstNodeCor(){
         this.firstNodeX = this.gridTopLeftX + this.gridMarginX;
@@ -378,7 +382,7 @@ public class Board {
             }
         }
 
-        Log.d("New ","Box No: "+newBoxes.toString());
+//        Log.d("New ","Box No: "+newBoxes.toString());
         Vector<Integer> newBoxNodes = new Vector();
         for(int i=0;i<newBoxes.size();i++){
             newBoxNodes.add(NodeNoGivenBoxNo(newBoxes.get(i)));

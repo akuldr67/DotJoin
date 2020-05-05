@@ -33,7 +33,7 @@ public class SinglePlayer extends AppCompatActivity {
     private Vector<TextView> scoreViewVector;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) throws RuntimeException {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_player);
 
@@ -158,8 +158,14 @@ public class SinglePlayer extends AppCompatActivity {
                                                     BoardHelperForAI b = new BoardHelperForAI(game.board);
                                                     if(difficultyLevel == 1)
                                                         edgeNo = b.giveNextEdgeNoEasy();
-                                                    else
-                                                        edgeNo = b.giveNextEdgeNoHard();
+                                                    else{
+//                                                        edgeNo = getNextEdgeHard(b);
+                                                        try {
+                                                            edgeNo = b.giveNextEdgeNoHard();
+                                                        }catch (CloneNotSupportedException ex){
+                                                            throw new RuntimeException(ex);
+                                                        }
+                                                    }
                                                     game.setLastEdgeUpdated(edgeNo);
                                                     game.board.makeMoveAt(edgeNo);
                                                     game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);

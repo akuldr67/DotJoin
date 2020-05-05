@@ -3,6 +3,7 @@ package com.example.dotjoin;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -135,7 +136,6 @@ public class Game {
         if(NodeNo<1) return;
         if(NodeNo%this.board.getColumns()==0) return;
         if(NodeNo>(this.board.getTotalNodes()-this.board.getColumns())) return;
-
         ImageView colorImage = new ImageView(context);
         colorImage.setTranslationZ(1f);
         colorImage.setVisibility(View.VISIBLE);
