@@ -17,6 +17,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class SinglePlayer extends AppCompatActivity {
@@ -86,16 +87,16 @@ public class SinglePlayer extends AppCompatActivity {
                                 //Initializing Board, Game, and layoutUtils
                                 layoutUtils.drawBoard(boardSize, boardSize, SinglePlayer.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2));
                                 board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
-                                game = new Game(0, 2,  board);
+                                game = new Game(0, 2,  board,new ArrayList<Player>());
 
-                                game.players.elementAt(0).setName("You");
-                                game.players.elementAt(1).setName("Computer");
+                                game.players.get(0).setName("You");
+                                game.players.get(1).setName("Computer");
 
                                 //Setting params for corner text Views that display score
                                 scoreViewVector.set(0,(TextView) findViewById(R.id.player1));
-                                scoreViewVector.elementAt(0).setText(game.players.elementAt(0).getName()+" - "+game.players.elementAt(0).getScore());
+                                scoreViewVector.elementAt(0).setText(game.players.get(0).getName()+" - "+game.players.get(0).getScore());
                                 scoreViewVector.set(1,(TextView) findViewById(R.id.computer_player));
-                                scoreViewVector.elementAt(1).setText(game.players.elementAt(1).getName()+" - "+game.players.elementAt(1).getScore());
+                                scoreViewVector.elementAt(1).setText(game.players.get(1).getName()+" - "+game.players.get(1).getScore());
 
 
                                 //Highlighting the first Player TextView
@@ -115,7 +116,7 @@ public class SinglePlayer extends AppCompatActivity {
 
                                             //Getting Edge No touched
                                             int edgeNo = game.board.EdgeNoGivenCor(posX, posY);
-                                            Vector<Boolean> edges = board.getEdges();
+                                            ArrayList<Boolean> edges = board.getEdges();
                                             if (edgeNo != -1 && !edges.get(edgeNo)) {
                                                 game.setLastEdgeUpdated(edgeNo);
                                                 game.board.makeMoveAt(edgeNo);
@@ -125,15 +126,15 @@ public class SinglePlayer extends AppCompatActivity {
                                                 if (NoOfNewBox == 0) {
                                                     game.nextTurn(scoreViewVector,SinglePlayer.this);
                                                 } else {
-                                                    Vector<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
+                                                    ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
                                                     for (int i = 0; i < NoOfNewBox; i++) {
-                                                        game.colourBox(newBoxNodes.get(i), getApplicationContext(), rootLayout);
+                                                        game.colourBox(board,newBoxNodes.get(i), getApplicationContext(), rootLayout);
                                                     }
                                                     game.increaseScore();
                                                 }
-                                                scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.elementAt(game.getCurrentPlayer()).getName()+" - "+game.players.elementAt(game.getCurrentPlayer()).getScore());
+                                                scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.get(game.getCurrentPlayer()).getName()+" - "+game.players.get(game.getCurrentPlayer()).getScore());
 
-                                                if (game.isGameCompleted()) {
+                                                if (game.gameCompleted()) {
                                                     endGame();
                                                 }
 
@@ -174,16 +175,16 @@ public class SinglePlayer extends AppCompatActivity {
                                                     if (NoOfNewBoxComp == 0) {
                                                         game.nextTurn(scoreViewVector,SinglePlayer.this);
                                                     } else {
-                                                        Vector<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
+                                                        ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
                                                         for (int i = 0; i < NoOfNewBoxComp; i++) {
-                                                            game.colourBox(newBoxNodes.get(i), getApplicationContext(), rootLayout);
+                                                            game.colourBox(board,newBoxNodes.get(i), getApplicationContext(), rootLayout);
                                                         }
                                                         game.increaseScore();
                                                     }
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.elementAt(game.getCurrentPlayer()).getName()+" - "+game.players.elementAt(game.getCurrentPlayer()).getScore());
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.get(game.getCurrentPlayer()).getName()+" - "+game.players.get(game.getCurrentPlayer()).getScore());
 
 //                                                    computerContinuousTurn++;
-                                                    if (game.isGameCompleted()) {
+                                                    if (game.gameCompleted()) {
                                                         endGame();
                                                     }
                                                 }
@@ -211,7 +212,7 @@ public class SinglePlayer extends AppCompatActivity {
 
         //Showing Final Dialog Box
         AlertDialog.Builder builder = new AlertDialog.Builder(SinglePlayer.this);
-        builder.setTitle(game.getResult());
+        builder.setTitle(game.resultString());
 
         //Showing final ScoreBoard
         TextView textView = new TextView(getApplicationContext());
@@ -221,9 +222,9 @@ public class SinglePlayer extends AppCompatActivity {
         String result = "";
         for (int i = 0; i < 2; i++) {
             if (i == 1) {
-                result = result + game.players.elementAt(i).getName() + " - " + game.players.elementAt(i).getScore();
+                result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore();
             } else {
-                result = result + game.players.elementAt(i).getName() + " - " + game.players.elementAt(i).getScore() + "\n";
+                result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore() + "\n";
             }
         }
         textView.setText(result);

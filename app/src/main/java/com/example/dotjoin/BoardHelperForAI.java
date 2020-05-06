@@ -63,8 +63,8 @@ public class BoardHelperForAI{
                     int currentEdge = completingEdges.get(0);
 
                     //making copy of edges and boxes vector
-                    Vector<Boolean> CopyEdges = (Vector)this.board.getEdges().clone();
-                    Vector<Boolean> CopyBoxes = (Vector)this.board.getBoxes().clone();
+                    ArrayList<Boolean> CopyEdges = (ArrayList<Boolean>) this.board.getEdges().clone();
+                    ArrayList<Boolean> CopyBoxes = (ArrayList<Boolean>) this.board.getBoxes().clone();
 
                     int profit = TotalBoxesAStepCanMake(b,currentEdge);
 
@@ -78,16 +78,16 @@ public class BoardHelperForAI{
                     if(profit<2) return currentEdge;
 
                     ////making copy of edges and boxes vector
-                    Vector<Boolean> CopyEdges2 = (Vector)this.board.getEdges().clone();
-                    Vector<Boolean> CopyBoxes2 = (Vector)this.board.getBoxes().clone();
+                    ArrayList<Boolean> CopyEdges2 = (ArrayList<Boolean>) this.board.getEdges().clone();
+                    ArrayList<Boolean> CopyBoxes2 = (ArrayList<Boolean>) this.board.getBoxes().clone();
 
                     //calculating all possible loss
                     Vector<Pair<Integer,Integer> > AllLoss = new Vector<>();
                     for(int i=1;i<=b.getTotalEdges();i++){
 
                         if(!b.getEdges().get(i)){
-                            Vector<Boolean> CopyEdges3 = (Vector)this.board.getEdges().clone();
-                            Vector<Boolean> CopyBoxes3 = (Vector)this.board.getBoxes().clone();
+                            ArrayList<Boolean> CopyEdges3 = (ArrayList<Boolean>) this.board.getEdges().clone();
+                            ArrayList<Boolean> CopyBoxes3 = (ArrayList<Boolean>) this.board.getBoxes().clone();
 
                             Pair<Integer,Integer> p = new Pair<>(i,TotalBoxesAStepCanMake(b,i));
 
@@ -200,8 +200,8 @@ public class BoardHelperForAI{
                     Vector<Pair<Integer,Integer> > profits = new Vector<>();
 
                     Collections.sort(completingEdges);
-                    Vector<Boolean> CopyEdges = (Vector)this.board.getEdges().clone();
-                    Vector<Boolean> CopyBoxes = (Vector)this.board.getBoxes().clone();
+                    ArrayList<Boolean> CopyEdges = (ArrayList)this.board.getEdges().clone();
+                    ArrayList<Boolean> CopyBoxes = (ArrayList)this.board.getBoxes().clone();
 
                     //returning a edge which is common.. producing profit of 2
                     for(int i=0;i<completingEdges.size();i++){
@@ -210,8 +210,8 @@ public class BoardHelperForAI{
                                 return completingEdges.get(i);
                             }
                         }
-                        Vector<Boolean> CopyEdges2 = (Vector)this.board.getEdges().clone();
-                        Vector<Boolean> CopyBoxes2 = (Vector)this.board.getBoxes().clone();
+                        ArrayList<Boolean> CopyEdges2 = (ArrayList<Boolean>) this.board.getEdges().clone();
+                        ArrayList<Boolean> CopyBoxes2 = (ArrayList<Boolean>) this.board.getBoxes().clone();
 
                         Pair<Integer,Integer> p = new Pair<>(completingEdges.get(i),TotalBoxesAStepCanMake(b,completingEdges.get(i)));
 
@@ -253,13 +253,13 @@ public class BoardHelperForAI{
                 Vector<Pair<Integer,Integer> > AllLoss = new Vector<>();
 
                 //calculating all possible loss
-                Vector<Boolean> CopyEdges = (Vector)this.board.getEdges().clone();
-                Vector<Boolean> CopyBoxes = (Vector)this.board.getBoxes().clone();
+                ArrayList<Boolean> CopyEdges = (ArrayList<Boolean>) this.board.getEdges().clone();
+                ArrayList<Boolean> CopyBoxes = (ArrayList<Boolean>) this.board.getBoxes().clone();
 
                 for(int i=1;i<=b.getTotalEdges();i++){
                     if(!b.getEdges().get(i)){
-                        Vector<Boolean> CopyEdges2 = (Vector)this.board.getEdges().clone();
-                        Vector<Boolean> CopyBoxes2 = (Vector)this.board.getBoxes().clone();
+                        ArrayList<Boolean> CopyEdges2 = (ArrayList)this.board.getEdges().clone();
+                        ArrayList<Boolean> CopyBoxes2 = (ArrayList)this.board.getBoxes().clone();
 
                         Pair<Integer,Integer> p = new Pair<>(i,TotalBoxesAStepCanMake(b,i));
 
@@ -294,7 +294,7 @@ public class BoardHelperForAI{
     public int calculateLeftBoxProfit(Board b,int EdgeNo){
         if(EdgeNo<1 || EdgeNo>b.getTotalEdges()) return 0;
         int profit = b.isBoxCompleted(EdgeNo).size();
-        Vector<Boolean> boardEdges = b.getEdges();
+        ArrayList<Boolean> boardEdges = b.getEdges();
         if(boardEdges.get(EdgeNo))profit = 0;
         else b.makeMoveAt(EdgeNo);
         if(!b.ifLeftBoxExist(EdgeNo))return profit;
@@ -313,7 +313,7 @@ public class BoardHelperForAI{
     public int calculateRightBoxProfit(Board b,int EdgeNo){
         if(EdgeNo<1 || EdgeNo>b.getTotalEdges()) return 0;
         int profit = b.isBoxCompleted(EdgeNo).size();
-        Vector<Boolean> boardEdges = b.getEdges();
+        ArrayList<Boolean> boardEdges = b.getEdges();
         if(boardEdges.get(EdgeNo))profit = 0;
         else b.makeMoveAt(EdgeNo);
 
@@ -334,7 +334,7 @@ public class BoardHelperForAI{
     public int calculateBottomBoxProfit(Board b,int EdgeNo){
         if(EdgeNo<1 || EdgeNo>b.getTotalEdges()) return 0;
         int profit = b.isBoxCompleted(EdgeNo).size();
-        Vector<Boolean> boardEdges = b.getEdges();
+        ArrayList<Boolean> boardEdges = b.getEdges();
         if(boardEdges.get(EdgeNo))profit = 0;
         else b.makeMoveAt(EdgeNo);
 
@@ -355,7 +355,7 @@ public class BoardHelperForAI{
     public int calculateTopBoxProfit(Board b,int EdgeNo){
         if(EdgeNo<1 || EdgeNo>b.getTotalEdges()) return 0;
         int profit = b.isBoxCompleted(EdgeNo).size();
-        Vector<Boolean> boardEdges = b.getEdges();
+        ArrayList<Boolean> boardEdges = b.getEdges();
         if(boardEdges.get(EdgeNo))profit = 0;
         else b.makeMoveAt(EdgeNo);
 
