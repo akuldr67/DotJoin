@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import androidx.annotation.RequiresApi;
@@ -30,8 +31,8 @@ public class Board {
     private float gridFirstCol, gridLastCol, gridFirstRow, gridLastRow;
     private boolean horizontalEdge = false, verticalEdge = false;
 
-    private Vector<Boolean> edges;
-    private Vector<Boolean> boxes;
+    private ArrayList<Boolean> edges;
+    private ArrayList<Boolean> boxes;
     private float width;
 
 
@@ -46,13 +47,12 @@ public class Board {
         this.boxLength=layoutUtils.getBoxLength(width,columns)-this.dotDia;
         this.buffer=layoutUtils.getBuffer(columns);
         this.totalEdges = this.totalNoOfEdges();
-        edges = new Vector<Boolean>();
-        edges.setSize(this.totalEdges + 1);
-        for(int i=0;i<edges.size();i++)edges.set(i,false);
+        edges = new ArrayList<Boolean>();
+//        edges.setSize(this.totalEdges + 1);
+        for(int i=0;i<totalEdges+1;i++)edges.add(false);
         this.totalBoxes = this.totalNoOfBoxes();
-        boxes = new Vector<Boolean>();
-        boxes.setSize(this.totalBoxes + 1);
-        for(int i=0;i<boxes.size();i++)boxes.set(i,false);
+        boxes = new ArrayList<Boolean>();
+        for(int i=0;i<totalBoxes+1;i++)boxes.add(false);
         this.totalNodes = this.totalNoOfNodes();
         this.gridMarginX=layoutUtils.getDiaOfDot(width, columns)/2;
         this.gridMarginY=layoutUtils.getDiaOfDot(width,columns)/2;
@@ -342,7 +342,7 @@ public class Board {
     }
 
     //it sets the box no too. so use it only when placing a edge, not to check if we place a edge...
-    public Vector<Integer> isBoxCompleted(int EdgeNo){
+    public ArrayList<Integer> isBoxCompleted(int EdgeNo){
         int nodeNo = NodeNoGivenEdgeNo(EdgeNo);
         int currBoxNo = BoxNoGivenNodeNo(nodeNo);
         Vector<Integer> newBoxes = new Vector();
@@ -379,7 +379,7 @@ public class Board {
         }
 
         Log.d("New ","Box No: "+newBoxes.toString());
-        Vector<Integer> newBoxNodes = new Vector();
+        ArrayList<Integer> newBoxNodes = new ArrayList<>();
         for(int i=0;i<newBoxes.size();i++){
             newBoxNodes.add(NodeNoGivenBoxNo(newBoxes.get(i)));
         }
@@ -404,7 +404,7 @@ public class Board {
 
     public int getTotalNodes(){ return this.totalNodes; }
 
-    public  Vector<Boolean> getEdges(){ return this.edges; }
+    public  ArrayList<Boolean> getEdges(){ return this.edges; }
 
     public int getRows(){ return this.rows; }
 
@@ -440,7 +440,7 @@ public class Board {
 
     public boolean isVerticalEdge() { return verticalEdge; }
 
-    public Vector<Boolean> getBoxes() { return this.boxes; }
+    public ArrayList<Boolean> getBoxes() { return this.boxes; }
 
     public float getWidth() { return width; }
 
@@ -450,11 +450,95 @@ public class Board {
     //setters
 
 
-    public void setEdges(Vector<Boolean> edges) {
+    public void setEdges(ArrayList<Boolean> edges) {
         this.edges = edges;
     }
 
-    public void setBoxes(Vector<Boolean> boxes) {
+    public void setBoxes(ArrayList<Boolean> boxes) {
         this.boxes = boxes;
+    }
+
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    public void setColumns(int columns) {
+        this.columns = columns;
+    }
+
+    public void setTotalEdges(int totalEdges) {
+        this.totalEdges = totalEdges;
+    }
+
+    public void setTotalBoxes(int totalBoxes) {
+        this.totalBoxes = totalBoxes;
+    }
+
+    public void setTotalNodes(int totalNodes) {
+        this.totalNodes = totalNodes;
+    }
+
+    public void setBoxLength(float boxLength) {
+        this.boxLength = boxLength;
+    }
+
+    public void setDotDia(float dotDia) {
+        this.dotDia = dotDia;
+    }
+
+    public void setBuffer(float buffer) {
+        this.buffer = buffer;
+    }
+
+    public void setGridTopLeftX(float gridTopLeftX) {
+        this.gridTopLeftX = gridTopLeftX;
+    }
+
+    public void setGridTopLeftY(float gridTopLeftY) {
+        this.gridTopLeftY = gridTopLeftY;
+    }
+
+    public void setGridMarginX(float gridMarginX) {
+        this.gridMarginX = gridMarginX;
+    }
+
+    public void setGridMarginY(float gridMarginY) {
+        this.gridMarginY = gridMarginY;
+    }
+
+    public void setFirstNodeX(float firstNodeX) {
+        this.firstNodeX = firstNodeX;
+    }
+
+    public void setFirstNodeY(float firstNodeY) {
+        this.firstNodeY = firstNodeY;
+    }
+
+    public void setGridFirstCol(float gridFirstCol) {
+        this.gridFirstCol = gridFirstCol;
+    }
+
+    public void setGridLastCol(float gridLastCol) {
+        this.gridLastCol = gridLastCol;
+    }
+
+    public void setGridFirstRow(float gridFirstRow) {
+        this.gridFirstRow = gridFirstRow;
+    }
+
+    public void setGridLastRow(float gridLastRow) {
+        this.gridLastRow = gridLastRow;
+    }
+
+    public void setHorizontalEdge(boolean horizontalEdge) {
+        this.horizontalEdge = horizontalEdge;
+    }
+
+    public void setVerticalEdge(boolean verticalEdge) {
+        this.verticalEdge = verticalEdge;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
     }
 }

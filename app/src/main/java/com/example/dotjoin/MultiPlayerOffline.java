@@ -26,6 +26,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class MultiPlayerOffline extends AppCompatActivity {
@@ -96,7 +97,17 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                 //Initializing Board, Game, and layoutUtils
                                 layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2));
                                 board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
-                                game = new Game(0, noOfPlayers,  board);
+                                ArrayList<Player> players = new ArrayList<Player>();
+//                                players.setSize(noOfPlayers);
+                                int color=0;
+                                for(int i=0;i<noOfPlayers;i++){
+                                    if(i==0)color=R.drawable.colour_box_blue;
+                                    else if(i==1)color=R.drawable.colour_box_red;
+                                    else if(i==2)color=R.drawable.colour_box_green;
+                                    else if(i==3)color=R.drawable.colour_box_yellow;
+                                    players.add(new Player("Player "+(i+1),color,0,i,""));
+                                }
+                                game = new Game(0, noOfPlayers,  board,players);
 
 
 
@@ -107,7 +118,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                     else if(i==2)  scoreViewVector.set(i,(TextView) findViewById(R.id.player3));
                                     else if(i==3)  scoreViewVector.set(i,(TextView) findViewById(R.id.player4));
 
-                                    scoreViewVector.elementAt(i).setText(game.players.elementAt(i).getName()+" - "+game.players.elementAt(i).getScore());
+                                    scoreViewVector.elementAt(i).setText(game.players.get(i).getName()+" - "+game.players.get(i).getScore());
                                 }
 
                                 //Highlighting the first Player TextView
@@ -128,29 +139,37 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                             int edgeNo = game.board.EdgeNoGivenCor(posX, posY);
 //                                            boolean[] edges = board.getEdgesArray();
 //                                            if (edgeNo != -1 && !edges[edgeNo]) {
-                                            Vector<Boolean> edges = board.getEdges();
+                                            ArrayList<Boolean> edges = board.getEdges();
                                             if (edgeNo != -1 && !edges.get(edgeNo)) {
-                                                game.setLastEdgeUpdated(edgeNo);
-                                                game.board.makeMoveAt(edgeNo);
-                                                game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);
+                                                game.setLastEdgeUpdated(edgeNo); //2
+                                                game.board.makeMoveAt(edgeNo);   //2
+                                                game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout); //1
 
                                                 int NoOfNewBox = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
                                                 if (NoOfNewBox == 0) {
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(0);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(MultiPlayerOffline.this,R.color.grey));
+
                                                     game.nextTurn(scoreViewVector,MultiPlayerOffline.this);
+
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(MultiPlayerOffline.this,R.color.black));
 //                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
                                                 } else {
-                                                    Vector<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
+                                                    ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
                                                     for (int i = 0; i < NoOfNewBox; i++) {
-                                                        game.colourBox(newBoxNodes.get(i), getApplicationContext(), rootLayout);
+                                                        game.colourBox(board,newBoxNodes.get(i), getApplicationContext(), rootLayout);
                                                     }
                                                     game.increaseScore();
                                                 }
-                                                scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.elementAt(game.getCurrentPlayer()).getName()+" - "+game.players.elementAt(game.getCurrentPlayer()).getScore());
-                                                if (game.isGameCompleted()) {
+                                                scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.get(game.getCurrentPlayer()).getName()+" - "+game.players.get(game.getCurrentPlayer()).getScore());
+                                                if (game.gameCompleted()) {
 
                                                     //Showing Final Dialog Box
                                                     AlertDialog.Builder builder = new AlertDialog.Builder(MultiPlayerOffline.this);
-                                                    builder.setTitle(game.getResult());
+                                                    builder.setTitle(game.resultString());
 
                                                     //Showing final ScoreBoard
                                                     TextView textView = new TextView(getApplicationContext());
@@ -160,9 +179,9 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     String result = "";
                                                     for (int i = 0; i < noOfPlayers; i++) {
                                                         if (i == noOfPlayers - 1) {
-                                                            result = result + game.players.elementAt(i).getName() + " - " + game.players.elementAt(i).getScore();
+                                                            result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore();
                                                         } else {
-                                                            result = result + game.players.elementAt(i).getName() + " - " + game.players.elementAt(i).getScore() + "\n";
+                                                            result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore() + "\n";
                                                         }
                                                     }
                                                     textView.setText(result);

@@ -2,13 +2,14 @@ package com.example.dotjoin;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class BoardHelperForAI {
 
     Board board;
-    private Vector<Boolean> edges;
-    private Vector<Boolean> boxes;
+    private ArrayList<Boolean> edges;
+    private ArrayList<Boolean> boxes;
     private int rows,columns,totalEdges,totalBoxes,totalNodes;
 
     public BoardHelperForAI(Board board) {

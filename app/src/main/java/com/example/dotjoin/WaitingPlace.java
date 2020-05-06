@@ -1,13 +1,16 @@
 package com.example.dotjoin;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.text.DateFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,7 +42,7 @@ public class WaitingPlace extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private ArrayList<Player>players;
     private SharedPreferences mSharedPreferences;
-    private int playerNo;
+    private int playerNo,boardSize;
     private Button exitRoom,startGame;
 
     @Override
@@ -87,6 +90,8 @@ public class WaitingPlace extends AppCompatActivity {
 //        mSharedPreferences=getSharedPreferences("com.example.dotjoin.file",Context.MODE_PRIVATE);
 //        final String name=mSharedPreferences.getString("UserName","");
 
+        //TODO Convert All Vectors to ArrayList
+
         //Retrieving Players
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
@@ -120,6 +125,15 @@ public class WaitingPlace extends AppCompatActivity {
                             startGame.setVisibility(View.VISIBLE);
                             startGame.setEnabled(true);
                         }
+
+                        if(room.getIsGameStarted()){
+                            mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                            Intent intent = new Intent(WaitingPlace.this,OnlineGamePlay.class);
+                            intent.putExtra("RoomId",roomId);
+                            intent.putExtra("PlayerNo",playerNo);
+                            startActivity(intent);
+                            finish();
+                        }
                     }
 
                     @Override
@@ -131,14 +145,61 @@ public class WaitingPlace extends AppCompatActivity {
         });
 
 
+        //Starting startGame Click Listener
+        startGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("logg","hello");
 
-//        startGame.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//
+                //Dialog Box that accepts board size
+                CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7"};
+
+                AlertDialog.Builder sizeDialog = new AlertDialog.Builder(WaitingPlace.this);
+                sizeDialog.setTitle("Size");
+                sizeDialog.setItems(sizeOptions, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) boardSize = 4;
+                        else if (which == 1) boardSize = 5;
+                        else if (which == 2) boardSize = 6;
+                        else if (which == 3) boardSize = 7;
+                        else if (which == 4) boardSize = 8;
+
+
+                        //Value Event Listener for room
+                        mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                                Room room=dataSnapshot.getValue(Room.class);
+                                Board board=new Board(boardSize,boardSize,0,0,0);
+                                ArrayList<Player>players=room.getPlayers();
+                                for(int i=0;i<players.size();i++){
+                                    if(i==0)players.get(i).setColor(R.drawable.colour_box_blue);
+                                    else if(i==1)players.get(i).setColor(R.drawable.colour_box_red);
+                                    else if(i==2)players.get(i).setColor(R.drawable.colour_box_green);
+                                    else if(i==3)players.get(i).setColor(R.drawable.colour_box_yellow);
+                                }
+                                Game game=new Game(-1,room.getPlayers().size(),board,players);
+                                room.setGame(game);
+                                room.setIsGameStarted(true);
+                                mDatabase.child("Rooms").child(roomId).setValue(room);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
+                AlertDialog alertDialog=sizeDialog.create();
+                alertDialog.setCanceledOnTouchOutside(false);
+                alertDialog.show();
+            }
+            //Ending startGame Listener
+        });
+
         exitRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,11 +231,6 @@ public class WaitingPlace extends AppCompatActivity {
 
                     }
                 });
-
-
-
-
-
             }
         });
 

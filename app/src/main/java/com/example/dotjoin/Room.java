@@ -77,7 +77,7 @@ public class Room {
 
     public void setHost(int host) { this.host = host; }
 
-    public void setIsGameStarted() { this.isGameStarted = true; }
+    public void setIsGameStarted(Boolean status) { this.isGameStarted = status; }
 
     public void setRoomStartTime(String roomStartTime) { this.roomStartTime = roomStartTime; }
 

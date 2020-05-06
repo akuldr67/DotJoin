@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class Game {
@@ -19,7 +20,8 @@ public class Game {
     //*Declaring Variables*
     //*********************
     int lastEdgeUpdated,noOfPlayers,currentPlayer,totalBoxes,boxesMade;
-    Vector<Player> players;
+    ArrayList<Player> players;
+    ArrayList<Integer>newBoxNodes;
     Board board;
 
     //*******************
@@ -31,23 +33,24 @@ public class Game {
     //*********************************
     //*Constructor with all parameters*
     //*********************************
-    public Game(int lastEdgeUpdated, int noOfPlayers,Board board) {
+    public Game(int lastEdgeUpdated, int noOfPlayers,Board board,ArrayList<Player>players) {
         this.lastEdgeUpdated = lastEdgeUpdated;
         this.noOfPlayers = noOfPlayers;
         this.board=board;
         this.totalBoxes=board.getTotalBoxes();
         currentPlayer=0;
         boxesMade=0;
-        players=new Vector<Player>();
-        players.setSize(noOfPlayers);
-        int color=0;
-        for(int i=0;i<noOfPlayers;i++){
-            if(i==0)color=R.drawable.colour_box_blue;
-            else if(i==1)color=R.drawable.colour_box_red;
-            else if(i==2)color=R.drawable.colour_box_green;
-            else if(i==3)color=R.drawable.colour_box_yellow;
-            players.set(i,new Player("Player "+(i+1),color,0,i,""));
-        }
+        this.players=players;
+//        players=new Vector<Player>();
+//        players.setSize(noOfPlayers);
+//        int color=0;
+//        for(int i=0;i<noOfPlayers;i++){
+//            if(i==0)color=R.drawable.colour_box_blue;
+//            else if(i==1)color=R.drawable.colour_box_red;
+//            else if(i==2)color=R.drawable.colour_box_green;
+//            else if(i==3)color=R.drawable.colour_box_yellow;
+//            players.set(i,new Player("Player "+(i+1),color,0,i,""));
+//        }
     }
 
     //*********
@@ -62,7 +65,7 @@ public class Game {
         return noOfPlayers;
     }
 
-    public Vector<Player> getPlayers(){
+    public ArrayList<Player> getPlayers(){
         return players;
     }
 
@@ -72,6 +75,18 @@ public class Game {
 
     public int getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public int getTotalBoxes() {
+        return totalBoxes;
+    }
+
+    public int getBoxesMade() {
+        return boxesMade;
+    }
+
+    public ArrayList<Integer> getNewBoxNodes() {
+        return newBoxNodes;
     }
 
     //*********
@@ -86,7 +101,7 @@ public class Game {
         this.noOfPlayers = noOfPlayers;
     }
 
-    public void setPlayers(Vector<Player> players){
+    public void setPlayers(ArrayList<Player> players){
         this.players=players;
     }
 
@@ -98,6 +113,18 @@ public class Game {
         this.currentPlayer = currentPlayer;
     }
 
+    public void setTotalBoxes(int totalBoxes) {
+        this.totalBoxes = totalBoxes;
+    }
+
+    public void setBoxesMade(int boxesMade) {
+        this.boxesMade = boxesMade;
+    }
+
+    public void setNewBoxNodes(ArrayList<Integer> newBoxNodes) {
+        this.newBoxNodes = newBoxNodes;
+    }
+
     //***************
     //*Miscellaneous*
     //***************
@@ -105,12 +132,12 @@ public class Game {
 
     //Function to increase score if the current player makes a box
     public void increaseScore(){
-        players.elementAt(currentPlayer).setScore(players.elementAt(currentPlayer).getScore()+board.isBoxCompleted(lastEdgeUpdated).size());
+        players.get(currentPlayer).setScore(players.get(currentPlayer).getScore()+board.isBoxCompleted(lastEdgeUpdated).size());
         boxesMade=boxesMade+board.isBoxCompleted(lastEdgeUpdated).size();
     }
 
     //Check if game is completed
-    public boolean isGameCompleted(){
+    public boolean gameCompleted(){
         if(boxesMade==totalBoxes)
             return true;
         else
@@ -119,33 +146,28 @@ public class Game {
 
     //NextPlayersTurn
     public void nextTurn(Vector<TextView> textViews,Context context){
-        textViews.elementAt(currentPlayer).setBackgroundResource(0);
-        textViews.elementAt(currentPlayer).setTypeface(Typeface.DEFAULT);
-        textViews.elementAt(currentPlayer).setTextColor(ContextCompat.getColor(context,R.color.grey));
         if(currentPlayer==noOfPlayers-1)
             currentPlayer=0;
         else
             currentPlayer=currentPlayer+1;
-        textViews.elementAt(currentPlayer).setBackgroundResource(R.drawable.border);
-        textViews.elementAt(currentPlayer).setTypeface(Typeface.DEFAULT_BOLD);
-        textViews.elementAt(currentPlayer).setTextColor(ContextCompat.getColor(context,R.color.black));
+
     }
 
-    public void colourBox(int NodeNo, Context context, ConstraintLayout root){
+    public void colourBox(Board board,int NodeNo, Context context, ConstraintLayout root){
         if(NodeNo<1) return;
-        if(NodeNo%this.board.getColumns()==0) return;
-        if(NodeNo>(this.board.getTotalNodes()-this.board.getColumns())) return;
+        if(NodeNo%board.getColumns()==0) return;
+        if(NodeNo>(board.getTotalNodes()-board.getColumns())) return;
 
         ImageView colorImage = new ImageView(context);
         colorImage.setTranslationZ(1f);
         colorImage.setVisibility(View.VISIBLE);
         ConstraintLayout.LayoutParams params;
 
-        float[] cor = this.board.FindCoordinatesOfNode(NodeNo);
+        float[] cor = board.FindCoordinatesOfNode(NodeNo);
 
-        colorImage.setImageResource(players.elementAt(currentPlayer).getColor());
+        colorImage.setImageResource(players.get(currentPlayer).getColor());
 
-        params = new ConstraintLayout.LayoutParams((int) (this.board.getBoxLength()), (int) (this.board.getBoxLength()));
+        params = new ConstraintLayout.LayoutParams((int) (board.getBoxLength()), (int) (board.getBoxLength()));
 
         colorImage.setX(cor[0]);
         colorImage.setY(cor[1]);
@@ -153,19 +175,19 @@ public class Game {
         root.addView(colorImage, params);
     }
 
-    public String getResult(){
+    public String resultString(){
         //Finding Max
         int max=0;
         for(int i=0;i<noOfPlayers;i++){
-            if(players.elementAt(i).getScore()>max){
-                max=players.elementAt(i).getScore();
+            if(players.get(i).getScore()>max){
+                max=players.get(i).getScore();
             }
         }
         //Finding Name of Winners
         Vector<String>winners=new Vector<String>();
         for(int i=0;i<noOfPlayers;i++){
-            if(players.elementAt(i).getScore()==max){
-                winners.add(players.elementAt(i).getName());
+            if(players.get(i).getScore()==max){
+                winners.add(players.get(i).getName());
             }
         }
 
