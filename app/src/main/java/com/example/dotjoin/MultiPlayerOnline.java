@@ -192,3 +192,7 @@ public class MultiPlayerOnline extends AppCompatActivity {
 
     }
 }
+
+
+//ToDo - Add margin above line in join room alert builder
+//ToDo - Change big names to same with ... while showing scores in a game
