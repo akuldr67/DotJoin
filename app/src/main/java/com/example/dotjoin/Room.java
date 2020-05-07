@@ -28,7 +28,7 @@ public class Room {
         this.host = 0;
         this.isGameStarted = false;
         this.game =null;
-        this.roomStartTime = new Date().toString();
+        this.roomStartTime = new Date().toString(); // ServerValue.TIMESTAMP
         this.gameStartTime = null;
         players=new ArrayList<>();
         Player player = new Player(name,0,0,0,deviceToken);
@@ -46,10 +46,10 @@ public class Room {
 
     private String generateRoomID(){
         String id="";
-        String CHAR_LOWER = "abcdefghijklmnopqrstuvwxyz";
+        String CHAR_OPTIONS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         for(int i=0;i<8;i++){
-            int index = (int)(CHAR_LOWER.length()*Math.random());
-            id+=CHAR_LOWER.charAt(index);
+            int index = (int)(CHAR_OPTIONS.length()*Math.random());
+            id+=CHAR_OPTIONS.charAt(index);
         }
         return id;
     }

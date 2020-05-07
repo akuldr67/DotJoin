@@ -28,9 +28,13 @@ public class BoardHelperForAI{
         if(edgeNo!=-1)return edgeNo;
         Vector<Integer> safeEdges = findSafeEdges();
         if(safeEdges.size()==0) {
+            Vector<Integer> possibleEdges = new Vector<>();
             for (int i = 1; i < this.totalEdges + 1; i++) {
-                if (!this.board.getEdges().get(i)) return i;
+                if (!this.board.getEdges().get(i)) possibleEdges.add(i);
             }
+            int index = (int) (possibleEdges.size()*Math.random());
+            if(possibleEdges.size()>0)
+                return possibleEdges.get(index);
         }else {
             int index = (int)(safeEdges.size()*Math.random());
             return safeEdges.get(index);
