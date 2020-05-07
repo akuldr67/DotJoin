@@ -250,7 +250,8 @@ public class OnlineGamePlay extends AppCompatActivity {
                         });
                         AlertDialog alertDialog=builder.create();
                         alertDialog.setCanceledOnTouchOutside(false);
-                        alertDialog.show();
+                        if(!isFinishing())
+                            alertDialog.show();
 
                     }
 
