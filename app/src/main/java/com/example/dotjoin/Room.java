@@ -31,7 +31,7 @@ public class Room {
         this.roomStartTime = new Date().toString();
         this.gameStartTime = null;
         players=new ArrayList<>();
-        Player player = new Player(name,0,0,0,deviceToken);
+        Player player = new Player(name,0,0,0,deviceToken,1);
         players.add(player);
     }
 

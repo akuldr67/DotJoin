@@ -3,6 +3,7 @@ package com.example.dotjoin;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.icu.text.DateFormat;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,6 +46,7 @@ public class WaitingPlace extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private int playerNo,boardSize;
     private Button exitRoom,startGame;
+    private String roomId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class WaitingPlace extends AppCompatActivity {
 
         //Getting Data from previous activity
         Intent intent = getIntent();
-        final String roomId=intent.getStringExtra("RoomId");
+        roomId=intent.getStringExtra("RoomId");
         playerNo=intent.getIntExtra("PlayerNo",-1);
         if(playerNo==-1){
             Log.d("playerNo","Did not get the player No");
@@ -90,7 +93,6 @@ public class WaitingPlace extends AppCompatActivity {
 //        mSharedPreferences=getSharedPreferences("com.example.dotjoin.file",Context.MODE_PRIVATE);
 //        final String name=mSharedPreferences.getString("UserName","");
 
-        //TODO Convert All Vectors to ArrayList
 
         //Retrieving Players
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
@@ -105,6 +107,14 @@ public class WaitingPlace extends AppCompatActivity {
                         for(int i=0;i<players.size();i++){
                             playerTextViews.elementAt(i).setText(players.get(i).getName());
                             playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
+                            if(players.get(i).getReady()==1){
+                                playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this,R.color.black));
+                                playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
+                            }
+                            else{
+                                playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this,R.color.grey));
+                                playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
+                            }
                             //Updating the player no. if it has changed
                             if(players.get(i).getDeviceToken().equals(instanceIdResult.getToken())){
                                 playerNo=i;
@@ -240,8 +250,68 @@ public class WaitingPlace extends AppCompatActivity {
     public void onBackPressed() {
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("checkk",playerNo+"");
+        mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
+                if(dataSnapshot.hasChild(playerNo+"")){
+                    Log.d("checkk","in onDataChange for true");
+                    mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("checkk","ready set to true");
+                        }
+                    });
+                }
+                else{
+                    Log.d("Problem","problem");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("Problem","problem");
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("checkk",playerNo+"");
+        mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
+                if(dataSnapshot.hasChild(playerNo+"")){
+                    Log.d("checkk","in onDataChange for false");
+                    mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("checkk","ready set to false");
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }
-//TODO - Disable back button when in this activity (Done)
-//TODO - Edit Player Class add id or no so that we can check if current player is host (Done)
-//TODO - Start Game Button
+
 //ToDo - Check after retrieving players, if players null/empty, if null go back to previous activity and delete room from database
+//Todo - Check if there are at least two people in the room when game starts
+//Todo - Delete Room after some time of inactivity
+//Todo - Timer for each turn
+//Todo - Check if the user is ready or not
+//Todo - AutoRotate Off
+//Todo - Change repo from public to private
+//Todo - App Crash if all leave

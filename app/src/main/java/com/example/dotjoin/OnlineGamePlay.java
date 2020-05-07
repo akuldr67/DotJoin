@@ -1,5 +1,6 @@
 package com.example.dotjoin;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -325,8 +326,8 @@ public class OnlineGamePlay extends AppCompatActivity {
 
     }
 
-//    @Override
-//    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-////        super.onConfi gurationChanged(newConfig);
-//    }
+    @Override
+    public void onBackPressed() {
+
+    }
 }

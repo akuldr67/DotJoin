@@ -105,7 +105,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                     else if(i==1)color=R.drawable.colour_box_red;
                                     else if(i==2)color=R.drawable.colour_box_green;
                                     else if(i==3)color=R.drawable.colour_box_yellow;
-                                    players.add(new Player("Player "+(i+1),color,0,i,""));
+                                    players.add(new Player("Player "+(i+1),color,0,i,"",0));
                                 }
                                 game = new Game(0, noOfPlayers,  board,players);
 

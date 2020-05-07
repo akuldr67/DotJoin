@@ -10,11 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".OnlineGamePlay"
-            android:configChanges="screenSize|screenLayout|touchscreen|layoutDirection"></activity>
+            android:screenOrientation="portrait"></activity>
         <activity android:name=".WaitingPlace" />
         <activity android:name=".MultiPlayerOnline" />
-        <activity android:name=".MultiPlayerOffline" />
-        <activity android:name=".SinglePlayer" />
+        <activity android:name=".MultiPlayerOffline"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SinglePlayer"
+            android:screenOrientation="portrait"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
