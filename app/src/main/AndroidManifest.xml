@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".OnlineGamePlay"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".WaitingPlace" />
+        <activity android:name=".WaitingPlace"
+            android:screenOrientation="portrait"/>
         <activity android:name=".MultiPlayerOnline" />
         <activity android:name=".MultiPlayerOffline"
             android:screenOrientation="portrait"/>

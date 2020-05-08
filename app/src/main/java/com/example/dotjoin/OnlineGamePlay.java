@@ -22,12 +22,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -96,6 +100,10 @@ public class OnlineGamePlay extends AppCompatActivity {
 
                         mDatabase.child("Rooms").child(roomId).removeEventListener(this);
 
+                        //Setting Ready for all as false
+                        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0);
+                        //Host is getting ready even after this
+
                         //Initializing Board, Game, and layoutUtils
                         Room room = dataSnapshot.getValue(Room.class);
                         final Game game = room.getGame();
@@ -127,6 +135,14 @@ public class OnlineGamePlay extends AppCompatActivity {
                         scoreViewVector.elementAt(0).setBackgroundResource(R.drawable.border);
                         scoreViewVector.elementAt(0).setTypeface(Typeface.DEFAULT_BOLD);
                         scoreViewVector.elementAt(0).setTextColor(ContextCompat.getColor(OnlineGamePlay.this,R.color.black));
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
 
 
@@ -180,6 +196,9 @@ public class OnlineGamePlay extends AppCompatActivity {
                     if(activeGame.gameCompleted()){
                         //Setting isGameStarted false
                         mDatabase.child("Rooms").child(roomId).child("isGameStarted").setValue(false);
+
+                        //Setting ready of this player false
+                        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0);
 
                         //Showing Final Dialog Box
                         AlertDialog.Builder builder = new AlertDialog.Builder(OnlineGamePlay.this);
@@ -291,6 +310,7 @@ public class OnlineGamePlay extends AppCompatActivity {
 //                                                        }
                                         activeGame.increaseScore();
                                     }
+                                    Log.d("Touch","Touch");
                                     mDatabase.child("Rooms").child(roomId).setValue(activeRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
@@ -314,13 +334,7 @@ public class OnlineGamePlay extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
 
             }
         });

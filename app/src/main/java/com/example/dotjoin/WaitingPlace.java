@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -111,7 +112,7 @@ public class WaitingPlace extends AppCompatActivity {
                                 playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this,R.color.black));
                                 playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
                             }
-                            else{
+                            else if(players.get(i).getReady()==0){
                                 playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this,R.color.grey));
                                 playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
                             }
@@ -252,56 +253,78 @@ public class WaitingPlace extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         Log.d("checkk",playerNo+"");
-        mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
-                if(dataSnapshot.hasChild(playerNo+"")){
-                    Log.d("checkk","in onDataChange for true");
-                    mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("checkk","ready set to true");
-                        }
-                    });
-                }
-                else{
-                    Log.d("Problem","problem");
-                }
-            }
 
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Problem","problem");
+            public void onSuccess(final InstanceIdResult instanceIdResult) {
+                mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
+                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                        ArrayList<Player>players=dataSnapshot.getValue(t);
+
+                        for(int i=0; i<players.size();i++){
+                            if(players.get(i).getDeviceToken().equals(instanceIdResult.getToken())){
+                                players.get(i).setReady(1);
+                            }
+                        }
+
+                        mDatabase.child("Rooms").child(roomId).child("players").setValue(players).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("checkk","ready set to true");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d("Problem","problem");
+                    }
+                });
             }
         });
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d("checkk",playerNo+"");
-        mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(new ValueEventListener() {
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
-                if(dataSnapshot.hasChild(playerNo+"")){
-                    Log.d("checkk","in onDataChange for false");
-                    mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("checkk","ready set to false");
+            public void onSuccess(final InstanceIdResult instanceIdResult) {
+                mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
+                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                        ArrayList<Player>players=dataSnapshot.getValue(t);
+
+                        for(int i=0; i<players.size();i++){
+                            if(players.get(i).getDeviceToken().equals(instanceIdResult.getToken())){
+                                players.get(i).setReady(0);
+                            }
                         }
-                    });
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                        mDatabase.child("Rooms").child(roomId).child("players").setValue(players).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d("checkk","ready set to false");
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d("Problem","problem");
+                    }
+                });
             }
         });
     }
