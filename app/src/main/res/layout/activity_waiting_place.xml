@@ -48,6 +48,7 @@
 
     </LinearLayout>
 
+
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
@@ -59,42 +60,130 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-        <TextView
-            android:id="@+id/waiting_player1"
+        <LinearLayout
+            android:id="@+id/player1Layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Player1"
-            android:textSize="30sp"
-            android:visibility="invisible" />
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginTop="0dp"
+            >
 
-        <TextView
-            android:id="@+id/waiting_player2"
+            <TextView
+                android:id="@+id/waiting_player1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:text="Player1"
+                android:textSize="30sp"
+                android:visibility="invisible"
+                />
+            <Button
+                android:id="@+id/removePlayer1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove"
+                android:textSize="20sp"
+                android:visibility="invisible"
+                android:enabled="false"
+                android:layout_marginStart="0dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/player2Layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Player2"
-            android:textSize="30sp"
-            android:visibility="invisible" />
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginTop="0dp"
+            >
 
-        <TextView
-            android:id="@+id/waiting_player3"
+            <TextView
+                android:id="@+id/waiting_player2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:text="Player2"
+                android:textSize="30sp"
+                android:visibility="invisible"
+                />
+            <Button
+                android:id="@+id/removePlayer2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove"
+                android:textSize="20sp"
+                android:visibility="invisible"
+                android:enabled="false"
+                android:layout_marginStart="0dp"
+                />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/player3Layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Player3"
-            android:textSize="30sp"
-            android:visibility="invisible" />
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginTop="0dp"
+            >
 
-        <TextView
-            android:id="@+id/waiting_player4"
+            <TextView
+                android:id="@+id/waiting_player3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:text="Player3"
+                android:textSize="30sp"
+                android:visibility="invisible"
+                />
+            <Button
+                android:id="@+id/removePlayer3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove"
+                android:textSize="20sp"
+                android:visibility="invisible"
+                android:enabled="false"
+                android:layout_marginStart="0dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/player4Layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Player4"
-            android:textSize="30sp"
-            android:visibility="invisible" />
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginTop="0dp"
+            >
 
+            <TextView
+                android:id="@+id/waiting_player4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:text="Player4"
+                android:textSize="30sp"
+                android:visibility="invisible"
+                />
+            <Button
+                android:id="@+id/removePlayer4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove"
+                android:textSize="20sp"
+                android:visibility="invisible"
+                android:enabled="false"
+                android:layout_marginStart="0dp"
+                />
+
+        </LinearLayout>
         <Button
             android:id="@+id/start_game"
             android:layout_width="wrap_content"
@@ -115,5 +204,17 @@
             android:textSize="20sp" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/generalText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Host will start the game"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
