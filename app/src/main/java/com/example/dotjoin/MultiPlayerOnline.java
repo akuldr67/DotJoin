@@ -32,6 +32,7 @@ import java.util.Vector;
 public class MultiPlayerOnline extends AppCompatActivity {
     //Firebase
     private DatabaseReference mDatabaseRef;
+    private String roomId;
 
     //Buttons
     private Button createRoom,joinRoom;
@@ -87,7 +88,7 @@ public class MultiPlayerOnline extends AppCompatActivity {
                         }
                         else{
                             //Saving User input in this string
-                            final String roomId = input.getText().toString();
+                            roomId = input.getText().toString();
                             FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
                                 @Override
                                 public void onSuccess(final InstanceIdResult instanceIdResult) {

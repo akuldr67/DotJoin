@@ -13,11 +13,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,12 +50,14 @@ public class OnlineGamePlay extends AppCompatActivity {
     private int noOfPlayers,boardSize,playerNo,lastUpdatedEdge;
     private LayoutUtils layoutUtils;
     private Vector<TextView> scoreViewVector;
+    private Vector<ProgressBar> progressBars;
     private DatabaseReference mDatabase;
     private String roomId;
     private Room activeRoom;
     private Game activeGame;
     private Board activeBoard,mainBoard;
     private ArrayList<Player>players;
+    private CountDownTimer timer;
 
 
     @Override
@@ -107,7 +111,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                         //Initializing Board, Game, and layoutUtils
                         Room room = dataSnapshot.getValue(Room.class);
                         final Game game = room.getGame();
-                        Board board = game.getBoard();
+                        final Board board = game.getBoard();
                         boardSize=board.getRows();
                         layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2));
                          mainBoard = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
@@ -122,12 +126,28 @@ public class OnlineGamePlay extends AppCompatActivity {
                         scoreViewVector=new Vector<TextView>();
                         scoreViewVector.setSize(noOfPlayers);
 
-                        for(int i=0;i<noOfPlayers;i++){
-                            if(i==0)       scoreViewVector.set(i,(TextView) findViewById(R.id.online_player1));
-                            else if(i==1)  scoreViewVector.set(i,(TextView) findViewById(R.id.online_player2));
-                            else if(i==2)  scoreViewVector.set(i,(TextView) findViewById(R.id.online_player3));
-                            else if(i==3)  scoreViewVector.set(i,(TextView) findViewById(R.id.online_player4));
+                        //and progress bars
+                        progressBars = new Vector<>();
+                        progressBars.setSize(noOfPlayers);
 
+                        for(int i=0;i<noOfPlayers;i++){
+                            if(i==0){
+                                scoreViewVector.set(i,(TextView) findViewById(R.id.online_player1));
+                                progressBars.set(i,(ProgressBar)findViewById(R.id.online_bar_player1));
+                            }
+                            else if(i==1){
+                                scoreViewVector.set(i,(TextView) findViewById(R.id.online_player2));
+                                progressBars.set(i,(ProgressBar)findViewById(R.id.online_bar_player2));
+                            }
+                            else if(i==2){
+                                scoreViewVector.set(i,(TextView) findViewById(R.id.online_player3));
+                                progressBars.set(i,(ProgressBar)findViewById(R.id.online_bar_player3));
+                            }
+                            else if(i==3){
+                                scoreViewVector.set(i,(TextView) findViewById(R.id.online_player4));
+                                progressBars.set(i,(ProgressBar)findViewById(R.id.online_bar_player4));
+                            }
+                            progressBars.elementAt(i).setVisibility(View.VISIBLE);
                             scoreViewVector.elementAt(i).setText(game.players.get(i).getName()+" - "+game.players.get(i).getScore());
                         }
 
@@ -136,6 +156,26 @@ public class OnlineGamePlay extends AppCompatActivity {
                         scoreViewVector.elementAt(0).setTypeface(Typeface.DEFAULT_BOLD);
                         scoreViewVector.elementAt(0).setTextColor(ContextCompat.getColor(OnlineGamePlay.this,R.color.black));
 
+                        //Starting Timer for first player
+                        timer=new CountDownTimer(30000,1000){
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                int progress=(int)(millisUntilFinished/1000);
+                                progressBars.elementAt(0).setProgress(progress*progressBars.elementAt(0).getMax()/30);
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                if(playerNo==activeGame.getCurrentPlayer()) {
+                                    //Creating a move randomly
+                                    ArrayList<Boolean> edges = board.getEdges();
+                                    int edgeNo=randomEdge(edges);
+                                    executeYourTurn(edgeNo);
+                                }
+
+                            }
+                        };
+                        timer.start();
                     }
 
                     @Override
@@ -156,6 +196,30 @@ public class OnlineGamePlay extends AppCompatActivity {
                 //Checking if someone has played his/her turn
                 if(activeGame.getLastEdgeUpdated()!=lastUpdatedEdge){
                     lastUpdatedEdge=activeGame.getLastEdgeUpdated();
+                    int previousPlayer;
+                    if(activeGame.getCurrentPlayer()==0) previousPlayer=activeGame.getNoOfPlayers()-1;
+                    else previousPlayer=activeGame.getCurrentPlayer()-1;
+                    progressBars.elementAt(previousPlayer).setProgress(progressBars.elementAt(playerNo).getMax());
+                    timer.cancel();
+                    //Starting Timer
+                    timer=new CountDownTimer(30000,1000){
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            int progress=(int)(millisUntilFinished/1000);
+                            progressBars.elementAt(activeGame.getCurrentPlayer()).setProgress(progress*progressBars.elementAt(activeGame.getCurrentPlayer()).getMax()/30);
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            if(playerNo==activeGame.getCurrentPlayer()) {
+                                //Creating a move randomly
+                                ArrayList<Boolean> edges = activeBoard.getEdges();
+                                int edgeNo=randomEdge(edges);
+                                executeYourTurn(edgeNo);
+                            }
+                        }
+                    };
+                    timer.start();
 
                     //Drawing the latest move
                     mainBoard.placeEdgeGivenEdgeNo(lastUpdatedEdge,OnlineGamePlay.this,rootLayout);
@@ -294,34 +358,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                                 Log.d("checkk","edge No "+edgeNo);
                                 ArrayList<Boolean> edges = activeBoard.getEdges();
                                 if (edgeNo != -1 && !edges.get(edgeNo)) {
-                                    activeGame.setLastEdgeUpdated(edgeNo); //2
-                                    activeBoard.makeMoveAt(edgeNo);   //2
-                                    int NoOfNewBox = activeBoard.isBoxCompleted(activeGame.lastEdgeUpdated).size();
-                                    if (NoOfNewBox == 0) {
-                                        view.setEnabled(false);
-                                        activeGame.nextTurn(scoreViewVector,OnlineGamePlay.this);
-                                        activeGame.setNewBoxNodes(null);
-//                                                   scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
-                                    } else {
-                                        ArrayList<Integer> newBoxNodes = activeBoard.isBoxCompleted(activeGame.lastEdgeUpdated);
-                                        activeGame.setNewBoxNodes(newBoxNodes);
-//                                                      for (int i = 0; i < NoOfNewBox; i++) {
-//                                                            game.colourBox(newBoxNodes.get(i), getApplicationContext(), rootLayout);
-//                                                        }
-                                        activeGame.increaseScore();
-                                    }
-                                    Log.d("Touch","Touch");
-                                    mDatabase.child("Rooms").child(roomId).setValue(activeRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
-                                                Log.d("write","Successful");
-                                            }
-                                            else{
-                                                Log.d("write","Failed");
-                                            }
-                                        }
-                                    });
+                                    executeYourTurn(edgeNo);
                                 }
                             }
                             return true;
@@ -344,5 +381,41 @@ public class OnlineGamePlay extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+    }
+
+    private int randomEdge(ArrayList<Boolean>edges){
+        Vector<Integer> possibleNos=new Vector<>();
+        for(int i=1;i<edges.size();i++){
+            if(!edges.get(i)){
+                possibleNos.add(i);
+            }
+        }
+        return possibleNos.get((int)(possibleNos.size()*Math.random()));
+    }
+
+    private void executeYourTurn(int edgeNo){
+            activeGame.setLastEdgeUpdated(edgeNo);
+            activeBoard.makeMoveAt(edgeNo);
+            int NoOfNewBox = activeBoard.isBoxCompleted(activeGame.lastEdgeUpdated).size();
+            if (NoOfNewBox == 0) {
+                view.setEnabled(false);
+                activeGame.nextTurn(scoreViewVector,OnlineGamePlay.this);
+                activeGame.setNewBoxNodes(null);
+            } else {
+                ArrayList<Integer> newBoxNodes = activeBoard.isBoxCompleted(activeGame.lastEdgeUpdated);
+                activeGame.setNewBoxNodes(newBoxNodes);
+                activeGame.increaseScore();
+            }
+            mDatabase.child("Rooms").child(roomId).setValue(activeRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+                        Log.d("write","Successful");
+                    }
+                    else{
+                        Log.d("write","Failed");
+                    }
+                }
+            });
     }
 }

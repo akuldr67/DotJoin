@@ -338,3 +338,4 @@ public class WaitingPlace extends AppCompatActivity {
 //Todo - AutoRotate Off
 //Todo - Change repo from public to private
 //Todo - App Crash if all leave
+//Todo - onStop of OnlineGamePlay
