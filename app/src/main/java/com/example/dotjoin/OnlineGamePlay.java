@@ -308,22 +308,39 @@ public class OnlineGamePlay extends AppCompatActivity {
                                         Room room = dataSnapshot.getValue(Room.class);
                                         players=room.getPlayers();
                                         players.remove(playerNo);
-                                        room.setPlayers(players);
-                                        mDatabase.child("Rooms" ).child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
-                                                    Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
-                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                    finish();
-                                                    startActivity(intent);
+                                        if(players==null || players.size()<1){
+                                            mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
+                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                        finish();
+                                                        startActivity(intent);
+                                                    }
+                                                    else{
+                                                        Toast.makeText(OnlineGamePlay.this,"Unable to go to home page",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                        }else{
+                                            room.setPlayers(players);
+                                            mDatabase.child("Rooms" ).child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
+                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                        finish();
+                                                        startActivity(intent);
 //                                                    finish();
+                                                    }
+                                                    else{
+                                                        Toast.makeText(OnlineGamePlay.this,"Unable to go to home page",Toast.LENGTH_SHORT).show();
+                                                    }
                                                 }
-                                                else{
-                                                    Toast.makeText(OnlineGamePlay.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        });
+                                            });
+                                        }
                                     }
 
                                     @Override

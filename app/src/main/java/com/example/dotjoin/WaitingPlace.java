@@ -110,7 +110,24 @@ public class WaitingPlace extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Room room = dataSnapshot.getValue(Room.class);
+                        //null checking..for crash checking.. not working
+                        if(room==null){
+                            Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            finish();
+                            startActivity(intent);
+                        }
+
                         players=room.getPlayers();
+                        //null checking..for crash checking.. not working
+                        if(players == null || players.size()<1){
+                            Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            finish();
+                            startActivity(intent);
+                        }
 
                         //checking if that player is present or removed by host
                         Boolean isPresent = false;
@@ -209,6 +226,7 @@ public class WaitingPlace extends AppCompatActivity {
                          mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                          Room room = dataSnapshot.getValue(Room.class);
                          ArrayList<Player> players = room.getPlayers();
+
                          if(players.size()<2) {
                              Toast.makeText(getApplicationContext(), "Minimum 2 players required to start game", Toast.LENGTH_SHORT).show();
                          }
@@ -410,22 +428,39 @@ public class WaitingPlace extends AppCompatActivity {
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(playerNo);
-                        room.setPlayers(players);
-                        mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    finish();
-                                    startActivity(intent);
-//                                    finish();
+                        if(players==null || players.size()<1){
+                            mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Log.d("check"," room deleted successfully!");
+                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        finish();
+                                        startActivity(intent);
+                                    }
+                                    else{
+                                        Toast.makeText(WaitingPlace.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                                else{
-                                    Toast.makeText(WaitingPlace.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
+                            });
+                        }else{
+                            room.setPlayers(players);
+                            mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        finish();
+                                        startActivity(intent);
+                                    }
+                                    else{
+                                        Toast.makeText(WaitingPlace.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
 
                     @Override
@@ -519,9 +554,10 @@ public class WaitingPlace extends AppCompatActivity {
             }
         });
     }
+
 }
 
-//ToDo - Check after every players vector use, if players null/empty, if null go back to previous activity and delete room from database
+//ToDo - Check after every players/room object use, if it null/empty, if null go back to previous activity and delete room from database
 //Todo - Check if there are at least two people in the room when game starts (done)
 //Todo - Delete Room after some time of inactivity (cant do)
 //Todo - Timer for each turn
