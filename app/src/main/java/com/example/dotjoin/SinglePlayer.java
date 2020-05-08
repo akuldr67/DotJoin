@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -230,6 +231,11 @@ public class SinglePlayer extends AppCompatActivity {
 
         //Showing Final Dialog Box
         AlertDialog.Builder builder = new AlertDialog.Builder(SinglePlayer.this);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            builder = new AlertDialog.Builder(SinglePlayer.this, android.R.style.Theme_Material_Light_Dialog_Alert);
+//        } else {
+//            builder = new AlertDialog.Builder(SinglePlayer.this);
+//        }
         builder.setTitle(game.resultString());
 
         //Showing final ScoreBoard

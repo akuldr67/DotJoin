@@ -227,8 +227,9 @@ public class OnlineGamePlay extends AppCompatActivity {
                                 Intent intent = new Intent(OnlineGamePlay.this,WaitingPlace.class);
                                 intent.putExtra("RoomId",roomId);
                                 intent.putExtra("PlayerNo",playerNo);
-                                startActivity(intent);
                                 finish();
+                                startActivity(intent);
+//                                finish();
                             }
                         });
 
@@ -244,13 +245,15 @@ public class OnlineGamePlay extends AppCompatActivity {
                                         players=room.getPlayers();
                                         players.remove(playerNo);
                                         room.setPlayers(players);
-                                        mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        mDatabase.child("Rooms" ).child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful()){
                                                     Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
-                                                    startActivity(intent);
+                                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                     finish();
+                                                    startActivity(intent);
+//                                                    finish();
                                                 }
                                                 else{
                                                     Toast.makeText(OnlineGamePlay.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
