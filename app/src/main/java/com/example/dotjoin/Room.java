@@ -46,7 +46,7 @@ public class Room {
 
     private String generateRoomID(){
         String id="";
-        String CHAR_OPTIONS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        String CHAR_OPTIONS = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789";
         for(int i=0;i<8;i++){
             int index = (int)(CHAR_OPTIONS.length()*Math.random());
             id+=CHAR_OPTIONS.charAt(index);
