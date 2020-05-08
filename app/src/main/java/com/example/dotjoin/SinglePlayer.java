@@ -124,7 +124,15 @@ public class SinglePlayer extends AppCompatActivity {
 
                                                 int NoOfNewBox = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
                                                 if (NoOfNewBox == 0) {
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(0);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.grey));
+
                                                     game.nextTurn(scoreViewVector,SinglePlayer.this);
+
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.black));
                                                 } else {
                                                     ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
                                                     for (int i = 0; i < NoOfNewBox; i++) {
@@ -173,7 +181,16 @@ public class SinglePlayer extends AppCompatActivity {
 
                                                     int NoOfNewBoxComp = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
                                                     if (NoOfNewBoxComp == 0) {
+                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(0);
+                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
+                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.grey));
+
                                                         game.nextTurn(scoreViewVector,SinglePlayer.this);
+
+                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
+                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
+                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.black));
+
                                                     } else {
                                                         ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
                                                         for (int i = 0; i < NoOfNewBoxComp; i++) {
@@ -188,6 +205,7 @@ public class SinglePlayer extends AppCompatActivity {
                                                         endGame();
                                                     }
                                                 }
+
                                             }
                                             Log.d("pos", "current player " + game.currentPlayer + "\n");
                                         }

@@ -26,17 +26,17 @@
             android:id="@+id/id_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:text="Id:"
-            android:textSize="40sp" />
+            android:textSize="35sp" />
 
         <TextView
             android:id="@+id/waiting_roomId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:text="Room Id"
-            android:textSize="40sp" />
+            android:textSize="35sp" />
 
         <ImageButton
             android:id="@+id/waiting_copy_button"
