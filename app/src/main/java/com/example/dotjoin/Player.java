@@ -2,16 +2,17 @@ package com.example.dotjoin;
 
 public class Player {
     private String name,deviceToken;
-    private int score,color,playerNumber,ready;
+    private int score,color,playerNumber,ready,active;
 
 
-    public Player(String name, int color, int score,int playerNumber,String deviceToken,int ready) {
+    public Player(String name, int color, int score,int playerNumber,String deviceToken,int ready,int active) {
         this.name = name;
         this.color = color;
         this.score = score;
         this.playerNumber = playerNumber;
         this.deviceToken=deviceToken;
         this.ready=ready;
+        this.active=active;
     }
 
     public Player() {
@@ -19,6 +20,9 @@ public class Player {
 
     //Getters
 
+    public int getActive() {
+        return active;
+    }
 
     public int getReady() {
         return ready;
@@ -44,6 +48,9 @@ public class Player {
 
     //Setters
 
+    public void setActive(int active) {
+        this.active = active;
+    }
 
     public void setReady(int ready) {
         this.ready = ready;

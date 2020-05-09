@@ -47,7 +47,7 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Game game;
     private View view;
     private float posX,posY;
-    private int noOfPlayers,boardSize,playerNo,lastUpdatedEdge;
+    private int noOfPlayers,boardSize,playerNo,lastUpdatedEdge,noOfChancesMissed;
     private LayoutUtils layoutUtils;
     private Vector<TextView> scoreViewVector;
     private Vector<ProgressBar> progressBars;
@@ -66,9 +66,11 @@ public class OnlineGamePlay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_game_play);
 
+        //Initializing noOfChancesMissed
+        noOfChancesMissed=0;
+
         //Setting mDatabase to firebaseRealtimeDatabase root
         mDatabase= FirebaseDatabase.getInstance().getReference();
-
 
         //Getting RoomID
         Intent intent = getIntent();
@@ -77,9 +79,6 @@ public class OnlineGamePlay extends AppCompatActivity {
         if(playerNo==-1){
             Log.d("playerNo","Did not get the player No");
         }
-
-        Log.d("RoomId","roomId = "+roomId);
-        Log.d("checkk","playerNo = "+playerNo);
 
         //Finding Layouts
         boardImage=findViewById(R.id.online_boardImage);
@@ -98,11 +97,11 @@ public class OnlineGamePlay extends AppCompatActivity {
                 imageHeight = boardImage.getHeight();
                 imageWidth = boardImage.getWidth();
 
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
 
                         //Setting Ready for all as false
                         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo + "").child("ready").setValue(0);
@@ -165,6 +164,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                                 @Override
                                 public void onFinish() {
                                     if (playerNo == activeGame.getCurrentPlayer()) {
+                                        noOfChancesMissed++;
                                         //Creating a move randomly
                                         ArrayList<Boolean> edges = board.getEdges();
                                         int edgeNo = randomEdge(edges);
@@ -196,6 +196,20 @@ public class OnlineGamePlay extends AppCompatActivity {
                 if(activeRoom!=null) {
                     activeGame = activeRoom.getGame();
                     activeBoard = activeGame.getBoard();
+                    //Here we need to update if someone has left
+                    int activePlayers=0;
+                    for(int i=0;i<activeGame.getNoOfPlayers();i++){
+                        if(activeGame.getPlayers().get(i).getActive()==1) {
+                            activePlayers++;
+                        }
+                        else {
+                            scoreViewVector.elementAt(i).setBackgroundResource(R.drawable.inactive_border);
+                        }
+                    }
+                    if(activePlayers<2){
+                        endGame();
+                    }
+
                     //Checking if someone has played his/her turn
                     if (activeGame.getLastEdgeUpdated() != lastUpdatedEdge) {
                         lastUpdatedEdge = activeGame.getLastEdgeUpdated();
@@ -217,6 +231,11 @@ public class OnlineGamePlay extends AppCompatActivity {
                             public void onFinish() {
                                 if (playerNo == activeGame.getCurrentPlayer()) {
                                     //Creating a move randomly
+                                    noOfChancesMissed++;
+                                    if(noOfChancesMissed>2) {
+                                        mDatabase.child("Rooms").child(roomId).child("game").child("players").child(activeGame.getCurrentPlayer()+"").child("active").setValue(0);
+                                        activeGame.getPlayers().get(activeGame.getCurrentPlayer()).setActive(0);
+                                    }
                                     ArrayList<Boolean> edges = activeBoard.getEdges();
                                     int edgeNo = randomEdge(edges);
                                     executeYourTurn(edgeNo);
@@ -238,125 +257,18 @@ public class OnlineGamePlay extends AppCompatActivity {
                                 activeGame.colourBox(mainBoard, activeGame.getNewBoxNodes().get(i), OnlineGamePlay.this, rootLayout);
                         }
 
-                        //Highlighting Current Player
-                        if (activeGame.getCurrentPlayer() == 0) {
+                        int previousActivePlayer=previousActiveUser(activeGame.getCurrentPlayer());
 
-                            scoreViewVector.elementAt(0).setBackgroundResource(R.drawable.border);
-                            scoreViewVector.elementAt(0).setTypeface(Typeface.DEFAULT_BOLD);
-                            scoreViewVector.elementAt(0).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.black));
+                        scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
+                        scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
+                        scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.black));
 
-                            scoreViewVector.elementAt(activeGame.getPlayers().size() - 1).setBackgroundResource(0);
-                            scoreViewVector.elementAt(activeGame.getPlayers().size() - 1).setTypeface(Typeface.DEFAULT);
-                            scoreViewVector.elementAt(activeGame.getPlayers().size() - 1).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.grey));
-
-                        } else {
-                            scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
-                            scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
-                            scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.black));
-
-                            scoreViewVector.elementAt(activeGame.getCurrentPlayer() - 1).setBackgroundResource(0);
-                            scoreViewVector.elementAt(activeGame.getCurrentPlayer() - 1).setTypeface(Typeface.DEFAULT);
-                            scoreViewVector.elementAt(activeGame.getCurrentPlayer() - 1).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.grey));
-
-                        }
+                        scoreViewVector.elementAt(previousActivePlayer).setBackgroundResource(0);
+                        scoreViewVector.elementAt(previousActivePlayer).setTypeface(Typeface.DEFAULT);
+                        scoreViewVector.elementAt(previousActivePlayer).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.grey));
 
                         if (activeGame.gameCompleted()) {
-                            //Setting isGameStarted false
-                            mDatabase.child("Rooms").child(roomId).child("isGameStarted").setValue(false);
-
-                            //Setting ready of this player false
-                            mDatabase.child("Rooms").child(roomId).child("players").child(playerNo + "").child("ready").setValue(0);
-
-                            //Showing Final Dialog Box
-                            AlertDialog.Builder builder = new AlertDialog.Builder(OnlineGamePlay.this);
-                            builder.setTitle(activeGame.resultString());
-
-                            //Showing final ScoreBoard
-                            TextView textView = new TextView(getApplicationContext());
-                            textView.setPadding(60, 50, 20, 40);
-                            textView.setLineSpacing(1.5f, 1.5f);
-                            textView.setTextSize(16);
-                            String result = "";
-                            for (int i = 0; i < noOfPlayers; i++) {
-                                if (i == noOfPlayers - 1) {
-                                    result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore();
-                                } else {
-                                    result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore() + "\n";
-                                }
-                            }
-                            textView.setText(result);
-                            builder.setView(textView);
-
-                            //Replay Button
-                            builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(OnlineGamePlay.this, WaitingPlace.class);
-                                    intent.putExtra("RoomId", roomId);
-                                    intent.putExtra("PlayerNo", playerNo);
-                                    finish();
-                                    startActivity(intent);
-//                                finish();
-                                }
-                            });
-
-                            //Home Button
-                            builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                                            Room room = dataSnapshot.getValue(Room.class);
-                                            players = room.getPlayers();
-                                            players.remove(playerNo);
-                                            if (players == null || players.size() < 1) {
-                                                mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
-                                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                            finish();
-                                                            startActivity(intent);
-                                                        } else {
-                                                            Toast.makeText(OnlineGamePlay.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                });
-                                            } else {
-                                                room.setPlayers(players);
-                                                mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()) {
-                                                            Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
-                                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                            finish();
-                                                            startActivity(intent);
-//                                                    finish();
-                                                        } else {
-                                                            Toast.makeText(OnlineGamePlay.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
-
-                                }
-                            });
-                            AlertDialog alertDialog = builder.create();
-                            alertDialog.setCanceledOnTouchOutside(false);
-                            if (!isFinishing())
-                                alertDialog.show();
-
+                           endGame();
                         }
 
                     }
@@ -423,7 +335,11 @@ public class OnlineGamePlay extends AppCompatActivity {
             int NoOfNewBox = activeBoard.isBoxCompleted(activeGame.lastEdgeUpdated).size();
             if (NoOfNewBox == 0) {
                 view.setEnabled(false);
-                activeGame.nextTurn(scoreViewVector,OnlineGamePlay.this);
+                activeGame.nextTurn();
+                while(activeGame.getPlayers().get(activeGame.getCurrentPlayer()).getActive()==0){
+                    activeGame.nextTurn();
+                }
+
                 activeGame.setNewBoxNodes(null);
             } else {
                 ArrayList<Integer> newBoxNodes = activeBoard.isBoxCompleted(activeGame.lastEdgeUpdated);
@@ -442,4 +358,115 @@ public class OnlineGamePlay extends AppCompatActivity {
                 }
             });
     }
+
+    private void endGame(){
+        //Cancelling Timer
+        timer.cancel();
+
+        //Setting isGameStarted false
+        mDatabase.child("Rooms").child(roomId).child("isGameStarted").setValue(false);
+
+        //Setting ready of this player false
+        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo + "").child("ready").setValue(0);
+
+        //Showing Final Dialog Box
+        AlertDialog.Builder builder = new AlertDialog.Builder(OnlineGamePlay.this);
+        builder.setTitle(activeGame.resultString());
+
+        //Showing final ScoreBoard
+        TextView textView = new TextView(getApplicationContext());
+        textView.setPadding(60, 50, 20, 40);
+        textView.setLineSpacing(1.5f, 1.5f);
+        textView.setTextSize(16);
+        String result = "";
+        for (int i = 0; i < noOfPlayers; i++) {
+            if (i == noOfPlayers - 1) {
+                result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore();
+            } else {
+                result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore() + "\n";
+            }
+        }
+        textView.setText(result);
+        builder.setView(textView);
+
+        //Replay Button
+        builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(OnlineGamePlay.this, WaitingPlace.class);
+                intent.putExtra("RoomId", roomId);
+                intent.putExtra("PlayerNo", playerNo);
+                finish();
+                startActivity(intent);
+//                                finish();
+            }
+        });
+
+        //Home Button
+        builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                        Room room = dataSnapshot.getValue(Room.class);
+                        players = room.getPlayers();
+                        players.remove(playerNo);
+                        if (players == null || players.size() < 1) {
+                            mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        finish();
+                                        startActivity(intent);
+                                    } else {
+                                        Toast.makeText(OnlineGamePlay.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            room.setPlayers(players);
+                            mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        finish();
+                                        startActivity(intent);
+//                                                    finish();
+                                    } else {
+                                        Toast.makeText(OnlineGamePlay.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        if (!isFinishing())
+            alertDialog.show();
+
+    }
+
+    private int previousActiveUser(int playerNo){
+        int ans=activeGame.previousPlayer(playerNo);
+        while(activeGame.getPlayers().get(ans).getActive()==0){
+            ans=activeGame.previousPlayer(ans);
+        }
+        return ans;
+    }
+
 }

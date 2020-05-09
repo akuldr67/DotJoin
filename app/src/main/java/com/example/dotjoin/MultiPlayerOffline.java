@@ -105,7 +105,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                     else if(i==1)color=R.drawable.colour_box_red;
                                     else if(i==2)color=R.drawable.colour_box_green;
                                     else if(i==3)color=R.drawable.colour_box_yellow;
-                                    players.add(new Player("Player "+(i+1),color,0,i,"",0));
+                                    players.add(new Player("Player "+(i+1),color,0,i,"",0,1));
                                 }
                                 game = new Game(0, noOfPlayers,  board,players);
 
@@ -151,7 +151,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(MultiPlayerOffline.this,R.color.grey));
 
-                                                    game.nextTurn(scoreViewVector,MultiPlayerOffline.this);
+                                                    game.nextTurn();
 
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
@@ -230,4 +230,3 @@ public class MultiPlayerOffline extends AppCompatActivity {
         });
     }
 }
-//TODO FIX LAYOUT ERROR (IF SCORE > 9 its going outside textView)

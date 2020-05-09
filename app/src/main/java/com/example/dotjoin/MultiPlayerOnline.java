@@ -92,7 +92,7 @@ public class MultiPlayerOnline extends AppCompatActivity {
                             FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
                                 @Override
                                 public void onSuccess(final InstanceIdResult instanceIdResult) {
-                            mDatabaseRef.child("Rooms").addValueEventListener(new ValueEventListener() {
+                            mDatabaseRef.child("Rooms").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -107,12 +107,12 @@ public class MultiPlayerOnline extends AppCompatActivity {
                                         }
                                         else {
                                             //Removing Listener to avoid infinite loop because of recursion
-                                            mDatabaseRef.child("Rooms").removeEventListener(this);
+//                                            mDatabaseRef.child("Rooms").removeEventListener(this);
                                             mSharedPreferences = getSharedPreferences("com.example.dotjoin.file", Context.MODE_PRIVATE);
                                             final String name = mSharedPreferences.getString("UserName", "");
                                             //Adding the user to the server
 
-                                                    Player player = new Player(name, 0, 0, noOfPlayers,instanceIdResult.getToken(),1);
+                                                    Player player = new Player(name, 0, 0, noOfPlayers,instanceIdResult.getToken(),1,1);
                                                     ArrayList<Player> players = room.getPlayers();
                                                     players.add(player);
                                                     room.setPlayers(players);
@@ -130,8 +130,6 @@ public class MultiPlayerOnline extends AppCompatActivity {
                                                             }
                                                         }
                                                     });
-
-
 
                                         }
                                     }

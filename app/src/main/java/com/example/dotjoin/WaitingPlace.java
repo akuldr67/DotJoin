@@ -213,10 +213,10 @@ public class WaitingPlace extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d("logg","hello");
 
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                      @Override
                      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                         mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                         mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                          Room room = dataSnapshot.getValue(Room.class);
                          ArrayList<Player> players = room.getPlayers();
 
@@ -286,10 +286,10 @@ public class WaitingPlace extends AppCompatActivity {
         playerButtonViews.elementAt(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(0);
@@ -318,10 +318,10 @@ public class WaitingPlace extends AppCompatActivity {
         playerButtonViews.elementAt(1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(1);
@@ -350,10 +350,10 @@ public class WaitingPlace extends AppCompatActivity {
         playerButtonViews.elementAt(2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(2);
@@ -382,10 +382,10 @@ public class WaitingPlace extends AppCompatActivity {
         playerButtonViews.elementAt(3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(3);
@@ -414,10 +414,10 @@ public class WaitingPlace extends AppCompatActivity {
         exitRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(playerNo);
@@ -426,7 +426,6 @@ public class WaitingPlace extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        Log.d("check"," room deleted successfully!");
                                         Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         finish();
@@ -479,10 +478,9 @@ public class WaitingPlace extends AppCompatActivity {
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(final InstanceIdResult instanceIdResult) {
-                mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(new ValueEventListener() {
+                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
                         GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
                         ArrayList<Player>players=dataSnapshot.getValue(t);
 
@@ -518,10 +516,9 @@ public class WaitingPlace extends AppCompatActivity {
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(final InstanceIdResult instanceIdResult) {
-                mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(new ValueEventListener() {
+                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
                         GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
                         ArrayList<Player>players=dataSnapshot.getValue(t);
 
@@ -554,6 +551,46 @@ public class WaitingPlace extends AppCompatActivity {
         });
     }
 
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        Log.d("checkk","waitingActivity is destroyed");
+//        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+//            @Override
+//            public void onSuccess(final InstanceIdResult instanceIdResult) {
+//                mDatabase.child("Rooms").child(roomId).child("game").child("players").addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+//                        ArrayList<Player>players=dataSnapshot.getValue(t);
+//
+//                        if(players!=null &&  players.size()>0) {
+//                            for (int i = 0; i < players.size(); i++) {
+//                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+//                                    players.get(i).setActive(0);
+//                                }
+//                            }
+//
+//                            mDatabase.child("Rooms").child(roomId).child("game").child("players").setValue(players).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                @Override
+//                                public void onSuccess(Void aVoid) {
+//                                    Log.d("checkk", "ready set to false");
+//                                }
+//                            });
+//                        }else{
+//                            Log.d("ceck","***reached here too***");
+//                            finish();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                        Log.d("Problem","problem");
+//                    }
+//                });
+//            }
+//        });
+//    }
 }
 
 //ToDo - Check after every players/room object use, if it null/empty, if null go back to previous activity and delete room from database

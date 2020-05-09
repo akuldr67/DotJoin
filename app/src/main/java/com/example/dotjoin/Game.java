@@ -145,12 +145,17 @@ public class Game {
     }
 
     //NextPlayersTurn
-    public void nextTurn(Vector<TextView> textViews,Context context){
+    public void nextTurn(){
         if(currentPlayer==noOfPlayers-1)
             currentPlayer=0;
         else
             currentPlayer=currentPlayer+1;
 
+    }
+
+    public int previousPlayer(int playerNo){
+        if(playerNo==0) return (noOfPlayers-1);
+        else return (playerNo-1);
     }
 
     public void colourBox(Board board,int NodeNo, Context context, ConstraintLayout root){

@@ -90,8 +90,8 @@ public class SinglePlayer extends AppCompatActivity {
                                 board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
                                 game = new Game(0, 2,  board,new ArrayList<Player>());
 
-                                game.players.add(new Player("You",R.drawable.colour_box_blue,0,0,"",0));
-                                game.players.add(new Player("Computer",R.drawable.colour_box_red,0,1,"",0));
+                                game.players.add(new Player("You",R.drawable.colour_box_blue,0,0,"",0,1));
+                                game.players.add(new Player("Computer",R.drawable.colour_box_red,0,1,"",0,1));
 
                                 //Setting params for corner text Views that display score
                                 scoreViewVector.set(0,(TextView) findViewById(R.id.player1));
@@ -129,7 +129,7 @@ public class SinglePlayer extends AppCompatActivity {
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.grey));
 
-                                                    game.nextTurn(scoreViewVector,SinglePlayer.this);
+                                                    game.nextTurn();
 
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
@@ -186,7 +186,7 @@ public class SinglePlayer extends AppCompatActivity {
                                                         scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
                                                         scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.grey));
 
-                                                        game.nextTurn(scoreViewVector,SinglePlayer.this);
+                                                        game.nextTurn();
 
                                                         scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
                                                         scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
