@@ -7,9 +7,19 @@
     android:background="@drawable/chat_box_background"
     tools:context=".PopUpChat">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/completePopUp"
+        android:weightSum="10"
+        >
+
     <ScrollView
-        android:layout_width="409dp"
-        android:layout_height="729dp"
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -23,9 +33,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:scrollbars="vertical"
             android:scrollbarAlwaysDrawVerticalTrack="true"
-            >
+            android:scrollbars="vertical">
 
             <TextView
                 android:id="@+id/randomText1"
@@ -33,8 +42,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext1" />
+                android:text="randomtext1"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/randomText2"
@@ -42,73 +51,110 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext2" />
+                android:text="randomtext2"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/randomText3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext3" />
+                android:text="randomtext3"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/randomText4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext4" />
+                android:text="randomtext4"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/randomText5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext5" />
+                android:text="randomtext5"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/randomText6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext6" />
+                android:text="randomtext6"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/randomText7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext7" />
+                android:text="randomtext7"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/randomText8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext8" />
+                android:text="randomtext8"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/randomText9"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext9" />
+                android:text="randomtext9"
+                android:textSize="20dp" />
+
             <TextView
                 android:id="@+id/randomText10"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:textSize="20dp"
-                android:text="randomtext10" />
+                android:text="randomtext10"
+                android:textSize="20dp" />
 
         </LinearLayout>
     </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:layout_weight="9"
+            android:weightSum="5"
+            >
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignBottom="@id/scrollView"
+                android:background="#FFFFFF"
+                android:layout_marginBottom="0dp"
+                android:id="@+id/writeNewText"
+                android:layout_weight="1"
+                >
+            </EditText>
+
+            <ImageButton
+                android:id="@+id/send"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="10dp"
+                android:src="@drawable/ic_send_button"
+                android:layout_weight="4"/>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

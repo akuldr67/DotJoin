@@ -6,9 +6,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 public class PopUpChat extends Activity {
+
+    private ImageButton sendButton;
+    private EditText newMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,5 +35,19 @@ public class PopUpChat extends Activity {
         params.y = -20;
 
         getWindow().setAttributes(params);
+
+
+
+        //send Button
+        sendButton = findViewById(R.id.send);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //when send button pressed
+            }
+        });
+
+        //new Message
+        newMessage = findViewById(R.id.writeNewText);
     }
 }
