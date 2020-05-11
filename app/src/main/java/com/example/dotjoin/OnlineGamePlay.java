@@ -227,7 +227,8 @@ public class OnlineGamePlay extends AppCompatActivity {
                     Log.d("checkk","counted no of active players");
                     if(activePlayers<2){
                         Log.d("checkk","started exiting process because active players where not enough");
-                        endGame();
+                        if(activeGame.getPlayers().get(playerNo).getActive()==1)
+                            endGame();
                     }
 
                     //Checking if someone has played his/her turn
@@ -366,6 +367,17 @@ public class OnlineGamePlay extends AppCompatActivity {
             alertDialog=null;
         }
     }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        Log.d("checkk","onStop Called");
+//        if(alertDialog!=null){
+//            Log.d("checkk","dialog box was found not null hence dismissing the dialog box");
+//            alertDialog.dismiss();
+//            alertDialog=null;
+//        }
+//    }
 
     private int randomEdge(ArrayList<Boolean>edges){
         Vector<Integer> possibleNos=new Vector<>();

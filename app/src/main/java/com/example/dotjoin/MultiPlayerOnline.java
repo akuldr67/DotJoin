@@ -11,8 +11,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,15 +40,20 @@ public class MultiPlayerOnline extends AppCompatActivity {
     private Button createRoom,joinRoom;
     private SharedPreferences mSharedPreferences;
 
+    //ProgressBar
+    private ProgressBar mProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_player_online);
 
         mDatabaseRef=FirebaseDatabase.getInstance().getReference();
+
         //Finding Buttons in Layout
         createRoom=findViewById(R.id.create_room);
         joinRoom=findViewById(R.id.join_room);
+        mProgressBar=findViewById(R.id.multi_player_online_progress_bar);
 
         //Setting Click Listeners for Buttons
 
@@ -82,6 +89,8 @@ public class MultiPlayerOnline extends AppCompatActivity {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         //If User does not give input
                         if(input.getText().toString().equals("")){
                             Toast.makeText(getApplicationContext(),"Please Enter Room Id",Toast.LENGTH_LONG).show();
@@ -104,6 +113,8 @@ public class MultiPlayerOnline extends AppCompatActivity {
                                         final int noOfPlayers=room.getPlayers().size();
                                         if(noOfPlayers==4){
                                             Toast.makeText(getApplicationContext(),"This Room is full",Toast.LENGTH_SHORT).show();
+                                            mProgressBar.setVisibility(View.GONE);
+                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                         }
                                         else {
                                             //Removing Listener to avoid infinite loop because of recursion
@@ -124,8 +135,12 @@ public class MultiPlayerOnline extends AppCompatActivity {
                                                                 Intent waitingRoomIntent = new Intent(MultiPlayerOnline.this, WaitingPlace.class);
                                                                 waitingRoomIntent.putExtra("RoomId", roomId);
                                                                 waitingRoomIntent.putExtra("PlayerNo", noOfPlayers);
+                                                                mProgressBar.setVisibility(View.GONE);
+                                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                                 startActivity(waitingRoomIntent);
                                                             } else {
+                                                                mProgressBar.setVisibility(View.GONE);
+                                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                                 Toast.makeText(getApplicationContext(), "Unable to join, try Later", Toast.LENGTH_LONG).show();
                                                             }
                                                         }
@@ -134,6 +149,9 @@ public class MultiPlayerOnline extends AppCompatActivity {
                                         }
                                     }
                                     else{
+                                        mProgressBar.setVisibility(View.GONE);
+                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
                                         Toast.makeText(getApplicationContext(),"Check your room id",Toast.LENGTH_LONG).show();
                                     }
                                 }
@@ -163,6 +181,8 @@ public class MultiPlayerOnline extends AppCompatActivity {
     }
 
     protected void hostRoom(){
+        mProgressBar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         mSharedPreferences=getSharedPreferences("com.example.dotjoin.file",Context.MODE_PRIVATE);
         final String name=mSharedPreferences.getString("UserName","");
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
@@ -179,9 +199,13 @@ public class MultiPlayerOnline extends AppCompatActivity {
                             Intent waitingRoomIntent =new Intent(MultiPlayerOnline.this,WaitingPlace.class);
                             waitingRoomIntent.putExtra("RoomId",room.getRoomID());
                             waitingRoomIntent.putExtra("PlayerNo",0);
+                            mProgressBar.setVisibility(View.GONE);
+                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                             startActivity(waitingRoomIntent);
                         }
                         else{
+                            mProgressBar.setVisibility(View.GONE);
+                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                             Toast.makeText(getApplicationContext(),"Unable to Create Room", Toast.LENGTH_LONG).show();
                         }
                     }
