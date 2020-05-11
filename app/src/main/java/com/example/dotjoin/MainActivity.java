@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor myEdit;
 
     String mCurrentUserName;
+    private ImageButton chatButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +117,20 @@ public class MainActivity extends AppCompatActivity {
 //            myEdit.putInt("playerNo",playerNo);
 //            myEdit.apply();
 //        }
+
+
+
+        //just trying
+        chatButton = findViewById(R.id.chat);
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),PopUpChat.class);
+                startActivity(intent);
+            }
+        });
+
+
 
     }
 }

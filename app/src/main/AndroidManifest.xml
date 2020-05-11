@@ -9,15 +9,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".OnlineGamePlay"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".WaitingPlace"
-            android:screenOrientation="portrait"/>
+
+        <activity android:name=".PopUpChat"
+            android:theme="@style/AppTheme.PopUp"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".OnlineGamePlay"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".WaitingPlace"
+            android:screenOrientation="portrait" />
         <activity android:name=".MultiPlayerOnline" />
-        <activity android:name=".MultiPlayerOffline"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SinglePlayer"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".MultiPlayerOffline"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SinglePlayer"
+            android:screenOrientation="portrait" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
