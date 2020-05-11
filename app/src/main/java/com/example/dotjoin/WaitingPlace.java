@@ -54,7 +54,9 @@ public class WaitingPlace extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_place);
+        Log.d("checkk","Starting OnCreate of WaitingPlace");
 
+        Log.d("checkk","Getting Intent Extras");
         //Getting Data from previous activity
         Intent intent = getIntent();
         roomId=intent.getStringExtra("RoomId");
@@ -101,24 +103,35 @@ public class WaitingPlace extends AppCompatActivity {
 //        mSharedPreferences=getSharedPreferences("com.example.dotjoin.file",Context.MODE_PRIVATE);
 //        final String name=mSharedPreferences.getString("UserName","");
 
+        Log.d("checkk","setting Ready value 1");
+        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(1).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d("checkk","ready value successfully set to 1");
+
 
         //Retrieving Players
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(final InstanceIdResult instanceIdResult) {
+                Log.d("checkk","Successfully got FirebaseInstanceId");
                 mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d("checkk","Value Event Listener OnData Change Called");
                         Room room = dataSnapshot.getValue(Room.class);
 
                         //null checking..for crash checking..
                         if(room==null){
+                            Log.d("checkk","Room found null, finishing");
                             finish();
                         }
                         else {
+                            Log.d("checkk","Room not found null, getting players");
                             players = room.getPlayers();
 
                             if (players == null || players.size() < 1) {
+                                Log.d("checkk","Players null, finishing");
                                 finish();
                             }
 
@@ -140,18 +153,24 @@ public class WaitingPlace extends AppCompatActivity {
                             for (int i = 0; i < players.size(); i++) {
                                 playerTextViews.elementAt(i).setText(players.get(i).getName());
                                 playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
+                                Log.d("checkk","Checking if player ready or not");
                                 if (players.get(i).getReady() == 1) {
+                                    Log.d("checkk","Player found ready, making bold");
                                     playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
                                     playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
                                 } else if (players.get(i).getReady() == 0) {
+                                    Log.d("checkk","Player not ready, making thin text");
                                     playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.grey));
                                     playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
                                 }
+
+                                Log.d("checkk","Checking if PlayerNo Changed");
                                 //Updating the player no. if it has changed
                                 if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
                                     playerNo = i;
                                     players.get(i).setPlayerNumber(i);
                                     room.setPlayers(players);
+                                    Log.d("checkk","Updating room which updated playerNo");
                                     mDatabase.child("Rooms").child(roomId).setValue(room);
                                 }
 
@@ -167,12 +186,12 @@ public class WaitingPlace extends AppCompatActivity {
                             }
 
                             //setting start game visible for host
-                            Log.d("playerNo", playerNo + "");
                             if (room.getHost() == playerNo) {
                                 startGame.setVisibility(View.VISIBLE);
                                 startGame.setEnabled(true);
                             }
 
+                            Log.d("checkk","Setting Room Buttons visible for host ");
                             //setting remove players visible for host and invisible when removed
                             if (room.getHost() == playerNo) {
                                 for (int i = 0; i < players.size(); i++) {
@@ -187,13 +206,17 @@ public class WaitingPlace extends AppCompatActivity {
                                 }
                             }
 
+                            Log.d("checkk","Checking if game has started");
                             if (room.getIsGameStarted()) {
+                                Log.d("checkk","Game has started, Removing ValueEventListener");
                                 mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                                 Intent intent = new Intent(WaitingPlace.this, OnlineGamePlay.class);
                                 intent.putExtra("RoomId", roomId);
                                 intent.putExtra("PlayerNo", playerNo);
-                                startActivity(intent);
+                                Log.d("checkk","finishing Waiting Place");
                                 finish();
+                                Log.d("checkk","Starting Online GamePlay");
+                                startActivity(intent);
                             }
                         }
                     }
@@ -205,21 +228,23 @@ public class WaitingPlace extends AppCompatActivity {
                 });
             }
         });
+            }
+        });
 
 
         //Starting startGame Click Listener
         startGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("logg","hello");
-
+                Log.d("checkk","Click on Start Game detected");
                 mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                      @Override
                      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                         mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                         Log.d("checkk","SingleValueEvent Listener Added");
+                         mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                          Room room = dataSnapshot.getValue(Room.class);
                          ArrayList<Player> players = room.getPlayers();
-
+                         Log.d("checkk","Checking if players are less than 2");
                          if(players.size()<2) {
                              Toast.makeText(getApplicationContext(), "Minimum 2 players required to start game", Toast.LENGTH_SHORT).show();
                          }
@@ -227,6 +252,8 @@ public class WaitingPlace extends AppCompatActivity {
                              Toast.makeText(getApplicationContext(), "Maximum 4 players can play. Remove extra players", Toast.LENGTH_SHORT).show();
                          }
                          else{
+                             Log.d("checkk","Found suitable player no");
+                             Log.d("checkk","Started Creating Dialog to accept board size");
                              //Dialog Box that accepts board size
                              CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7"};
 
@@ -243,11 +270,13 @@ public class WaitingPlace extends AppCompatActivity {
 
 
                                      //Value Event Listener for room
-                                     mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                                     mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                                          @Override
                                          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                             Log.d("checkk","onDataChange started, SingleValueEventListener");
                                              mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                                              Room room=dataSnapshot.getValue(Room.class);
+                                             Log.d("checkk","Initializing Board");
                                              Board board=new Board(boardSize,boardSize,0,0,0);
                                              ArrayList<Player>players=room.getPlayers();
                                              for(int i=0;i<players.size();i++){
@@ -256,9 +285,12 @@ public class WaitingPlace extends AppCompatActivity {
                                                  else if(i==2)players.get(i).setColor(R.drawable.colour_box_green);
                                                  else if(i==3)players.get(i).setColor(R.drawable.colour_box_yellow);
                                              }
+                                             Log.d("checkk","Initializing Game with players in room");
                                              Game game=new Game(-1,room.getPlayers().size(),board,players);
                                              room.setGame(game);
+                                             Log.d("checkk","Setting isGameStarted true");
                                              room.setIsGameStarted(true);
+                                             Log.d("checkk","Updating to server, updated room");
                                              mDatabase.child("Rooms").child(roomId).setValue(room);
                                          }
 
@@ -269,8 +301,10 @@ public class WaitingPlace extends AppCompatActivity {
                                      });
                                  }
                              });
+                             Log.d("checkk","Creating dialog from builder");
                              AlertDialog alertDialog=sizeDialog.create();
                              alertDialog.setCanceledOnTouchOutside(false);
+                             Log.d("checkk","Showing dialog");
                              alertDialog.show();
                          }
                      }
@@ -289,7 +323,7 @@ public class WaitingPlace extends AppCompatActivity {
                 mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(0);
@@ -321,7 +355,7 @@ public class WaitingPlace extends AppCompatActivity {
                 mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(1);
@@ -353,7 +387,7 @@ public class WaitingPlace extends AppCompatActivity {
                 mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(2);
@@ -385,7 +419,7 @@ public class WaitingPlace extends AppCompatActivity {
                 mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
                         players=room.getPlayers();
                         players.remove(3);
@@ -414,21 +448,28 @@ public class WaitingPlace extends AppCompatActivity {
         exitRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("checkk","Click on ExitRoom Detected");
                 mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                        Log.d("checkk","SingleValueEventListener, OnDataChange triggered");
+                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
+                        Log.d("checkk","Getting Players and removing currentPlayer");
                         players=room.getPlayers();
                         players.remove(playerNo);
+                        Log.d("checkk","Checking if this is the last player");
                         if(players==null || players.size()<1){
+                            Log.d("checkk","Players has become null removing room");
                             mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
                                         Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        Log.d("checkk","Finishing Waiting Place");
                                         finish();
+                                        Log.d("checkk","Starting MainActivity");
                                         startActivity(intent);
                                     }
                                     else{
@@ -437,14 +478,18 @@ public class WaitingPlace extends AppCompatActivity {
                                 }
                             });
                         }else{
+                            Log.d("checkk","Its not the last player");
                             room.setPlayers(players);
+                            Log.d("checkk","Updating room");
                             mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
                                         Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        Log.d("checkk","Finishing WatingPlace");
                                         finish();
+                                        Log.d("checkk","Starting MainActivity");
                                         startActivity(intent);
                                     }
                                     else{
@@ -473,27 +518,31 @@ public class WaitingPlace extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("checkk",playerNo+"");
-
+        Log.d("checkk","onResume of WaitingPlace called");
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(final InstanceIdResult instanceIdResult) {
+                Log.d("checkk","onResume Got FirebaseInstanceId");
                 mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d("checkk","onResume SingleValueEventListener of onResume, onDataChange trigerred");
+                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
                         ArrayList<Player>players=dataSnapshot.getValue(t);
 
                         for(int i=0; i<players.size();i++){
                             if(players.get(i).getDeviceToken().equals(instanceIdResult.getToken())){
+                                Log.d("checkk","onResume Setting this player ready");
                                 players.get(i).setReady(1);
                             }
                         }
 
+                        Log.d("checkk","onResume Uploading this change to database");
                         mDatabase.child("Rooms").child(roomId).child("players").setValue(players).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Log.d("checkk","ready set to true");
+                                Log.d("checkk","onResume Uploaded onReady set true successfully");
                             }
                         });
                     }
@@ -511,14 +560,16 @@ public class WaitingPlace extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("checkk",playerNo+"");
-
+        Log.d("checkk","onPause of WaitingPlace triggered");
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(final InstanceIdResult instanceIdResult) {
+                Log.d("checkk","onPause Got FirebaseInstanceId");
                 mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d("checkk","onPause SingleValueEventListener onPause, onDataChange triggered");
+                        mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
                         GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
                         ArrayList<Player>players=dataSnapshot.getValue(t);
 
@@ -526,18 +577,20 @@ public class WaitingPlace extends AppCompatActivity {
                         if(players!=null &&  players.size()>0) {
                             for (int i = 0; i < players.size(); i++) {
                                 if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                    Log.d("checkk","onPause Setting this player not ready");
                                     players.get(i).setReady(0);
                                 }
                             }
 
+                            Log.d("checkk","onPause Uploading this chang to database (onPause)");
                             mDatabase.child("Rooms").child(roomId).child("players").setValue(players).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Log.d("checkk", "ready set to false");
+                                    Log.d("checkk", "onPause change on Ready false successful");
                                 }
                             });
                         }else{
-                            Log.d("ceck","***reached here too***");
+                            Log.d("checkk","onPause players null hence finishing");
                             finish();
                         }
                     }

@@ -58,6 +58,8 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Board activeBoard,mainBoard;
     private ArrayList<Player>players;
     private CountDownTimer timer;
+    private AlertDialog alertDialog;
+    private ValueEventListener mainValueEventListener;
 
 
     @Override
@@ -65,6 +67,8 @@ public class OnlineGamePlay extends AppCompatActivity {
         Log.d("Starting","Started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_game_play);
+
+        Log.d("checkk","onCreate OnlineGamePlay started");
 
         //Initializing noOfChancesMissed
         noOfChancesMissed=0;
@@ -80,6 +84,13 @@ public class OnlineGamePlay extends AppCompatActivity {
             Log.d("playerNo","Did not get the player No");
         }
 
+        Log.d("checkk","Starting EndService");
+        //Starting Service that would handle if user removes app from recents
+        Intent exitingIntent=new Intent(this,EndService.class);
+        exitingIntent.putExtra("RoomId",roomId);
+        exitingIntent.putExtra("PlayerNo",playerNo);
+        startService(exitingIntent);
+
         //Finding Layouts
         boardImage=findViewById(R.id.online_boardImage);
         rootLayout=findViewById(R.id.online_constraint);
@@ -90,6 +101,7 @@ public class OnlineGamePlay extends AppCompatActivity {
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                Log.d("checkk","Entered Global Layout Listener");
                 boardImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 layoutUtils=new LayoutUtils();
 
@@ -100,8 +112,9 @@ public class OnlineGamePlay extends AppCompatActivity {
                 mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d("checkk","entered 1st singleValueEventListener in OnlineGamePlay");
 
-//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
 
                         //Setting Ready for all as false
                         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo + "").child("ready").setValue(0);
@@ -153,6 +166,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                             scoreViewVector.elementAt(0).setTypeface(Typeface.DEFAULT_BOLD);
                             scoreViewVector.elementAt(0).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.black));
 
+                            Log.d("checkk","starting timer for first turn");
                             //Starting Timer for first player
                             timer = new CountDownTimer(30000, 1000) {
                                 @Override
@@ -163,11 +177,13 @@ public class OnlineGamePlay extends AppCompatActivity {
 
                                 @Override
                                 public void onFinish() {
+                                    Log.d("checkk","timer for first turn finished");
                                     if (playerNo == activeGame.getCurrentPlayer()) {
                                         noOfChancesMissed++;
                                         //Creating a move randomly
                                         ArrayList<Boolean> edges = board.getEdges();
                                         int edgeNo = randomEdge(edges);
+                                        Log.d("checkk","Randomly making a move for the first time");
                                         executeYourTurn(edgeNo);
                                     }
 
@@ -188,12 +204,14 @@ public class OnlineGamePlay extends AppCompatActivity {
 
 
 
-        mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+        mainValueEventListener=new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("checkk","playerNo "+playerNo);
+                Log.d("checkk","started 2nd main value event listener in OnlineGamePlay");
                 activeRoom = dataSnapshot.getValue(Room.class);
+                Log.d("checkk","Checking if room is null");
                 if(activeRoom!=null) {
+                    Log.d("checkk","Room was not null");
                     activeGame = activeRoom.getGame();
                     activeBoard = activeGame.getBoard();
                     //Here we need to update if someone has left
@@ -206,17 +224,18 @@ public class OnlineGamePlay extends AppCompatActivity {
                             scoreViewVector.elementAt(i).setBackgroundResource(R.drawable.inactive_border);
                         }
                     }
+                    Log.d("checkk","counted no of active players");
                     if(activePlayers<2){
+                        Log.d("checkk","started exiting process because active players where not enough");
                         endGame();
                     }
 
                     //Checking if someone has played his/her turn
                     if (activeGame.getLastEdgeUpdated() != lastUpdatedEdge) {
+                        Log.d("checkk","lastEdge Update detected");
                         lastUpdatedEdge = activeGame.getLastEdgeUpdated();
-                        int previousPlayer;
-                        if (activeGame.getCurrentPlayer() == 0)
-                            previousPlayer = activeGame.getNoOfPlayers() - 1;
-                        else previousPlayer = activeGame.getCurrentPlayer() - 1;
+                        int previousPlayer=previousActiveUser(activeGame.getCurrentPlayer());
+                        Log.d("checkk","cancelling the last timer");
                         progressBars.elementAt(previousPlayer).setProgress(progressBars.elementAt(playerNo).getMax());
                         timer.cancel();
                         //Starting Timer
@@ -229,28 +248,42 @@ public class OnlineGamePlay extends AppCompatActivity {
 
                             @Override
                             public void onFinish() {
+                                Log.d("checkk","timer finished");
                                 if (playerNo == activeGame.getCurrentPlayer()) {
                                     //Creating a move randomly
                                     noOfChancesMissed++;
-                                    if(noOfChancesMissed>2) {
-                                        mDatabase.child("Rooms").child(roomId).child("game").child("players").child(activeGame.getCurrentPlayer()+"").child("active").setValue(0);
+                                    if (noOfChancesMissed > 2) {
+                                        Log.d("checkk","making player inactive because he skipped 3 chances");
                                         activeGame.getPlayers().get(activeGame.getCurrentPlayer()).setActive(0);
+                                        mDatabase.child("Rooms").child(roomId).child("game").child("players").child(activeGame.getCurrentPlayer() + "").child("active").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Log.d("checkk","Finishing the game for the player who skipped 3 chances");
+                                                finish();
+                                            }
+                                        });
+                                    } else {
+                                        Log.d("checkk","Randomly making a move");
+                                        ArrayList<Boolean> edges = activeBoard.getEdges();
+                                        int edgeNo = randomEdge(edges);
+                                        executeYourTurn(edgeNo);
                                     }
-                                    ArrayList<Boolean> edges = activeBoard.getEdges();
-                                    int edgeNo = randomEdge(edges);
-                                    executeYourTurn(edgeNo);
                                 }
                             }
                         };
+                        Log.d("checkk","Starting timer");
                         timer.start();
 
+                        Log.d("checkk","Drawing edge on the board");
                         //Drawing the latest move
                         mainBoard.placeEdgeGivenEdgeNo(lastUpdatedEdge, OnlineGamePlay.this, rootLayout);
 
+                        Log.d("checkk","Updating to the lates score");
                         //Setting Latest Score
                         for (int i = 0; i < activeGame.getPlayers().size(); i++)
                             scoreViewVector.elementAt(i).setText(activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore());
 
+                        Log.d("checkk","Coloring the boxes");
                         //Coloring Boxes
                         if (activeGame.getNewBoxNodes() != null) {
                             for (int i = 0; i < activeGame.getNewBoxNodes().size(); i++)
@@ -259,15 +292,18 @@ public class OnlineGamePlay extends AppCompatActivity {
 
                         int previousActivePlayer=previousActiveUser(activeGame.getCurrentPlayer());
 
+                        Log.d("checkk","highlighting current player");
                         scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
                         scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
                         scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.black));
 
+                        Log.d("checkk","unHighlighting previous player");
                         scoreViewVector.elementAt(previousActivePlayer).setBackgroundResource(0);
                         scoreViewVector.elementAt(previousActivePlayer).setTypeface(Typeface.DEFAULT);
                         scoreViewVector.elementAt(previousActivePlayer).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.grey));
 
                         if (activeGame.gameCompleted()) {
+                            Log.d("checkk","Ending the game because all boxes are completed");
                            endGame();
                         }
 
@@ -279,18 +315,18 @@ public class OnlineGamePlay extends AppCompatActivity {
                             @SuppressLint("ClickableViewAccessibility")
                             @Override
                             public boolean onTouch(View v, MotionEvent event) {
-                                Log.d("checkk", "touch");
                                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                                    Log.d("checkk", "touch_action_down");
+                                    Log.d("checkk", "user touch detected");
                                     //Getting Coordinates of Touch
                                     posX = event.getX();
                                     posY = event.getY();
 //
                                     //Getting Edge No touched
                                     int edgeNo = mainBoard.EdgeNoGivenCor(posX, posY);
-                                    Log.d("checkk", "edge No " + edgeNo);
+                                    Log.d("checkk", "Got the edge no where user clicked");
                                     ArrayList<Boolean> edges = activeBoard.getEdges();
                                     if (edgeNo != -1 && !edges.get(edgeNo)) {
+                                        Log.d("checkk","Executing turn for the edge no where user clicked");
                                         executeYourTurn(edgeNo);
                                     }
                                 }
@@ -299,6 +335,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                         });
                     }
                 }else{
+                    Log.d("checkk","Room was null, therefore finishing");
                     finish();
                 }
             }
@@ -306,8 +343,8 @@ public class OnlineGamePlay extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
-        });
-
+        };
+                mDatabase.child("Rooms").child(roomId).addValueEventListener(mainValueEventListener);
 
             }
         });
@@ -317,6 +354,17 @@ public class OnlineGamePlay extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("checkk","onDestroy Called");
+        if(alertDialog!=null){
+            Log.d("checkk","dialog box was found not null hence dismissing the dialog box");
+            alertDialog.dismiss();
+            alertDialog=null;
+        }
     }
 
     private int randomEdge(ArrayList<Boolean>edges){
@@ -330,11 +378,15 @@ public class OnlineGamePlay extends AppCompatActivity {
     }
 
     private void executeYourTurn(int edgeNo){
+            Log.d("checkk","Updating last edge updated");
             activeGame.setLastEdgeUpdated(edgeNo);
+            Log.d("checkk","Setting that edge true");
             activeBoard.makeMoveAt(edgeNo);
             int NoOfNewBox = activeBoard.isBoxCompleted(activeGame.lastEdgeUpdated).size();
             if (NoOfNewBox == 0) {
+                Log.d("checkk","no new boxes made");
                 view.setEnabled(false);
+                Log.d("checkk","Finding the next active player");
                 activeGame.nextTurn();
                 while(activeGame.getPlayers().get(activeGame.getCurrentPlayer()).getActive()==0){
                     activeGame.nextTurn();
@@ -342,37 +394,49 @@ public class OnlineGamePlay extends AppCompatActivity {
 
                 activeGame.setNewBoxNodes(null);
             } else {
+                Log.d("checkk","new boxed made");
                 ArrayList<Integer> newBoxNodes = activeBoard.isBoxCompleted(activeGame.lastEdgeUpdated);
                 activeGame.setNewBoxNodes(newBoxNodes);
+                Log.d("checkk","updating the score");
                 activeGame.increaseScore();
             }
+        Log.d("checkk","Writing all these updates to the server");
             mDatabase.child("Rooms").child(roomId).setValue(activeRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
-                        Log.d("write","Successful");
+                        Log.d("checkk","updated server successfully");
                     }
                     else{
-                        Log.d("write","Failed");
+                        Log.d("checkk","updating server failed");
                     }
                 }
             });
     }
 
     private void endGame(){
+        Log.d("checkk","Removing MainValueEventListener");
+        //Removing MainValueEventListener
+        mDatabase.child("Rooms").child(roomId).removeEventListener(mainValueEventListener);
+
+        Log.d("checkk","cancelling timer");
         //Cancelling Timer
         timer.cancel();
 
+        Log.d("checkk","setting isGameStarted false");
         //Setting isGameStarted false
         mDatabase.child("Rooms").child(roomId).child("isGameStarted").setValue(false);
 
+        Log.d("checkk","Setting ready false");
         //Setting ready of this player false
         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo + "").child("ready").setValue(0);
 
+        Log.d("checkk","Started creating alertDialog Builder");
         //Showing Final Dialog Box
         AlertDialog.Builder builder = new AlertDialog.Builder(OnlineGamePlay.this);
         builder.setTitle(activeGame.resultString());
 
+        Log.d("checkk","Creating Text view for dialog");
         //Showing final ScoreBoard
         TextView textView = new TextView(getApplicationContext());
         textView.setPadding(60, 50, 20, 40);
@@ -386,6 +450,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                 result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore() + "\n";
             }
         }
+        Log.d("checkk","Setting result in the text view");
         textView.setText(result);
         builder.setView(textView);
 
@@ -393,12 +458,15 @@ public class OnlineGamePlay extends AppCompatActivity {
         builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Log.d("checkk","Click on Replay detected");
                 Intent intent = new Intent(OnlineGamePlay.this, WaitingPlace.class);
                 intent.putExtra("RoomId", roomId);
                 intent.putExtra("PlayerNo", playerNo);
-                finish();
+//                finish();
+                Log.d("checkk","Starting Waiting Activity");
                 startActivity(intent);
-//                                finish();
+                Log.d("checkk","Finishing OnlineGamePlay Activity");
+                finish();
             }
         });
 
@@ -406,21 +474,28 @@ public class OnlineGamePlay extends AppCompatActivity {
         builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                Log.d("checkk","Click on Home Detected");
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                         Room room = dataSnapshot.getValue(Room.class);
+                        Log.d("checkk","Loaded room");
                         players = room.getPlayers();
+                        Log.d("checkk","Removing player from room");
                         players.remove(playerNo);
                         if (players == null || players.size() < 1) {
+                            Log.d("checkk","All players gone");
+                            Log.d("checkk","Deleting room");
                             mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        Log.d("checkk","finishing OnlineGamePlay");
                                         finish();
+                                        Log.d("checkk","Starting Main Activity");
                                         startActivity(intent);
                                     } else {
                                         Toast.makeText(OnlineGamePlay.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
@@ -428,14 +503,18 @@ public class OnlineGamePlay extends AppCompatActivity {
                                 }
                             });
                         } else {
+                            Log.d("checkk","all player not gone");
                             room.setPlayers(players);
+                            Log.d("checkk","updating room with the player removed");
                             mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        Log.d("checkk","finishing OnlineGamePlay");
                                         finish();
+                                        Log.d("checkk","Starting intent for MainActivity");
                                         startActivity(intent);
 //                                                    finish();
                                     } else {
@@ -454,9 +533,13 @@ public class OnlineGamePlay extends AppCompatActivity {
 
             }
         });
-        AlertDialog alertDialog = builder.create();
+        Log.d("checkk","Creating alert Dialog Box from Builder");
+        alertDialog = builder.create();
+        Log.d("checkk","Setting Outside touch false");
         alertDialog.setCanceledOnTouchOutside(false);
+        Log.d("checkk","Checking if activity is not finished");
         if (!isFinishing())
+            Log.d("checkk","Finally showing the dialog box");
             alertDialog.show();
 
     }
