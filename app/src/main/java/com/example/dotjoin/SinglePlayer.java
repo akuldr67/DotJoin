@@ -4,12 +4,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -30,14 +33,19 @@ public class SinglePlayer extends AppCompatActivity {
     private Game game;
     private View view;
     private float posX,posY;
-    private int difficultyLevel,boardSize;
+    private int difficultyLevel,boardSize,flag;
     private LayoutUtils layoutUtils;
     private Vector<TextView> scoreViewVector;
+    private CountDownTimer timer;
+    private MutableLiveData<Integer>lastEdgeUpdated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) throws RuntimeException {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_player);
+
+        lastEdgeUpdated = new MutableLiveData<>();
+        lastEdgeUpdated.setValue(-1);
 
         //Finding Layouts
         boardImage=findViewById(R.id.boardImage);
@@ -105,114 +113,103 @@ public class SinglePlayer extends AppCompatActivity {
                                 scoreViewVector.elementAt(0).setTypeface(Typeface.DEFAULT_BOLD);
                                 scoreViewVector.elementAt(0).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.black));
 
-                                //Touch Listener
-                                view.setOnTouchListener(new View.OnTouchListener() {
+                                lastEdgeUpdated.observe(SinglePlayer.this, new Observer<Integer>() {
                                     @Override
-                                    public boolean onTouch(View v, MotionEvent event) {
-                                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-                                            //Getting Coordinates of Touch
-                                            posX = event.getX();
-                                            posY = event.getY();
-
-                                            //Getting Edge No touched
-                                            int edgeNo = game.board.EdgeNoGivenCor(posX, posY);
-                                            ArrayList<Boolean> edges = board.getEdges();
-                                            if (edgeNo != -1 && !edges.get(edgeNo)) {
-                                                game.setLastEdgeUpdated(edgeNo);
-                                                game.board.makeMoveAt(edgeNo);
-                                                game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);
-
-                                                int NoOfNewBox = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
-                                                if (NoOfNewBox == 0) {
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(0);
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.grey));
-
-                                                    game.nextTurn();
-
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.black));
-                                                } else {
-                                                    ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
-                                                    for (int i = 0; i < NoOfNewBox; i++) {
-                                                        game.colourBox(board,newBoxNodes.get(i), getApplicationContext(), rootLayout);
+                                    public void onChanged(Integer integer) {
+                                        Log.d("checkk","onChange Triggered");
+                                        if(game.getCurrentPlayer()==0){
+                                            view.setOnTouchListener(new View.OnTouchListener() {
+                                                @Override
+                                                public boolean onTouch(View v, MotionEvent event) {
+                                                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                                                        //Getting Coordinates of Touch
+                                                        posX = event.getX();
+                                                        posY = event.getY();
+                                                        //Getting Edge No touched
+                                                        int edgeNo = game.board.EdgeNoGivenCor(posX, posY);
+                                                        ArrayList<Boolean> edges = board.getEdges();
+                                                        if (edgeNo != -1 && !edges.get(edgeNo)) {
+                                                            executeTurn(edgeNo);
+                                                        }
                                                     }
-                                                    game.increaseScore();
+                                                    return true;
                                                 }
-                                                scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.get(game.getCurrentPlayer()).getName()+" - "+game.players.get(game.getCurrentPlayer()).getScore());
+                                            });
+                                        }
+                                        else if(game.getCurrentPlayer()==1){
+                                            timer = new CountDownTimer(500,100) {
+                                                @Override
+                                                public void onTick(long millisUntilFinished) {
 
-                                                if (game.gameCompleted()) {
-                                                    endGame();
                                                 }
 
-                                                Log.d("current "," player no "+game.currentPlayer);
-
-//                                                int computerContinuousTurn = 0;
-                                                while(game.currentPlayer == 1){
-//                                                    if(computerContinuousTurn > 0){
-//                                                        try{
-//                                                            Log.d("Currently ","Sleeping!!!!");
-//                                                            Thread.sleep(1000);
-//                                                        }catch (Exception e){
-//                                                            e.printStackTrace();
-//                                                        }
-//                                                        new Handler().postDelayed(new Runnable() {
-//                                                            @Override
-//                                                            public void run() {
-//                                                                Log.d("Currently ","Sleeping!!!!");
-//                                                            }
-//                                                        }, 1000);
-//                                                    }
+                                                @Override
+                                                public void onFinish() {
+                                                    Log.d("checkk", "Timer Finished, Starting computers turn");
                                                     BoardHelperForAI b = new BoardHelperForAI(game.board);
-                                                    if(difficultyLevel == 1)
-                                                        edgeNo = b.giveNextEdgeNoEasy();
-                                                    else{
-//                                                        edgeNo = getNextEdgeHard(b);
+                                                    int computerEdgeNo;
+                                                    if (difficultyLevel == 1)
+                                                        computerEdgeNo = b.giveNextEdgeNoEasy();
+                                                    else {
                                                         try {
-                                                            edgeNo = b.giveNextEdgeNoHard();
-                                                        }catch (CloneNotSupportedException ex){
+                                                            computerEdgeNo = b.giveNextEdgeNoHard();
+                                                        } catch (CloneNotSupportedException ex) {
                                                             throw new RuntimeException(ex);
                                                         }
                                                     }
-                                                    game.setLastEdgeUpdated(edgeNo);
-                                                    game.board.makeMoveAt(edgeNo);
-                                                    game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);
-
-                                                    int NoOfNewBoxComp = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
-                                                    if (NoOfNewBoxComp == 0) {
-                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(0);
-                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
-                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.grey));
-
-                                                        game.nextTurn();
-
-                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
-                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
-                                                        scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.black));
-
-                                                    } else {
-                                                        ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
-                                                        for (int i = 0; i < NoOfNewBoxComp; i++) {
-                                                            game.colourBox(board,newBoxNodes.get(i), getApplicationContext(), rootLayout);
-                                                        }
-                                                        game.increaseScore();
-                                                    }
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.get(game.getCurrentPlayer()).getName()+" - "+game.players.get(game.getCurrentPlayer()).getScore());
-
-//                                                    computerContinuousTurn++;
-                                                    if (game.gameCompleted()) {
-                                                        endGame();
-                                                    }
+                                                    Log.d("checkk", "Starting Execution of computers turn");
+                                                    executeTurn(computerEdgeNo);
                                                 }
-
-                                            }
-                                            Log.d("pos", "current player " + game.currentPlayer + "\n");
+                                            }.start();
                                         }
-                                        return true;
                                     }
                                 });
+                                lastEdgeUpdated.setValue(-2);
+
+////                                                Log.d("checkk","Loop starting");
+////                                                MutableLiveData<Integer>lastEdgeUpdated=new MutableLiveData<>();
+////                                                lastEdgeUpdated.setValue(-1);
+////                                                lastEdgeUpdated.observe(SinglePlayer.this, new Observer<Integer>() {
+////                                                    @Override
+////                                                    public void onChanged(Integer integer) {
+////                                                        if(game.getCurrentPlayer()==1){
+////
+////                                                    }
+////                                                });
+////                                                    lastEdgeUpdated=game.getLastEdgeUpdated();
+////                                                        timer = new CountDownTimer(5000, 1000) {
+////                                                            @Override
+////                                                            public void onTick(long millisUntilFinished) {
+////                                                                Log.d("checkk","Ticking");
+////                                                            }
+////
+////                                                            @Override
+////                                                            public void onFinish() {
+////                                                                Log.d("checkk", "Timer Finished, Starting computers turn");
+////                                                                BoardHelperForAI b = new BoardHelperForAI(game.board);
+////                                                                int computerEdgeNo;
+////                                                                if (difficultyLevel == 1)
+////                                                                    computerEdgeNo = b.giveNextEdgeNoEasy();
+////                                                                else {
+////                                                                    try {
+////                                                                        computerEdgeNo = b.giveNextEdgeNoHard();
+////                                                                    } catch (CloneNotSupportedException ex) {
+////                                                                        throw new RuntimeException(ex);
+////                                                                    }
+////                                                                }
+////                                                                Log.d("checkk", "Starting Execution of computers turn");
+////                                                                executeTurn(computerEdgeNo);
+////                                                            }
+////                                                        };
+////                                                        Log.d("checkk","starting the timer");
+////                                                        timer.start();
+////                                                    }
+////                                                }
+////                                            }
+////                                        }
+////                                        return true;
+////                                    }
+////                                });
                             }
                         });
                         AlertDialog alertDialog=sizeDialog.create();
@@ -227,8 +224,45 @@ public class SinglePlayer extends AppCompatActivity {
         });
     }
 
-    protected void endGame(){
+    private void executeTurn(int edgeNo){
+        Log.d("checkk","got edgeNo"+edgeNo);
+        game.setLastEdgeUpdated(edgeNo);
+        game.board.makeMoveAt(edgeNo);
+        Log.d("checkk","Placing Edge");
+        game.board.placeEdgeGivenEdgeNo(game.lastEdgeUpdated, getApplicationContext(), rootLayout);
 
+        int NoOfNewBox = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
+        if (NoOfNewBox == 0) {
+            Log.d("checkk","no boxes made, Changing the turn");
+            scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(0);
+            scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
+            scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.grey));
+
+            game.nextTurn();
+
+            scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
+            scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
+            scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.black));
+        } else {
+            Log.d("checkk","boxes made, same players turn");
+            ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
+            for (int i = 0; i < NoOfNewBox; i++) {
+                game.colourBox(board,newBoxNodes.get(i), getApplicationContext(), rootLayout);
+            }
+            game.increaseScore();
+        }
+        scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.get(game.getCurrentPlayer()).getName()+" - "+game.players.get(game.getCurrentPlayer()).getScore());
+        lastEdgeUpdated.setValue(edgeNo);
+        Log.d("checkk","Checking if game is completed or not");
+        if(game.gameCompleted()){
+            endGame();
+        }
+    }
+
+
+
+    protected void endGame(){
+        timer.cancel();
         //Showing Final Dialog Box
         AlertDialog.Builder builder = new AlertDialog.Builder(SinglePlayer.this);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
