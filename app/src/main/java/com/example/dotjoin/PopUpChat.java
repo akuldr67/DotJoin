@@ -81,20 +81,20 @@ public class PopUpChat extends Activity {
         mNames.add("Random Name5");
         mMessage.add("Random Message5");
 
-        mNames.add("Random Name1");
-        mMessage.add("Random Message1");
+        mNames.add("Random Name6");
+        mMessage.add("Random Message6");
 
-        mNames.add("Random Name2");
-        mMessage.add("Random Message2");
+        mNames.add("Random Name7");
+        mMessage.add("Random Message7");
 
-        mNames.add("Random Name3");
-        mMessage.add("Random Message3");
+        mNames.add("Random Name8");
+        mMessage.add("Random Message8");
 
-        mNames.add("Random Name4");
-        mMessage.add("Random Message4");
+        mNames.add("Random Name9");
+        mMessage.add("Random Message9");
 
-        mNames.add("Random Name5");
-        mMessage.add("Random Message5");
+        mNames.add("Random Name10");
+        mMessage.add("Random Message10");
 
         initRecyclerView();
     }
@@ -108,5 +108,8 @@ public class PopUpChat extends Activity {
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        //auto scroll to last message element
+        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
     }
 }
