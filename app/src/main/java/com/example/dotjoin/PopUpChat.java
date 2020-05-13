@@ -1,8 +1,8 @@
 package com.example.dotjoin;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+//import androidx.recyclerview.widget.LinearLayoutManager;
+//import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -96,20 +96,20 @@ public class PopUpChat extends Activity {
         mNames.add("Random Name10");
         mMessage.add("Random Message10");
 
-        initRecyclerView();
+//        initRecyclerView();
     }
 
-    private void initRecyclerView(){
-        Log.d("check"," inside initRecyclerView");
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-
-        RecyclerViewAdapterForChat adapter = new RecyclerViewAdapterForChat(this,mNames,mMessage);
-
-        recyclerView.setAdapter(adapter);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        //auto scroll to last message element
-        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
-    }
+//    private void initRecyclerView(){
+//        Log.d("check"," inside initRecyclerView");
+//        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+//
+//        RecyclerViewAdapterForChat adapter = new RecyclerViewAdapterForChat(this,mNames,mMessage);
+//
+//        recyclerView.setAdapter(adapter);
+//
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//
+//        //auto scroll to last message element
+//        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
+//    }
 }

@@ -259,8 +259,13 @@ public class OnlineGamePlay extends AppCompatActivity {
                                         mDatabase.child("Rooms").child(roomId).child("game").child("players").child(activeGame.getCurrentPlayer() + "").child("active").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                Log.d("checkk","Finishing the game for the player who skipped 3 chances");
-                                                finish();
+                                                mDatabase.child("Rooms").child(roomId).child("players").child(activeGame.getCurrentPlayer()+"").child("ready").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        Log.d("checkk","Finishing the game for the player who skipped 3 chances");
+                                                        finish();
+                                                    }
+                                                });
                                             }
                                         });
                                     } else {
@@ -471,14 +476,40 @@ public class OnlineGamePlay extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.d("checkk","Click on Replay detected");
-                Intent intent = new Intent(OnlineGamePlay.this, WaitingPlace.class);
-                intent.putExtra("RoomId", roomId);
-                intent.putExtra("PlayerNo", playerNo);
+                //Updating the player No
+                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d("checkk","OnlineGamePlay Replay button onDataChange Called");
+                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                        ArrayList<Player>players=dataSnapshot.getValue(t);
+                        for(int i=0;i<players.size();i++){
+                            if(playerNo==players.get(i).getPlayerNumber()){
+                                playerNo=i;
+                                players.get(i).setPlayerNumber(i);
+                            }
+                        }
+                        mDatabase.child("Rooms").child(roomId).child("players").setValue(players).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Intent intent = new Intent(OnlineGamePlay.this, WaitingPlace.class);
+                                intent.putExtra("RoomId", roomId);
+                                intent.putExtra("PlayerNo", playerNo);
 //                finish();
-                Log.d("checkk","Starting Waiting Activity");
-                startActivity(intent);
-                Log.d("checkk","Finishing OnlineGamePlay Activity");
-                finish();
+                                Log.d("checkk","Starting Waiting Activity");
+                                startActivity(intent);
+                                Log.d("checkk","Finishing OnlineGamePlay Activity");
+                                finish();
+                            }
+                        });
+
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         });
 
@@ -495,7 +526,14 @@ public class OnlineGamePlay extends AppCompatActivity {
                         Log.d("checkk","Loaded room");
                         players = room.getPlayers();
                         Log.d("checkk","Removing player from room");
-                        players.remove(playerNo);
+                        for(int i=0;i<players.size();i++){
+                            if(players.get(i).getPlayerNumber()==playerNo){
+                                players.remove(i);
+                            }
+                        }
+//                        players.remove(playerNo);
+
+
                         if (players == null || players.size() < 1) {
                             Log.d("checkk","All players gone");
                             Log.d("checkk","Deleting room");
@@ -542,7 +580,6 @@ public class OnlineGamePlay extends AppCompatActivity {
 
                     }
                 });
-
             }
         });
         Log.d("checkk","Creating alert Dialog Box from Builder");
