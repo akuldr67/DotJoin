@@ -16,13 +16,12 @@ import java.util.ArrayList;
 
 public class RecyclerViewAdapterForChat extends RecyclerView.Adapter<RecyclerViewAdapterForChat.ViewHolder>{
 
-    private ArrayList<String> mSenderName = new ArrayList<>();
-    private ArrayList<String> mSentMessage = new ArrayList<>();
+    private  ArrayList<Message> mMessages = new ArrayList<>();
     private Context mContext;
 
-    public RecyclerViewAdapterForChat(Context mContext, ArrayList<String> mSenderName, ArrayList<String> mSentMessage) {
-        this.mSenderName = mSenderName;
-        this.mSentMessage = mSentMessage;
+    public RecyclerViewAdapterForChat(Context mContext, ArrayList<Message> mMessages) {
+
+        this.mMessages = mMessages;
         this.mContext = mContext;
     }
 
@@ -38,22 +37,21 @@ public class RecyclerViewAdapterForChat extends RecyclerView.Adapter<RecyclerVie
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         Log.d("check"," onBindViewHolder called");
 
-        holder.SenderName.setText(mSenderName.get(position));
-
-        holder.SentMessage.setText(mSentMessage.get(position));
+        holder.SenderName.setText(mMessages.get(position).getSenderName());
+        holder.SentMessage.setText(mMessages.get(position).getMessage());
 
         holder.chatParentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("check"," inside onClickListener");
-                Toast.makeText(mContext, mSenderName.get(position), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, mMessages.get(position).getSenderName(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mSenderName.size();
+        return mMessages.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{

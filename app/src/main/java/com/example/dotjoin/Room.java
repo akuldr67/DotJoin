@@ -18,6 +18,7 @@ public class Room {
     private String roomStartTime;
     private String gameStartTime;
     private ArrayList<Player> players;
+    private Chat roomChat;
 
     public Room() {
     }
@@ -30,6 +31,7 @@ public class Room {
         this.game =null;
         this.roomStartTime = new Date().toString(); // ServerValue.TIMESTAMP
         this.gameStartTime = null;
+        this.roomChat = new Chat();
         players=new ArrayList<>();
         Player player = new Player(name,0,0,0,deviceToken,0,1);
         players.add(player);
@@ -72,6 +74,8 @@ public class Room {
         return players;
     }
 
+    public Chat getRoomChat() { return this.roomChat; }
+
     //setters
     public void setGame(Game game) { this.game = game; }
 
@@ -86,4 +90,6 @@ public class Room {
     public void setPlayers(ArrayList<Player> players) {
         this.players = players;
     }
+
+    public void setRoomChat(Chat roomChat) { this.roomChat = roomChat; }
 }

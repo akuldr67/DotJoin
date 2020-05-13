@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -60,6 +61,7 @@ public class OnlineGamePlay extends AppCompatActivity {
     private CountDownTimer timer;
     private AlertDialog alertDialog;
     private ValueEventListener mainValueEventListener;
+    private ImageButton chatButton;
 
 
     @Override
@@ -199,6 +201,19 @@ public class OnlineGamePlay extends AppCompatActivity {
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                    }
+                });
+
+
+                //just trying
+                chatButton = findViewById(R.id.chat);
+                chatButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent chatIntent = new Intent(getApplicationContext(),PopUpChat.class);
+                        chatIntent.putExtra("RoomId",roomId);
+//                        chatIntent.putExtra("")
+                        startActivity(chatIntent);
                     }
                 });
 

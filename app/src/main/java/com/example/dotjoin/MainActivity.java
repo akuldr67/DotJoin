@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor myEdit;
 
     String mCurrentUserName;
-    private ImageButton chatButton;
+//    private ImageButton chatButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,20 +117,6 @@ public class MainActivity extends AppCompatActivity {
 //            myEdit.putInt("playerNo",playerNo);
 //            myEdit.apply();
 //        }
-
-
-
-        //just trying
-        chatButton = findViewById(R.id.chat);
-        chatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),PopUpChat.class);
-                startActivity(intent);
-            }
-        });
-
-
 
     }
 }
