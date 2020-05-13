@@ -1,37 +1,27 @@
 package com.example.dotjoin;
 
 public class Message {
-    private String SenderName;
-    private String Message;
-    private String SenderDeviceToken;
+    private String senderName;
+    private String message;
 
-    public Message(String senderName, String message, String senderDeviceToken) {
-        SenderName = senderName;
-        Message = message;
-        SenderDeviceToken = senderDeviceToken;
+    public Message(String senderName, String message) {
+        this.senderName = senderName;
+        this.message = message;
     }
 
     public String getSenderName() {
-        return SenderName;
-    }
-
-    public void setSenderName(String senderName) {
-        SenderName = senderName;
+        return senderName;
     }
 
     public String getMessage() {
-        return Message;
+        return message;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 
     public void setMessage(String message) {
-        Message = message;
-    }
-
-    public String getSenderDeviceToken() {
-        return SenderDeviceToken;
-    }
-
-    public void setSenderDeviceToken(String senderDeviceToken) {
-        SenderDeviceToken = senderDeviceToken;
+        this.message = message;
     }
 }

@@ -54,18 +54,28 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Vector<ProgressBar> progressBars;
     private DatabaseReference mDatabase;
     private String roomId;
-    private Room activeRoom;
+//    private Room activeRoom;
     private Game activeGame;
     private Board activeBoard,mainBoard;
     private ArrayList<Player>players;
     private CountDownTimer timer;
     private AlertDialog alertDialog;
-    private ValueEventListener mainValueEventListener;
+    private ValueEventListener mainValueEventListener,firstValueEventListener;
     private ImageButton chatButton;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        boardImage=null;
+        board=null;
+        game=null;
+        view=null;
+        activeGame=null;
+        activeBoard=null;
+        mainBoard=null;
+        mainValueEventListener=null;
+        firstValueEventListener=null;
+        noOfChancesMissed=0;
         Log.d("Starting","Started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_game_play);
@@ -111,26 +121,27 @@ public class OnlineGamePlay extends AppCompatActivity {
                 imageHeight = boardImage.getHeight();
                 imageWidth = boardImage.getWidth();
 
-                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+                        firstValueEventListener=new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Log.d("checkk","entered 1st singleValueEventListener in OnlineGamePlay");
 
                         mDatabase.child("Rooms").child(roomId).removeEventListener(this);
 
-                        //Setting Ready for all as false
-                        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo + "").child("ready").setValue(0);
                         //Host is getting ready even after this
 
-                        //Initializing Board, Game, and layoutUtils
                         Room room = dataSnapshot.getValue(Room.class);
                         if (room != null) {
-                            final Game game = room.getGame();
-                            final Board board = game.getBoard();
+                            //Setting Ready for all as false
+                            mDatabase.child("Rooms").child(roomId).child("players").child(playerNo + "").child("ready").setValue(0);
+                            game = room.getGame();
+                            board = game.getBoard();
                             boardSize = board.getRows();
                             layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2));
                             mainBoard = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
-
+                            Log.d("checkkk","mainBoard initialized with boardSize "+boardSize+" mainBoard vala total Edges "+mainBoard.getTotalEdges());
                             //Getting Last updated Edge
                             lastUpdatedEdge = game.getLastEdgeUpdated();
 
@@ -202,7 +213,10 @@ public class OnlineGamePlay extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
-                });
+                };
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(firstValueEventListener);
+
+
 
 
                 //just trying
@@ -223,11 +237,10 @@ public class OnlineGamePlay extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d("checkk","started 2nd main value event listener in OnlineGamePlay");
-                activeRoom = dataSnapshot.getValue(Room.class);
+                activeGame = dataSnapshot.getValue(Game.class);
                 Log.d("checkk","Checking if room is null");
-                if(activeRoom!=null) {
+                if(activeGame!=null) {
                     Log.d("checkk","Room was not null");
-                    activeGame = activeRoom.getGame();
                     activeBoard = activeGame.getBoard();
                     //Here we need to update if someone has left
                     int activePlayers=0;
@@ -295,7 +308,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                         Log.d("checkk","Starting timer");
                         timer.start();
 
-                        Log.d("checkk","Drawing edge on the board");
+                        Log.d("checkk","Drawing edge on the board, edge no = "+lastUpdatedEdge);
                         //Drawing the latest move
                         mainBoard.placeEdgeGivenEdgeNo(lastUpdatedEdge, OnlineGamePlay.this, rootLayout);
 
@@ -365,7 +378,7 @@ public class OnlineGamePlay extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         };
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(mainValueEventListener);
+                mDatabase.child("Rooms").child(roomId).child("game").addValueEventListener(mainValueEventListener);
 
             }
         });
@@ -386,6 +399,7 @@ public class OnlineGamePlay extends AppCompatActivity {
             alertDialog.dismiss();
             alertDialog=null;
         }
+//        mainBoard=null;
     }
 //
 //    @Override
@@ -433,7 +447,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                 activeGame.increaseScore();
             }
         Log.d("checkk","Writing all these updates to the server");
-            mDatabase.child("Rooms").child(roomId).setValue(activeRoom).addOnCompleteListener(new OnCompleteListener<Void>() {
+            mDatabase.child("Rooms").child(roomId).child("game").setValue(activeGame).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
@@ -450,6 +464,8 @@ public class OnlineGamePlay extends AppCompatActivity {
         Log.d("checkk","Removing MainValueEventListener");
         //Removing MainValueEventListener
         mDatabase.child("Rooms").child(roomId).removeEventListener(mainValueEventListener);
+        mainValueEventListener=null;
+        firstValueEventListener=null;
 
         Log.d("checkk","cancelling timer");
         //Cancelling Timer
@@ -511,11 +527,11 @@ public class OnlineGamePlay extends AppCompatActivity {
                                 Intent intent = new Intent(OnlineGamePlay.this, WaitingPlace.class);
                                 intent.putExtra("RoomId", roomId);
                                 intent.putExtra("PlayerNo", playerNo);
-//                finish();
+                                finish();
                                 Log.d("checkk","Starting Waiting Activity");
                                 startActivity(intent);
                                 Log.d("checkk","Finishing OnlineGamePlay Activity");
-                                finish();
+//                                finish();
                             }
                         });
 

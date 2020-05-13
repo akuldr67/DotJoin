@@ -1,12 +1,15 @@
 package com.example.dotjoin;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -17,10 +20,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -32,8 +39,10 @@ public class PopUpChat extends Activity {
 
     private String roomId;
     private DatabaseReference mDatabase;
-
+    private SharedPreferences mSharedPreferences;
+    private RecyclerViewAdapterForChat adapter;
     private ArrayList<Message> mMessages = new ArrayList<>();
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,67 +80,94 @@ public class PopUpChat extends Activity {
             @Override
             public void onClick(View v) {
                 //when send button pressed
-                Toast.makeText(getApplicationContext(),"send button pressed", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(),"send button pressed", Toast.LENGTH_SHORT).show();
 
                 // make a new message of this message text along with name and device token and add it roomChat in database
+                //Getting User Name
+                mSharedPreferences = getSharedPreferences("com.example.dotjoin.file", Context.MODE_PRIVATE);
+                final String name = mSharedPreferences.getString("UserName", "");
+
+                String messageText = newMessage.getText().toString();
+                if(messageText.equals("")){
+                    Toast.makeText(PopUpChat.this,"You didn't write anything",Toast.LENGTH_LONG);
+                }
+                else {
+                    newMessage.setText("");
+                    Message message = new Message(name, messageText);
+                    DatabaseReference uniqueMessage = mDatabase.child("Rooms").child(roomId).child("Chats").push();
+                    String uniqueMessageKey = uniqueMessage.getKey();
+                    mDatabase.child("Rooms").child(roomId).child("Chats").child(uniqueMessageKey).setValue(message).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d("checkk", "messageSent");
+                            } else {
+                                Log.d("checkk", "failed to send message");
+                            }
+                        }
+                    });
+                }
+                    recyclerView.smoothScrollToPosition(adapter.getItemCount());
+
             }
         });
 
         setChatData();
+
     }
 
     private void setChatData(){
-
-//        mDatabase.child("Rooms").child(roomId).child("roomChat").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                //assign all messages of roomChat to mMessages
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//
-//        });
-
-        Message m = new Message("Random Name1","Random Message1","abc");
-        mMessages.add(m);
-
-        m = new Message("Random Name2","Random Message2","abc");
-        mMessages.add(m);
-
-        m = new Message("Random Name3","Random Message3","abc");
-        mMessages.add(m);
-
-        m = new Message("Random Name4","Random Message4","abc");
-        mMessages.add(m);
-
-        m = new Message("Random Name5","Random Message5","abc");
-        mMessages.add(m);
-
-        m = new Message("Random Name6","Random Message6","abc");
-        mMessages.add(m);
-
-        m = new Message("Random Name7","Random Message7","abc");
-        mMessages.add(m);
-
         initRecyclerView();
+
+        Log.d("checkk","Starting Loading messages");
+        Query queryToChat=mDatabase.child("Rooms").child(roomId).child("Chats");
+        ChildEventListener childEventListener;
+        childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Message message = new Message(dataSnapshot.child("senderName").getValue().toString(),dataSnapshot.child("message").getValue().toString());
+                mMessages.add(message);
+                adapter.notifyDataSetChanged();
+                recyclerView.smoothScrollToPosition(adapter.getItemCount());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        queryToChat.addChildEventListener(childEventListener);
     }
 
     private void initRecyclerView(){
-        Log.d("check"," inside initRecyclerView");
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        Log.d("checkk"," inside initRecyclerView");
+         recyclerView= findViewById(R.id.recyclerView);
 
-        RecyclerViewAdapterForChat adapter = new RecyclerViewAdapterForChat(this,mMessages);
+         adapter= new RecyclerViewAdapterForChat(this,mMessages);
 
         recyclerView.setAdapter(adapter);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        //auto scroll to last message element
-        recyclerView.smoothScrollToPosition(adapter.getItemCount()-1);
+//        auto scroll to last message element
+
+        recyclerView.smoothScrollToPosition(adapter.getItemCount());
+
     }
 }

@@ -205,6 +205,7 @@ public class Board implements Cloneable{
 
     public Pair<Float,Float> findEdgeCordinates(int EdgeNo){
         float xCorStart,yCorStart,xCorEnd,yCorEnd,midx,midy;
+        Log.d("checkk","total Edges in Board = "+this.totalEdges);
         if(EdgeNo<1 || EdgeNo>this.totalEdges) return null;
 
         if(isEdgeNoHorizontal(EdgeNo)){
