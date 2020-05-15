@@ -41,6 +41,8 @@ public class MultiPlayerOffline extends AppCompatActivity {
     private int noOfPlayers,boardSize;
     private LayoutUtils layoutUtils;
     private Vector<TextView>scoreViewVector;
+    private Vector<Integer>highlightedBoxes,unhighlightedBoxes;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,19 @@ public class MultiPlayerOffline extends AppCompatActivity {
         boardImage=findViewById(R.id.boardImage);
         rootLayout=findViewById(R.id.constraint);
         view =findViewById(R.id.view);
+
+        highlightedBoxes=new Vector<>();
+        unhighlightedBoxes=new Vector<>();
+
+        highlightedBoxes.add(R.drawable.highlighted_color_box_blue);
+        highlightedBoxes.add(R.drawable.highlighted_color_box_red);
+        highlightedBoxes.add(R.drawable.highlighted_color_box_green);
+        highlightedBoxes.add(R.drawable.highlighted_color_box_yellow);
+
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_blue);
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_red);
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_green);
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_yellow);
 
         //Getting ViewTreeObserver of the board Image
         ViewTreeObserver vto = boardImage.getViewTreeObserver();
@@ -119,10 +134,11 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                     else if(i==3)  scoreViewVector.set(i,(TextView) findViewById(R.id.player4));
 
                                     scoreViewVector.elementAt(i).setText(game.players.get(i).getName()+" - "+game.players.get(i).getScore());
+                                    scoreViewVector.elementAt(i).setBackgroundResource(unhighlightedBoxes.get(i));
                                 }
 
                                 //Highlighting the first Player TextView
-                                scoreViewVector.elementAt(0).setBackgroundResource(R.drawable.border);
+                                scoreViewVector.elementAt(0).setBackgroundResource(highlightedBoxes.get(0));
                                 scoreViewVector.elementAt(0).setTypeface(Typeface.DEFAULT_BOLD);
                                 scoreViewVector.elementAt(0).setTextColor(ContextCompat.getColor(MultiPlayerOffline.this,R.color.black));
 
@@ -147,13 +163,13 @@ public class MultiPlayerOffline extends AppCompatActivity {
 
                                                 int NoOfNewBox = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
                                                 if (NoOfNewBox == 0) {
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(0);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(unhighlightedBoxes.get(game.getCurrentPlayer()));
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(MultiPlayerOffline.this,R.color.grey));
 
                                                     game.nextTurn();
 
-                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
+                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(highlightedBoxes.get(game.getCurrentPlayer()   ));
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(MultiPlayerOffline.this,R.color.black));
 //                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);

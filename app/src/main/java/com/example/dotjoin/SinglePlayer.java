@@ -38,6 +38,7 @@ public class SinglePlayer extends AppCompatActivity {
     private Vector<TextView> scoreViewVector;
     private CountDownTimer timer;
     private MutableLiveData<Integer>lastEdgeUpdated;
+    private Vector<Integer>highlightedBoxes,unhighlightedBoxes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) throws RuntimeException {
@@ -51,6 +52,16 @@ public class SinglePlayer extends AppCompatActivity {
         boardImage=findViewById(R.id.boardImage);
         rootLayout=findViewById(R.id.constraint);
         view =findViewById(R.id.view);
+
+        highlightedBoxes=new Vector<>();
+        unhighlightedBoxes=new Vector<>();
+
+        highlightedBoxes.add(R.drawable.highlighted_color_box_blue);
+        highlightedBoxes.add(R.drawable.highlighted_color_box_red);
+
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_blue);
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_red);
+
 
         //Getting ViewTreeObserver of the board Image
         ViewTreeObserver vto = boardImage.getViewTreeObserver();
@@ -104,12 +115,14 @@ public class SinglePlayer extends AppCompatActivity {
                                 //Setting params for corner text Views that display score
                                 scoreViewVector.set(0,(TextView) findViewById(R.id.player1));
                                 scoreViewVector.elementAt(0).setText(game.players.get(0).getName()+" - "+game.players.get(0).getScore());
+                                scoreViewVector.elementAt(0).setBackgroundResource(unhighlightedBoxes.get(0));
                                 scoreViewVector.set(1,(TextView) findViewById(R.id.computer_player));
                                 scoreViewVector.elementAt(1).setText(game.players.get(1).getName()+" - "+game.players.get(1).getScore());
+                                scoreViewVector.elementAt(1).setBackgroundResource(unhighlightedBoxes.get(1));
 
 
                                 //Highlighting the first Player TextView
-                                scoreViewVector.elementAt(0).setBackgroundResource(R.drawable.border);
+                                scoreViewVector.elementAt(0).setBackgroundResource(highlightedBoxes.get(0));
                                 scoreViewVector.elementAt(0).setTypeface(Typeface.DEFAULT_BOLD);
                                 scoreViewVector.elementAt(0).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.black));
 
@@ -137,6 +150,7 @@ public class SinglePlayer extends AppCompatActivity {
                                             });
                                         }
                                         else if(game.getCurrentPlayer()==1){
+                                            view.setEnabled(false);
                                             timer = new CountDownTimer(500,100) {
                                                 @Override
                                                 public void onTick(long millisUntilFinished) {
@@ -148,6 +162,7 @@ public class SinglePlayer extends AppCompatActivity {
                                                     Log.d("checkk", "Timer Finished, Starting computers turn");
                                                     BoardHelperForAI b = new BoardHelperForAI(game.board);
                                                     int computerEdgeNo;
+                                                    view.setEnabled(true);
                                                     if (difficultyLevel == 1)
                                                         computerEdgeNo = b.giveNextEdgeNoEasy();
                                                     else {
@@ -234,13 +249,13 @@ public class SinglePlayer extends AppCompatActivity {
         int NoOfNewBox = game.board.isBoxCompleted(game.lastEdgeUpdated).size();
         if (NoOfNewBox == 0) {
             Log.d("checkk","no boxes made, Changing the turn");
-            scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(0);
+            scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(unhighlightedBoxes.get(game.getCurrentPlayer()));
             scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT);
             scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.grey));
 
             game.nextTurn();
 
-            scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
+            scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(highlightedBoxes.get(game.getCurrentPlayer()));
             scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
             scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(SinglePlayer.this,R.color.black));
         } else {

@@ -62,7 +62,8 @@ public class OnlineGamePlay extends AppCompatActivity {
     private AlertDialog alertDialog;
     private ValueEventListener mainValueEventListener,firstValueEventListener;
     private ImageButton chatButton;
-
+    private ImageView redDot;
+    private Vector<Integer>highlightedBoxes,unhighlightedBoxes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +108,21 @@ public class OnlineGamePlay extends AppCompatActivity {
         boardImage=findViewById(R.id.online_boardImage);
         rootLayout=findViewById(R.id.online_constraint);
         view =findViewById(R.id.online_view);
+        redDot=findViewById(R.id.red_dot);
+
+        highlightedBoxes=new Vector<>();
+        unhighlightedBoxes=new Vector<>();
+
+        highlightedBoxes.add(R.drawable.highlighted_color_box_blue);
+        highlightedBoxes.add(R.drawable.highlighted_color_box_red);
+        highlightedBoxes.add(R.drawable.highlighted_color_box_green);
+        highlightedBoxes.add(R.drawable.highlighted_color_box_yellow);
+
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_blue);
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_red);
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_green);
+        unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_yellow);
+
 
         //Getting ViewTreeObserver of the board Image
         ViewTreeObserver vto = boardImage.getViewTreeObserver();
@@ -172,10 +188,11 @@ public class OnlineGamePlay extends AppCompatActivity {
                                 }
                                 progressBars.elementAt(i).setVisibility(View.VISIBLE);
                                 scoreViewVector.elementAt(i).setText(game.players.get(i).getName() + " - " + game.players.get(i).getScore());
+                                scoreViewVector.elementAt(i).setBackgroundResource(unhighlightedBoxes.get(i));
                             }
 
                             //Highlighting the first Player TextView
-                            scoreViewVector.elementAt(0).setBackgroundResource(R.drawable.border);
+                            scoreViewVector.elementAt(0).setBackgroundResource(highlightedBoxes.get(0));
                             scoreViewVector.elementAt(0).setTypeface(Typeface.DEFAULT_BOLD);
                             scoreViewVector.elementAt(0).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.black));
 
@@ -230,6 +247,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                         startActivity(chatIntent);
                     }
                 });
+
 
 
 
@@ -327,12 +345,12 @@ public class OnlineGamePlay extends AppCompatActivity {
                         int previousActivePlayer=previousActiveUser(activeGame.getCurrentPlayer());
 
                         Log.d("checkk","highlighting current player");
-                        scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
+                        scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setBackgroundResource(highlightedBoxes.get(activeGame.getCurrentPlayer()));
                         scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
                         scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.black));
 
                         Log.d("checkk","unHighlighting previous player");
-                        scoreViewVector.elementAt(previousActivePlayer).setBackgroundResource(0);
+                        scoreViewVector.elementAt(previousActivePlayer).setBackgroundResource(unhighlightedBoxes.get(previousActivePlayer));
                         scoreViewVector.elementAt(previousActivePlayer).setTypeface(Typeface.DEFAULT);
                         scoreViewVector.elementAt(previousActivePlayer).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.grey));
 
@@ -383,6 +401,21 @@ public class OnlineGamePlay extends AppCompatActivity {
             }
         });
 
+        //For the Notification of new message
+        mDatabase.child("Rooms").child(roomId).child("Chats").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChildren())
+                    redDot.setVisibility(View.VISIBLE);
+                else
+                    redDot.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
     }
 
     @Override
@@ -401,7 +434,14 @@ public class OnlineGamePlay extends AppCompatActivity {
         }
 //        mainBoard=null;
     }
-//
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        redDot.setVisibility(View.INVISIBLE);
+    }
+
+    //
 //    @Override
 //    protected void onStop() {
 //        super.onStop();
@@ -503,46 +543,46 @@ public class OnlineGamePlay extends AppCompatActivity {
         builder.setView(textView);
 
         //Replay Button
-        builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.d("checkk","Click on Replay detected");
-                //Updating the player No
-                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d("checkk","OnlineGamePlay Replay button onDataChange Called");
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
-                        ArrayList<Player>players=dataSnapshot.getValue(t);
-                        for(int i=0;i<players.size();i++){
-                            if(playerNo==players.get(i).getPlayerNumber()){
-                                playerNo=i;
-                                players.get(i).setPlayerNumber(i);
-                            }
-                        }
-                        mDatabase.child("Rooms").child(roomId).child("players").setValue(players).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Intent intent = new Intent(OnlineGamePlay.this, WaitingPlace.class);
-                                intent.putExtra("RoomId", roomId);
-                                intent.putExtra("PlayerNo", playerNo);
-                                finish();
-                                Log.d("checkk","Starting Waiting Activity");
-                                startActivity(intent);
-                                Log.d("checkk","Finishing OnlineGamePlay Activity");
+//        builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                Log.d("checkk","Click on Replay detected");
+//                //Updating the player No
+//                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        Log.d("checkk","OnlineGamePlay Replay button onDataChange Called");
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+//                        ArrayList<Player>players=dataSnapshot.getValue(t);
+//                        for(int i=0;i<players.size();i++){
+//                            if(playerNo==players.get(i).getPlayerNumber()){
+//                                playerNo=i;
+//                                players.get(i).setPlayerNumber(i);
+//                            }
+//                        }
+//                        mDatabase.child("Rooms").child(roomId).child("players").setValue(players).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<Void> task) {
+//                                Intent intent = new Intent(OnlineGamePlay.this, WaitingPlace.class);
+//                                intent.putExtra("RoomId", roomId);
+//                                intent.putExtra("PlayerNo", playerNo);
 //                                finish();
-                            }
-                        });
-
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        });
+//                                Log.d("checkk","Starting Waiting Activity");
+//                                startActivity(intent);
+//                                Log.d("checkk","Finishing OnlineGamePlay Activity");
+////                                finish();
+//                            }
+//                        });
+//
+//                    }
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//            }
+//        });
 
         //Home Button
         builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
