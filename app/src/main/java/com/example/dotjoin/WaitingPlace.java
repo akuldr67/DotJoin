@@ -214,6 +214,7 @@ public class WaitingPlace extends AppCompatActivity {
                                 intent.putExtra("RoomId", roomId);
                                 intent.putExtra("PlayerNo", playerNo);
                                 Log.d("checkk","finishing Waiting Place");
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 finish();
                                 Log.d("checkk","Starting Online GamePlay");
                                 startActivity(intent);

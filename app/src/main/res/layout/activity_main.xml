@@ -8,6 +8,18 @@
     tools:context=".MainActivity"
     >
 
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/LL2"
+        app:srcCompat="@drawable/ic_settings_black_24dp"
+        android:onClick="showPopupMenu"
+        />
+
     <LinearLayout
         android:id="@+id/LL2"
         android:layout_width="match_parent"

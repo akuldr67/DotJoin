@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/changeName"
+        android:title="Change Name"/>
+
+    <item android:id="@+id/AboutGame"
+        android:title="About Game"/>
+
+    <item android:id="@+id/AboutUs"
+        android:title="About Developers"/>
+
+
+</menu>

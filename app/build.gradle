@@ -42,5 +42,4 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha03'
 
 
-
 }

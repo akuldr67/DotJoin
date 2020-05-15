@@ -8,16 +8,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
     //Firebase
     private DatabaseReference mDatabaseRef;
 
@@ -118,5 +120,37 @@ public class MainActivity extends AppCompatActivity {
 //            myEdit.apply();
 //        }
 
+    }
+
+
+    public void showPopupMenu(View view){
+        PopupMenu popUp = new PopupMenu(this, view);
+        popUp.setOnMenuItemClickListener(this);
+        popUp.inflate(R.menu.popup_menu);
+        popUp.show();
+    }
+
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.changeName:
+                Intent changeNameIntent=new Intent(MainActivity.this,ChangeName.class);
+                startActivity(changeNameIntent);
+                return true;
+
+            case R.id.AboutGame:
+                Intent abouGameIntent=new Intent(MainActivity.this,aboutGame.class);
+                startActivity(abouGameIntent);
+                return true;
+
+            case R.id.AboutUs:
+                Intent aboutUsIntent=new Intent(MainActivity.this,aboutUs.class);
+                startActivity(aboutUsIntent);
+                return true;
+
+            default:
+                return false;
+        }
     }
 }
