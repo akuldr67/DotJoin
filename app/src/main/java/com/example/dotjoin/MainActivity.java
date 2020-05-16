@@ -90,7 +90,10 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if(input.getText().toString().equals("")){
-                        Toast.makeText(getApplicationContext(),"Please Enter Your Name",Toast.LENGTH_LONG);
+                        Toast.makeText(getApplicationContext(),"Please Enter Your Name",Toast.LENGTH_LONG).show();
+                    }
+                    else if(input.getText().toString().length()>8){
+                        Toast.makeText(getApplicationContext(),"Maximum 8 characters are allowed",Toast.LENGTH_LONG).show();
                     }
                     else{
                         myEdit=mSharedPreferences.edit();
