@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +42,7 @@ public class WaitingPlace extends AppCompatActivity {
     private TextView roomIdTextView;
     private ImageButton copyButton;
     private Vector<TextView>playerTextViews;
-    private Vector<Button>playerButtonViews;
+    private Vector<ImageButton>playerButtonViews;
     private static int maxPlayers=4;
     private DatabaseReference mDatabase;
     private ArrayList<Player>players;
@@ -49,6 +50,7 @@ public class WaitingPlace extends AppCompatActivity {
     private int playerNo,boardSize;
     private Button exitRoom,startGame;
     private String roomId;
+    private Vector<ImageView> playerReadyViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +79,18 @@ public class WaitingPlace extends AppCompatActivity {
         playerTextViews.add((TextView)findViewById(R.id.waiting_player3));
         playerTextViews.add((TextView)findViewById(R.id.waiting_player4));
 
-        playerButtonViews = new Vector<Button>();
-        playerButtonViews.add((Button)findViewById(R.id.removePlayer1));
-        playerButtonViews.add((Button)findViewById(R.id.removePlayer2));
-        playerButtonViews.add((Button)findViewById(R.id.removePlayer3));
-        playerButtonViews.add((Button)findViewById(R.id.removePlayer4));
+        playerButtonViews = new Vector<ImageButton>();
+        playerButtonViews.add((ImageButton)findViewById(R.id.removePlayer1));
+        playerButtonViews.add((ImageButton)findViewById(R.id.removePlayer2));
+        playerButtonViews.add((ImageButton)findViewById(R.id.removePlayer3));
+        playerButtonViews.add((ImageButton)findViewById(R.id.removePlayer4));
+
+        playerReadyViews = new Vector<ImageView>();
+        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer1));
+        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer2));
+        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer3));
+        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer4));
+
 
         //Getting firebase Database Reference
         mDatabase= FirebaseDatabase.getInstance().getReference();
@@ -150,18 +159,25 @@ public class WaitingPlace extends AppCompatActivity {
 //                                startActivity(intent);
                             }
 
+                            //setting readyViews invisible initially
+                            for(int i=0;i<4;i++){
+                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+                            }
+
                             for (int i = 0; i < players.size(); i++) {
                                 playerTextViews.elementAt(i).setText(players.get(i).getName());
                                 playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
                                 Log.d("checkk","Checking if player ready or not");
                                 if (players.get(i).getReady() == 1) {
                                     Log.d("checkk","Player found ready, making bold");
-                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
-                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
+//                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
+//                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
+                                    playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
                                 } else if (players.get(i).getReady() == 0) {
                                     Log.d("checkk","Player not ready, making thin text");
-                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.grey));
-                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
+//                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.grey));
+//                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
+                                    playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
                                 }
 
                                 Log.d("checkk","Checking if PlayerNo Changed");
@@ -176,13 +192,14 @@ public class WaitingPlace extends AppCompatActivity {
 
                                 //telling who is host in waiting place
                                 if (room.getHost() == i) {
-                                    playerTextViews.elementAt(i).setText(players.get(i).getName() + " (Host)");
+                                    playerTextViews.elementAt(i).setText(players.get(i).getName() + "  (Host)");
                                 }
                             }
                             //Making TextView invisible for the players who have left
                             for (int i = players.size(); i < 4; i++) {
                                 playerTextViews.elementAt(i).setText("");
                                 playerTextViews.elementAt(i).setVisibility(View.INVISIBLE);
+                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
                             }
 
                             //setting start game visible for host
@@ -304,7 +321,7 @@ public class WaitingPlace extends AppCompatActivity {
                                                  mDatabase.child("Rooms").child(roomId).setValue(room);
                                              }
                                              else {
-                                                 Toast.makeText(WaitingPlace.this,"All Players are not Ready!!!",Toast.LENGTH_LONG).show();
+                                                 Toast.makeText(WaitingPlace.this,"All Players are not Ready!!",Toast.LENGTH_LONG).show();
                                              }
                                          }
 

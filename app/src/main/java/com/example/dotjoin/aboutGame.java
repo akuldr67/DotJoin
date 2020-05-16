@@ -16,11 +16,10 @@ public class aboutGame extends AppCompatActivity {
 
         aboutGame = findViewById(R.id.aboutGameText);
 
-        aboutGame.setText("1. Join dotes to complete squares.\n\n" +
-                "2. Tap between two dots to mark the line between those two dots.\n\n" +
-                "3. More the boxes completed, more the score.\n\n" +
-                "4. Host will not be able to start the game till all plyers are ready. By ready means players should have the game open on their mobile screen\n\n" +
-                "5. In online game, for the first two misses, a random move will be made by the computer for every miss\n\n" +
-                "6. If player does not play his/her turn for the third times, player will be kicked out of the game.\n\n");
+        aboutGame.setText("1. Tap between two dots to mark the line between those two dots.\n\n" +
+                "2. More the boxes completed, more the score.\n\n" +
+                "3. Host will not be able to start the game until all players are ready. Player is called ready if the game is open on player's mobile screen.\n\n" +
+                "4. In online game, for the first two misses, a random move will be made by the computer.\n\n" +
+                "5. If player does not play the turn for the third time, player will be kicked out of the game.\n");
     }
 }

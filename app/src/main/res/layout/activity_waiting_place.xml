@@ -11,23 +11,24 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginRight="24dp"
         android:gravity="center"
         android:orientation="horizontal"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/id_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:fontFamily="sans-serif"
             android:text="Id:"
+            android:textColor="@android:color/darker_gray"
             android:textSize="35sp" />
 
         <TextView
@@ -36,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="Room Id"
+            android:textColor="#F52727"
             android:textSize="35sp" />
 
         <ImageButton
@@ -43,11 +45,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:background="#FFFFFF"
+            android:background="@android:color/transparent"
             android:src="@drawable/copy" />
 
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -58,150 +59,212 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/generalText">
 
-        <LinearLayout
-            android:id="@+id/player1Layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginTop="0dp"
-            >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
 
             <TextView
                 android:id="@+id/waiting_player1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="cursive"
                 android:text="Player1"
+                android:textColor="#4660F4"
+                android:paddingStart="10dp"
                 android:textSize="30sp"
                 android:visibility="invisible"
-                />
-            <Button
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
                 android:id="@+id/removePlayer1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="40dp"
+                android:background="@android:color/transparent"
+                android:enabled="false"
+                android:src="@drawable/ic_delete_24dp"
                 android:text="Remove"
                 android:textSize="20sp"
                 android:visibility="invisible"
-                android:enabled="false"
-                android:layout_marginStart="0dp"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/player2Layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginTop="0dp"
-            >
 
             <TextView
                 android:id="@+id/waiting_player2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="cursive"
+                android:paddingStart="10dp"
                 android:text="Player2"
+                android:textColor="#4660F4"
                 android:textSize="30sp"
                 android:visibility="invisible"
-                />
-            <Button
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player1" />
+
+            <ImageButton
                 android:id="@+id/removePlayer2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="40dp"
+                android:background="@android:color/transparent"
+                android:enabled="false"
+                android:src="@drawable/ic_delete_24dp"
                 android:text="Remove"
                 android:textSize="20sp"
                 android:visibility="invisible"
-                android:enabled="false"
-                android:layout_marginStart="0dp"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player1" />
 
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/player3Layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginTop="0dp"
-            >
 
             <TextView
                 android:id="@+id/waiting_player3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="cursive"
+                android:paddingStart="10dp"
                 android:text="Player3"
+                android:textColor="#4660F4"
                 android:textSize="30sp"
                 android:visibility="invisible"
-                />
-            <Button
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player2" />
+
+            <ImageButton
                 android:id="@+id/removePlayer3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="40dp"
+                android:background="@android:color/transparent"
+                android:enabled="false"
+                android:src="@drawable/ic_delete_24dp"
                 android:text="Remove"
                 android:textSize="20sp"
                 android:visibility="invisible"
-                android:enabled="false"
-                android:layout_marginStart="0dp"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player2" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/player4Layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_marginTop="0dp"
-            >
 
             <TextView
                 android:id="@+id/waiting_player4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="cursive"
+                android:paddingStart="10dp"
                 android:text="Player4"
+                android:textColor="#4660F4"
                 android:textSize="30sp"
                 android:visibility="invisible"
-                />
-            <Button
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player3" />
+
+            <ImageButton
                 android:id="@+id/removePlayer4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="40dp"
+                android:background="@android:color/transparent"
+                android:enabled="false"
+                android:src="@drawable/ic_delete_24dp"
                 android:text="Remove"
                 android:textSize="20sp"
                 android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player3" />
+
+
+            <Button
+                android:id="@+id/start_game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@android:color/transparent"
                 android:enabled="false"
-                android:layout_marginStart="0dp"
-                />
+                android:fontFamily="sans-serif"
+                android:text="Start Game"
+                android:textColor="#247A1D"
+                android:textSize="20sp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player4" />
 
-        </LinearLayout>
-        <Button
-            android:id="@+id/start_game"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="30dp"
-            android:text="Start Game"
-            android:textSize="20sp"
-            android:visibility="invisible"
-            android:enabled="false"/>
+            <Button
+                android:id="@+id/exit_room"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="serif"
+                android:text="Exit Room"
+                android:textSize="20sp"
+                android:background="@android:color/transparent"
+                android:textColor="#E71717"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/start_game" />
 
-        <Button
-            android:id="@+id/exit_room"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:text="Exit Room"
-            android:textSize="20sp" />
+            <ImageView
+                android:id="@+id/readyPlayer1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="30dp"
+                android:visibility="invisible"
+                app:layout_constraintStart_toEndOf="@+id/waiting_player1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_check_24px" />
+
+            <ImageView
+                android:id="@+id/readyPlayer2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="30dp"
+                android:visibility="invisible"
+                app:layout_constraintStart_toEndOf="@+id/waiting_player2"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player1"
+                app:srcCompat="@drawable/ic_check_24px" />
+
+            <ImageView
+                android:id="@+id/readyPlayer3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="30dp"
+                android:visibility="invisible"
+                app:layout_constraintStart_toEndOf="@+id/waiting_player3"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player2"
+                app:srcCompat="@drawable/ic_check_24px" />
+
+            <ImageView
+                android:id="@+id/readyPlayer4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="30dp"
+                android:visibility="invisible"
+                app:layout_constraintStart_toEndOf="@+id/waiting_player4"
+                app:layout_constraintTop_toBottomOf="@+id/waiting_player3"
+                app:srcCompat="@drawable/ic_check_24px" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
@@ -209,10 +272,11 @@
         android:id="@+id/generalText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="serif"
         android:text="Host will start the game"
+        android:textColor="#817F7F"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
