@@ -45,6 +45,17 @@ public class SinglePlayer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_player);
 
+        Intent intent = getIntent();
+        difficultyLevel=intent.getIntExtra("difficulty",-1);
+        if(difficultyLevel==-1){
+            Log.d("checkk","Did not get difficulty");
+        }
+
+        boardSize=intent.getIntExtra("size",-1);
+        if(boardSize==-1){
+            Log.d("checkk","Did not get size");
+        }
+
         lastEdgeUpdated = new MutableLiveData<>();
         lastEdgeUpdated.setValue(-1);
 
@@ -72,30 +83,30 @@ public class SinglePlayer extends AppCompatActivity {
                 boardImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 layoutUtils=new LayoutUtils();
 
-                //Dialog Box that accepts no. of players
-                String[] options = new String[]{"Easy","Hard"};
-
-                final AlertDialog.Builder noOfUsersDialog = new AlertDialog.Builder(SinglePlayer.this);
-                noOfUsersDialog.setTitle("Select difficulty level");
-                noOfUsersDialog.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) difficultyLevel = 1;
-                        else if (which == 1) difficultyLevel = 2;
-
-                        //Dialog Box that accepts board size
-                        CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7"};
-
-                        AlertDialog.Builder sizeDialog = new AlertDialog.Builder(SinglePlayer.this);
-                        sizeDialog.setTitle("Size");
-                        sizeDialog.setItems(sizeOptions, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (which == 0) boardSize = 4;
-                                else if (which == 1) boardSize = 5;
-                                else if (which == 2) boardSize = 6;
-                                else if (which == 3) boardSize = 7;
-                                else if (which == 4) boardSize = 8;
+//                //Dialog Box that accepts no. of players
+//                String[] options = new String[]{"Easy","Hard"};
+//
+//                final AlertDialog.Builder noOfUsersDialog = new AlertDialog.Builder(SinglePlayer.this);
+//                noOfUsersDialog.setTitle("Select difficulty level");
+//                noOfUsersDialog.setItems(options, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        if (which == 0) difficultyLevel = 1;
+//                        else if (which == 1) difficultyLevel = 2;
+//
+//                        //Dialog Box that accepts board size
+//                        CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7"};
+//
+//                        AlertDialog.Builder sizeDialog = new AlertDialog.Builder(SinglePlayer.this);
+//                        sizeDialog.setTitle("Size");
+//                        sizeDialog.setItems(sizeOptions, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                if (which == 0) boardSize = 4;
+//                                else if (which == 1) boardSize = 5;
+//                                else if (which == 2) boardSize = 6;
+//                                else if (which == 3) boardSize = 7;
+//                                else if (which == 4) boardSize = 8;
 
                                 scoreViewVector=new Vector<TextView>();
                                 scoreViewVector.setSize(2);
@@ -225,16 +236,16 @@ public class SinglePlayer extends AppCompatActivity {
 ////                                        return true;
 ////                                    }
 ////                                });
-                            }
-                        });
-                        AlertDialog alertDialog=sizeDialog.create();
-                        alertDialog.setCanceledOnTouchOutside(false);
-                        alertDialog.show();
-                    }
-                });
-                AlertDialog alertDialog = noOfUsersDialog.create();
-                alertDialog.setCanceledOnTouchOutside(false);
-                alertDialog.show();
+//                            }
+//                        });
+//                        AlertDialog alertDialog=sizeDialog.create();
+//                        alertDialog.setCanceledOnTouchOutside(false);
+//                        alertDialog.show();
+//                    }
+//                });
+//                AlertDialog alertDialog = noOfUsersDialog.create();
+//                alertDialog.setCanceledOnTouchOutside(false);
+//                alertDialog.show();
             }
         });
     }
@@ -307,7 +318,7 @@ public class SinglePlayer extends AppCompatActivity {
         builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(SinglePlayer.this, SinglePlayer.class);
+                Intent intent = new Intent(SinglePlayer.this, SinglePlayerDialog.class);
                 startActivity(intent);
                 finish();
             }

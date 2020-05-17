@@ -49,6 +49,17 @@ public class MultiPlayerOffline extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_player_offline);
 
+        Intent intent = getIntent();
+        noOfPlayers=intent.getIntExtra("noOfPlayers",-1);
+        if(noOfPlayers==-1){
+            Log.d("checkk","Did not get noOfPlayers");
+        }
+
+        boardSize=intent.getIntExtra("size",-1);
+        if(boardSize==-1){
+            Log.d("checkk","Did not get size");
+        }
+
         //Finding Layouts
         boardImage=findViewById(R.id.boardImage);
         rootLayout=findViewById(R.id.constraint);
@@ -76,31 +87,31 @@ public class MultiPlayerOffline extends AppCompatActivity {
                 boardImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 layoutUtils=new LayoutUtils();
 
-                //Dialog Box that accepts no. of players
-                CharSequence[] options = new CharSequence[]{"2","3","4"};
-
-                final AlertDialog.Builder noOfUsersDialog = new AlertDialog.Builder(MultiPlayerOffline.this);
-                noOfUsersDialog.setTitle("Number of Players");
-                noOfUsersDialog.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) noOfPlayers = 2;
-                        else if (which == 1) noOfPlayers = 3;
-                        else if (which == 2) noOfPlayers = 4;
-
-                        //Dialog Box that accepts board size
-                        CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7"};
-
-                        AlertDialog.Builder sizeDialog = new AlertDialog.Builder(MultiPlayerOffline.this);
-                        sizeDialog.setTitle("Size");
-                        sizeDialog.setItems(sizeOptions, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (which == 0) boardSize = 4;
-                                else if (which == 1) boardSize = 5;
-                                else if (which == 2) boardSize = 6;
-                                else if (which == 3) boardSize = 7;
-                                else if (which == 4) boardSize = 8;
+//                //Dialog Box that accepts no. of players
+//                CharSequence[] options = new CharSequence[]{"2","3","4"};
+//
+//                final AlertDialog.Builder noOfUsersDialog = new AlertDialog.Builder(MultiPlayerOffline.this);
+//                noOfUsersDialog.setTitle("Number of Players");
+//                noOfUsersDialog.setItems(options, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        if (which == 0) noOfPlayers = 2;
+//                        else if (which == 1) noOfPlayers = 3;
+//                        else if (which == 2) noOfPlayers = 4;
+//
+//                        //Dialog Box that accepts board size
+//                        CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7"};
+//
+//                        AlertDialog.Builder sizeDialog = new AlertDialog.Builder(MultiPlayerOffline.this);
+//                        sizeDialog.setTitle("Size");
+//                        sizeDialog.setItems(sizeOptions, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                if (which == 0) boardSize = 4;
+//                                else if (which == 1) boardSize = 5;
+//                                else if (which == 2) boardSize = 6;
+//                                else if (which == 3) boardSize = 7;
+//                                else if (which == 4) boardSize = 8;
 
                                 scoreViewVector=new Vector<TextView>();
                                 scoreViewVector.setSize(noOfPlayers);
@@ -207,7 +218,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {
-                                                            Intent intent = new Intent(MultiPlayerOffline.this, MultiPlayerOffline.class);
+                                                            Intent intent = new Intent(MultiPlayerOffline.this, MultiPlayerOfflineDialog.class);
                                                             startActivity(intent);
                                                             finish();
                                                         }
@@ -234,15 +245,15 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                 });
                             }
                         });
-                        AlertDialog alertDialog=sizeDialog.create();
-                        alertDialog.setCanceledOnTouchOutside(false);
-                        alertDialog.show();
-                    }
-                });
-                AlertDialog alertDialog = noOfUsersDialog.create();
-                alertDialog.setCanceledOnTouchOutside(false);
-                alertDialog.show();
-            }
-        });
+//                        AlertDialog alertDialog=sizeDialog.create();
+//                        alertDialog.setCanceledOnTouchOutside(false);
+//                        alertDialog.show();
+//                    }
+//                });
+//                AlertDialog alertDialog = noOfUsersDialog.create();
+//                alertDialog.setCanceledOnTouchOutside(false);
+//                alertDialog.show();
+//            }
+//        });
     }
 }

@@ -13,12 +13,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".aboutUs"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".aboutGame"
-            android:screenOrientation="portrait"
-            />
+        <activity android:name=".MultiPlayerOfflineDialog"
+            android:theme="@style/dialog"></activity>
+        <activity
+            android:name=".SinglePlayerDialog"
+            android:theme="@style/dialog" />
+        <activity
+            android:name=".aboutUs"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".aboutGame"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ChangeName"
             android:screenOrientation="portrait" />

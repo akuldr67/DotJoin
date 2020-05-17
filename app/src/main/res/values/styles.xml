@@ -14,5 +14,11 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
+    
+    <style name="dialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:background">@drawable/dialog_background</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
 </resources>
