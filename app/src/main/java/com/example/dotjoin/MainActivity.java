@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +17,19 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
     //Firebase
@@ -35,10 +47,51 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     String mCurrentUserName;
 //    private ImageButton chatButton;
 
+    private AdView bannerAdView;
+
+    private InterstitialAd mInterstitialAd;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
+
+//        //**** ad code starts ****
+//        //initializing mobile ad sdk
+//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+//            @Override
+//            public void onInitializationComplete(InitializationStatus initializationStatus) {
+//            }
+//        });
+
+//        //****** showing banner ad start *******
+//        //Loading banner ad in test device
+//        List<String> testDeviceIds = Arrays.asList("315EA26B97DB5CBDE5501CB99E69E32A");
+//        bannerAdView = findViewById(R.id.bannerAdMainActivity);
+//
+//        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+//        MobileAds.setRequestConfiguration(configuration);
+//
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        bannerAdView.loadAd(adRequest);
+//
+        //**** showing banner ad end ******
+
+
+        //**** showing interstitial ad start *****
+//        mInterstitialAd = new InterstitialAd(this);
+//        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+//        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        //*** showing interstitial ad end *****
+
+
+
+
 
         mDatabaseRef= FirebaseDatabase.getInstance().getReference();
         mDatabaseRef.child("Rooms");
@@ -56,6 +109,19 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             public void onClick(View v) {
                 Intent intent=new Intent(MainActivity.this,SinglePlayerDialog.class);
                 startActivity(intent);
+
+//                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+//                if(mInterstitialAd.isLoaded()){
+//                    mInterstitialAd.show();
+//                }
+//                else{
+//                    Log.d("check"," interstitial ad wasn't loaded");
+//                    Intent intent=new Intent(MainActivity.this,SinglePlayerDialog.class);
+//                    startActivity(intent);
+//                }
+//                interstitialAdEvents();
+
             }
         });
 
@@ -156,4 +222,19 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
                 return false;
         }
     }
+
+
+//    private void interstitialAdEvents(){
+//        //listener for single player start interstitial ad
+//        mInterstitialAd.setAdListener(new AdListener(){
+//
+//            @Override
+//            public void onAdClosed() {
+//                Intent intent=new Intent(MainActivity.this,SinglePlayerDialog.class);
+//                startActivity(intent);
+//            }
+//
+//        });
+//    }
+
 }
