@@ -2,10 +2,10 @@ package com.example.dotjoin;
 
 public class Player {
     private String name,deviceToken;
-    private int score,color,playerNumber,ready,active;
+    private int score,color,playerNumber,ready,active,noOfChancesMissed;
 
 
-    public Player(String name, int color, int score,int playerNumber,String deviceToken,int ready,int active) {
+    public Player(String name, int color, int score,int playerNumber,String deviceToken,int ready,int active,int noOfChancesMissed) {
         this.name = name;
         this.color = color;
         this.score = score;
@@ -13,12 +13,17 @@ public class Player {
         this.deviceToken=deviceToken;
         this.ready=ready;
         this.active=active;
+        this.noOfChancesMissed=noOfChancesMissed;
     }
 
     public Player() {
     }
 
     //Getters
+
+    public int getNoOfChancesMissed() {
+        return noOfChancesMissed;
+    }
 
     public int getActive() {
         return active;
@@ -47,6 +52,10 @@ public class Player {
     public int getPlayerNumber() { return playerNumber; }
 
     //Setters
+
+    public void setNoOfChancesMissed(int noOfChancesMissed) {
+        this.noOfChancesMissed = noOfChancesMissed;
+    }
 
     public void setActive(int active) {
         this.active = active;

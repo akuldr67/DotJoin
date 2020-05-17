@@ -123,7 +123,7 @@ public class MultiPlayerOnline extends AppCompatActivity {
                                             final String name = mSharedPreferences.getString("UserName", "");
                                             //Adding the user to the server
 
-                                                    Player player = new Player(name, 0, 0, noOfPlayers,instanceIdResult.getToken(),1,1);
+                                                    Player player = new Player(name, 0, 0, noOfPlayers,instanceIdResult.getToken(),1,1,0);
                                                     ArrayList<Player> players = room.getPlayers();
                                                     players.add(player);
                                                     room.setPlayers(players);

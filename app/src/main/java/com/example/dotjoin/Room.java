@@ -33,7 +33,7 @@ public class Room {
         this.gameStartTime = null;
         this.roomChat = new Chat();
         players=new ArrayList<>();
-        Player player = new Player(name,0,0,0,deviceToken,0,1);
+        Player player = new Player(name,0,0,0,deviceToken,0,1,0);
         players.add(player);
     }
 

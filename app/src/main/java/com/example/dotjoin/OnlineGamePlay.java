@@ -64,6 +64,8 @@ public class OnlineGamePlay extends AppCompatActivity {
     private ImageButton chatButton;
     private ImageView redDot;
     private Vector<Integer>highlightedBoxes,unhighlightedBoxes;
+    private Vector<Vector<ImageView> >redDots;
+    private Vector<Vector<ImageView> >greenDots;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +114,8 @@ public class OnlineGamePlay extends AppCompatActivity {
 
         highlightedBoxes=new Vector<>();
         unhighlightedBoxes=new Vector<>();
+        redDots=new Vector<>();
+        greenDots=new Vector<>();
 
         highlightedBoxes.add(R.drawable.highlighted_color_box_blue);
         highlightedBoxes.add(R.drawable.highlighted_color_box_red);
@@ -123,6 +127,50 @@ public class OnlineGamePlay extends AppCompatActivity {
         unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_green);
         unhighlightedBoxes.add(R.drawable.unhighlighted_color_box_yellow);
 
+        Vector<ImageView> v1=new Vector<>();
+        v1.add((ImageView) findViewById(R.id.player1_green_dot_1));
+        v1.add((ImageView) findViewById(R.id.player1_green_dot_2));
+        v1.add((ImageView) findViewById(R.id.player1_green_dot_3));
+
+        Vector<ImageView> v2=new Vector<>();
+        v2.add((ImageView) findViewById(R.id.player2_green_dot_1));
+        v2.add((ImageView) findViewById(R.id.player2_green_dot_2));
+        v2.add((ImageView) findViewById(R.id.player2_green_dot_3));
+
+        Vector<ImageView> v3=new Vector<>();
+        v3.add((ImageView) findViewById(R.id.player3_green_dot_1));
+        v3.add((ImageView) findViewById(R.id.player3_green_dot_2));
+        v3.add((ImageView) findViewById(R.id.player3_green_dot_3));
+
+        Vector<ImageView> v4=new Vector<>();
+        v4.add((ImageView) findViewById(R.id.player4_green_dot_1));
+        v4.add((ImageView) findViewById(R.id.player4_green_dot_2));
+        v4.add((ImageView) findViewById(R.id.player4_green_dot_3));
+
+        greenDots.add(v1);greenDots.add(v2);greenDots.add(v3);greenDots.add(v4);
+
+
+        Vector<ImageView> p1=new Vector<>();
+        p1.add((ImageView) findViewById(R.id.player1_red_dot_1));
+        p1.add((ImageView) findViewById(R.id.player1_red_dot_2));
+        p1.add((ImageView) findViewById(R.id.player1_red_dot_3));
+
+        Vector<ImageView> p2=new Vector<>();
+        p2.add((ImageView) findViewById(R.id.player2_red_dot_1));
+        p2.add((ImageView) findViewById(R.id.player2_red_dot_2));
+        p2.add((ImageView) findViewById(R.id.player2_red_dot_3));
+
+        Vector<ImageView> p3=new Vector<>();
+        p3.add((ImageView) findViewById(R.id.player3_red_dot_1));
+        p3.add((ImageView) findViewById(R.id.player3_red_dot_2));
+        p3.add((ImageView) findViewById(R.id.player3_red_dot_3));
+
+        Vector<ImageView> p4=new Vector<>();
+        p4.add((ImageView) findViewById(R.id.player4_red_dot_1));
+        p4.add((ImageView) findViewById(R.id.player4_red_dot_2));
+        p4.add((ImageView) findViewById(R.id.player4_red_dot_3));
+
+        redDots.add(p1);redDots.add(p2);redDots.add(p3);redDots.add(p4);
 
         //Getting ViewTreeObserver of the board Image
         ViewTreeObserver vto = boardImage.getViewTreeObserver();
@@ -189,6 +237,10 @@ public class OnlineGamePlay extends AppCompatActivity {
                                 progressBars.elementAt(i).setVisibility(View.VISIBLE);
                                 scoreViewVector.elementAt(i).setText(game.players.get(i).getName() + " - " + game.players.get(i).getScore());
                                 scoreViewVector.elementAt(i).setBackgroundResource(unhighlightedBoxes.get(i));
+
+                                for(int j=0;j<3;j++){
+                                    greenDots.get(i).get(j).setVisibility(View.VISIBLE);
+                                }
                             }
 
                             //Highlighting the first Player TextView
@@ -354,6 +406,8 @@ public class OnlineGamePlay extends AppCompatActivity {
                         scoreViewVector.elementAt(previousActivePlayer).setTypeface(Typeface.DEFAULT);
                         scoreViewVector.elementAt(previousActivePlayer).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.grey));
 
+                        drawChancesMissed(previousActivePlayer,activeGame.getPlayers().get(previousActivePlayer).getNoOfChancesMissed());
+
                         if (activeGame.gameCompleted()) {
                             Log.d("checkk","Ending the game because all boxes are completed");
                            endGame();
@@ -432,7 +486,6 @@ public class OnlineGamePlay extends AppCompatActivity {
             alertDialog.dismiss();
             alertDialog=null;
         }
-//        mainBoard=null;
     }
 
     @Override
@@ -441,17 +494,6 @@ public class OnlineGamePlay extends AppCompatActivity {
         redDot.setVisibility(View.INVISIBLE);
     }
 
-    //
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        Log.d("checkk","onStop Called");
-//        if(alertDialog!=null){
-//            Log.d("checkk","dialog box was found not null hence dismissing the dialog box");
-//            alertDialog.dismiss();
-//            alertDialog=null;
-//        }
-//    }
 
     private int randomEdge(ArrayList<Boolean>edges){
         Vector<Integer> possibleNos=new Vector<>();
@@ -468,6 +510,8 @@ public class OnlineGamePlay extends AppCompatActivity {
             activeGame.setLastEdgeUpdated(edgeNo);
             Log.d("checkk","Setting that edge true");
             activeBoard.makeMoveAt(edgeNo);
+            Log.d("checkk","Setting Chances missed = "+noOfChancesMissed);
+            activeGame.getPlayers().get(activeGame.getCurrentPlayer()).setNoOfChancesMissed(noOfChancesMissed);
             int NoOfNewBox = activeBoard.isBoxCompleted(activeGame.lastEdgeUpdated).size();
             if (NoOfNewBox == 0) {
                 Log.d("checkk","no new boxes made");
@@ -672,4 +716,43 @@ public class OnlineGamePlay extends AppCompatActivity {
         return ans;
     }
 
+    private void drawChancesMissed(int pNo,int missedChances){
+        if(missedChances==0){
+            greenDots.get(pNo).get(0).setVisibility(View.VISIBLE);
+            greenDots.get(pNo).get(1).setVisibility(View.VISIBLE);
+            greenDots.get(pNo).get(2).setVisibility(View.VISIBLE);
+
+            redDots.get(pNo).get(0).setVisibility(View.INVISIBLE);
+            redDots.get(pNo).get(1).setVisibility(View.INVISIBLE);
+            redDots.get(pNo).get(2).setVisibility(View.INVISIBLE);
+        }
+        else if(missedChances==1){
+            greenDots.get(pNo).get(0).setVisibility(View.INVISIBLE);
+            greenDots.get(pNo).get(1).setVisibility(View.VISIBLE);
+            greenDots.get(pNo).get(2).setVisibility(View.VISIBLE);
+
+            redDots.get(pNo).get(0).setVisibility(View.VISIBLE);
+            redDots.get(pNo).get(1).setVisibility(View.INVISIBLE);
+            redDots.get(pNo).get(2).setVisibility(View.INVISIBLE);
+        }
+        else if(missedChances==2){
+            greenDots.get(pNo).get(0).setVisibility(View.INVISIBLE);
+            greenDots.get(pNo).get(1).setVisibility(View.INVISIBLE);
+            greenDots.get(pNo).get(2).setVisibility(View.VISIBLE);
+
+            redDots.get(pNo).get(0).setVisibility(View.VISIBLE);
+            redDots.get(pNo).get(1).setVisibility(View.VISIBLE);
+            redDots.get(pNo).get(2).setVisibility(View.INVISIBLE);
+        }
+        else{
+            greenDots.get(pNo).get(0).setVisibility(View.INVISIBLE);
+            greenDots.get(pNo).get(1).setVisibility(View.INVISIBLE);
+            greenDots.get(pNo).get(2).setVisibility(View.INVISIBLE);
+
+            redDots.get(pNo).get(0).setVisibility(View.VISIBLE);
+            redDots.get(pNo).get(1).setVisibility(View.VISIBLE);
+            redDots.get(pNo).get(2).setVisibility(View.VISIBLE);
+        }
+
+    }
 }

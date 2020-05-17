@@ -120,8 +120,8 @@ public class SinglePlayer extends AppCompatActivity {
                                 board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
                                 game = new Game(0, 2,  board,new ArrayList<Player>());
 
-                                game.players.add(new Player("You",R.drawable.colour_box_blue,0,0,"",0,1));
-                                game.players.add(new Player("Computer",R.drawable.colour_box_red,0,1,"",0,1));
+                                game.players.add(new Player("You",R.drawable.colour_box_blue,0,0,"",0,1,0));
+                                game.players.add(new Player("Computer",R.drawable.colour_box_red,0,1,"",0,1,0));
 
                                 //Setting params for corner text Views that display score
                                 scoreViewVector.set(0,(TextView) findViewById(R.id.player1));
