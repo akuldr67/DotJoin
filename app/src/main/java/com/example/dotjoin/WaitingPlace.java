@@ -171,7 +171,7 @@ public class WaitingPlace extends AppCompatActivity {
                                 if (players.get(i).getReady() == 1) {
                                     Log.d("checkk","Player found ready, making bold");
 //                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
-//                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
+//                                    playerTe  xtViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
                                     playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
                                 } else if (players.get(i).getReady() == 0) {
                                     Log.d("checkk","Player not ready, making thin text");

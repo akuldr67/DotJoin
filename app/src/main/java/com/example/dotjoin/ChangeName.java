@@ -45,6 +45,9 @@ public class ChangeName extends AppCompatActivity {
                 if(newNameWritten.equals("")){
                     Toast.makeText(getApplicationContext(),"Please enter something",Toast.LENGTH_SHORT).show();
                 }
+                else if(newNameWritten.length()>8){
+                    Toast.makeText(getApplicationContext(),"Maximum 8 characters are allowed",Toast.LENGTH_LONG).show();
+                }
                 else{
                     newName.setText("");
                     myEdit=mSharedPreferences.edit();
