@@ -116,7 +116,7 @@ public class SinglePlayer extends AppCompatActivity {
                                 imageWidth = boardImage.getWidth();
 
                                 //Initializing Board, Game, and layoutUtils
-                                layoutUtils.drawBoard(boardSize, boardSize, SinglePlayer.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2));
+                                layoutUtils.drawBoard(boardSize, boardSize, SinglePlayer.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2),-1);
                                 board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
                                 game = new Game(0, 2,  board,new ArrayList<Player>());
 

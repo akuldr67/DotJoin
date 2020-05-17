@@ -203,7 +203,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                             game = room.getGame();
                             board = game.getBoard();
                             boardSize = board.getRows();
-                            layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2));
+                            layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2),-1);
                             mainBoard = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
                             Log.d("checkkk","mainBoard initialized with boardSize "+boardSize+" mainBoard vala total Edges "+mainBoard.getTotalEdges());
                             //Getting Last updated Edge

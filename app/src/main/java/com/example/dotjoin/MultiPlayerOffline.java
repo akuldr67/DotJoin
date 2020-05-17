@@ -121,7 +121,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                 imageWidth = boardImage.getWidth();
 
                                 //Initializing Board, Game, and layoutUtils
-                                layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2));
+                                layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2),0);
                                 board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
                                 ArrayList<Player> players = new ArrayList<Player>();
 //                                players.setSize(noOfPlayers);
@@ -184,6 +184,8 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(MultiPlayerOffline.this,R.color.black));
 //                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
+
+                                                    layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2),game.getCurrentPlayer());
                                                 } else {
                                                     ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
                                                     for (int i = 0; i < NoOfNewBox; i++) {

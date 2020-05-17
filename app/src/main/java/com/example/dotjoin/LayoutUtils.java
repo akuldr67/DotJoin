@@ -1,6 +1,7 @@
 package com.example.dotjoin;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.widget.ImageView;
 
@@ -27,13 +28,17 @@ public class LayoutUtils {
     public LayoutUtils() {
     }
 
-    public void drawBoard(int rows, int columns, Context context, ConstraintLayout root, float width, float topLeftX, float topLeftY){
+    public void drawBoard(int rows, int columns, Context context, ConstraintLayout root, float width, float topLeftX, float topLeftY, int playerNumber){
         int i,j;
         for(i=0;i<rows;i++){
             for(j=0;j<columns;j++){
                 ImageView dotImage = new ImageView(context);
                 dotImage.setTranslationZ(3f);
-                dotImage.setImageResource(R.drawable.dot);
+                if(playerNumber == 0) dotImage.setImageResource(R.drawable.dot1);
+                else if(playerNumber == 1) dotImage.setImageResource(R.drawable.dot2);
+                else if(playerNumber == 2) dotImage.setImageResource(R.drawable.dot3);
+                else if(playerNumber == 3) dotImage.setImageResource(R.drawable.dot4);
+                else dotImage.setImageResource(R.drawable.dot);
                 ConstraintLayout.LayoutParams params = new ConstraintLayout.LayoutParams((int)getDiaOfDot(width,columns),(int)getDiaOfDot(width,columns));
                 dotImage.setX(topLeftX+getXCoordinate(width,columns,j));
                 dotImage.setY(topLeftY+getYCoordinate(width,columns,i));
