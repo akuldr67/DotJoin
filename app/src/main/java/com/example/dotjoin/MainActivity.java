@@ -236,4 +236,10 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 //        });
 //    }
 
+
+    @Override
+    public void onBackPressed() {
+        Intent exitGameIntent = new Intent(MainActivity.this, ExitGameDialog.class);
+        startActivity(exitGameIntent);
+    }
 }
