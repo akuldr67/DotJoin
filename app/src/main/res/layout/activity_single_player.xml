@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SinglePlayer"
-    android:id="@+id/constraint">
+    android:id="@+id/constraint"
+    android:background="@drawable/game_background"
+    >
 
     <ImageView
         android:id="@+id/boardImage"

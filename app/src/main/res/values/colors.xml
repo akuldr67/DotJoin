@@ -12,4 +12,6 @@
     <color name="gradient1">#370057</color>
     <color name="gradient2">#000000</color>
     <color name="highlighter">#fff6d4</color>
+    <color name="gameBackground1">#ADAEB4</color>
+    <color name="gameBackground2">#2F1955</color>
 </resources>

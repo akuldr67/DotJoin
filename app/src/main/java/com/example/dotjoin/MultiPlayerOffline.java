@@ -61,21 +61,21 @@ public class MultiPlayerOffline extends AppCompatActivity {
         setContentView(R.layout.activity_multi_player_offline);
 
 
-//        //**** banner ad ****
-//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-//            @Override
-//            public void onInitializationComplete(InitializationStatus initializationStatus) {
-//            }
-//        });
-//
-//        List<String> testDeviceIds = Arrays.asList("315EA26B97DB5CBDE5501CB99E69E32A");
-//        bannerAdView = findViewById(R.id.bannerAdMultiPlayerOffline);
-//
-//        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-//        MobileAds.setRequestConfiguration(configuration);
-//
-//        AdRequest adRequest = new AdRequest.Builder().build();
-//        bannerAdView.loadAd(adRequest);
+        //**** banner ad ****
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        List<String> testDeviceIds = Arrays.asList("315EA26B97DB5CBDE5501CB99E69E32A");
+        bannerAdView = findViewById(R.id.bannerAdMultiPlayerOffline);
+
+        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+        MobileAds.setRequestConfiguration(configuration);
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        bannerAdView.loadAd(adRequest);
 
 
 
