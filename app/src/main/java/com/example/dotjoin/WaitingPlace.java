@@ -22,6 +22,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +41,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 public class WaitingPlace extends AppCompatActivity {
@@ -52,11 +60,34 @@ public class WaitingPlace extends AppCompatActivity {
     private String roomId;
     private Vector<ImageView> playerReadyViews;
 
+    private AdView bannerAdView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_place);
         Log.d("checkk","Starting OnCreate of WaitingPlace");
+
+
+
+
+//        //*** banner ad ****
+//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+//            @Override
+//            public void onInitializationComplete(InitializationStatus initializationStatus) {
+//            }
+//        });
+//        List<String> testDeviceIds = Arrays.asList("315EA26B97DB5CBDE5501CB99E69E32A");
+//        bannerAdView = findViewById(R.id.bannerAdWaitingPlace);
+//
+//        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+//        MobileAds.setRequestConfiguration(configuration);
+//
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        bannerAdView.loadAd(adRequest);
+
+
+
 
         Log.d("checkk","Getting Intent Extras");
         //Getting Data from previous activity

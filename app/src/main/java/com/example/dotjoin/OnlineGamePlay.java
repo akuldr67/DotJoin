@@ -24,6 +24,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -37,6 +43,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 public class OnlineGamePlay extends AppCompatActivity {
@@ -67,6 +75,8 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Vector<Vector<ImageView> >redDots;
     private Vector<Vector<ImageView> >greenDots;
 
+    private AdView bannerAdView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boardImage=null;
@@ -84,6 +94,27 @@ public class OnlineGamePlay extends AppCompatActivity {
         setContentView(R.layout.activity_online_game_play);
 
         Log.d("checkk","onCreate OnlineGamePlay started");
+
+
+
+//        //*** banner ad ****
+//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+//            @Override
+//            public void onInitializationComplete(InitializationStatus initializationStatus) {
+//            }
+//        });
+//        List<String> testDeviceIds = Arrays.asList("315EA26B97DB5CBDE5501CB99E69E32A");
+//        bannerAdView = findViewById(R.id.bannerAdOnlineGamePlay);
+//
+//        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+//        MobileAds.setRequestConfiguration(configuration);
+//
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        bannerAdView.loadAd(adRequest);
+
+
+
+
 
         //Initializing noOfChancesMissed
         noOfChancesMissed=0;

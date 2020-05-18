@@ -73,9 +73,9 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:fontFamily="cursive"
+                android:paddingStart="10dp"
                 android:text="Player1"
                 android:textColor="#4660F4"
-                android:paddingStart="10dp"
                 android:textSize="30sp"
                 android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
@@ -211,11 +211,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:background="@android:color/transparent"
                 android:fontFamily="serif"
                 android:text="Exit Room"
-                android:textSize="20sp"
-                android:background="@android:color/transparent"
                 android:textColor="#E71717"
+                android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/start_game" />
@@ -280,5 +280,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+<!--    <com.google.android.gms.ads.AdView-->
+<!--        android:id="@+id/bannerAdWaitingPlace"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:adSize="BANNER"-->
+<!--        app:adUnitId="ca-app-pub-3940256099942544/6300978111"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent">-->
+
+<!--    </com.google.android.gms.ads.AdView>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

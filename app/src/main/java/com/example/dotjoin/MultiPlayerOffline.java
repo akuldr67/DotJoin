@@ -26,7 +26,16 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 public class MultiPlayerOffline extends AppCompatActivity {
@@ -43,11 +52,32 @@ public class MultiPlayerOffline extends AppCompatActivity {
     private Vector<TextView>scoreViewVector;
     private Vector<Integer>highlightedBoxes,unhighlightedBoxes;
 
+    private AdView bannerAdView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_player_offline);
+
+
+//        //**** banner ad ****
+//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+//            @Override
+//            public void onInitializationComplete(InitializationStatus initializationStatus) {
+//            }
+//        });
+//
+//        List<String> testDeviceIds = Arrays.asList("315EA26B97DB5CBDE5501CB99E69E32A");
+//        bannerAdView = findViewById(R.id.bannerAdMultiPlayerOffline);
+//
+//        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+//        MobileAds.setRequestConfiguration(configuration);
+//
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        bannerAdView.loadAd(adRequest);
+
+
 
         Intent intent = getIntent();
         noOfPlayers=intent.getIntExtra("noOfPlayers",-1);

@@ -7,7 +7,7 @@
         />
 
     <solid
-        android:color="#FF8040"
+        android:color="@color/player2"
         />
 
 </shape>

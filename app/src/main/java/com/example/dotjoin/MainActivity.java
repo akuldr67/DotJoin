@@ -61,25 +61,24 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
 
 
-//        //**** ad code starts ****
-//        //initializing mobile ad sdk
-//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-//            @Override
-//            public void onInitializationComplete(InitializationStatus initializationStatus) {
-//            }
-//        });
+        //**** ad code starts ****
+        //initializing mobile ad sdk
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
 
-//        //****** showing banner ad start *******
-//        //Loading banner ad in test device
+        //****** showing banner ad start *******
+        //Loading banner ad in test device
 //        List<String> testDeviceIds = Arrays.asList("315EA26B97DB5CBDE5501CB99E69E32A");
-//        bannerAdView = findViewById(R.id.bannerAdMainActivity);
-//
+        bannerAdView = findViewById(R.id.bannerAdMainActivity);
+
 //        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
 //        MobileAds.setRequestConfiguration(configuration);
-//
-//        AdRequest adRequest = new AdRequest.Builder().build();
-//        bannerAdView.loadAd(adRequest);
-//
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        bannerAdView.loadAd(adRequest);
         //**** showing banner ad end ******
 
 
