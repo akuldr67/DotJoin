@@ -68,11 +68,11 @@ public class MultiPlayerOffline extends AppCompatActivity {
             }
         });
 
-        List<String> testDeviceIds = Arrays.asList("315EA26B97DB5CBDE5501CB99E69E32A");
+//        List<String> testDeviceIds = Arrays.asList("315EA26B97DB5CBDE5501CB99E69E32A");
         bannerAdView = findViewById(R.id.bannerAdMultiPlayerOffline);
 
-        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);
+//        RequestConfiguration configuration = new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+//        MobileAds.setRequestConfiguration(configuration);
 
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
