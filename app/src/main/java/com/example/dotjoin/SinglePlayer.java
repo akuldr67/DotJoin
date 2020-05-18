@@ -289,20 +289,6 @@ public class SinglePlayer extends AppCompatActivity {
 
     protected void endGame(){
         timer.cancel();
-        //Showing Final Dialog Box
-        AlertDialog.Builder builder = new AlertDialog.Builder(SinglePlayer.this);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            builder = new AlertDialog.Builder(SinglePlayer.this, android.R.style.Theme_Material_Light_Dialog_Alert);
-//        } else {
-//            builder = new AlertDialog.Builder(SinglePlayer.this);
-//        }
-        builder.setTitle(game.resultString());
-
-        //Showing final ScoreBoard
-        TextView textView = new TextView(getApplicationContext());
-        textView.setPadding(60, 50, 20, 40);
-        textView.setLineSpacing(1.5f, 1.5f);
-        textView.setTextSize(16);
         String result = "";
         for (int i = 0; i < 2; i++) {
             if (i == 1) {
@@ -311,31 +297,60 @@ public class SinglePlayer extends AppCompatActivity {
                 result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore() + "\n";
             }
         }
-        textView.setText(result);
-        builder.setView(textView);
 
-        //Replay Button
-        builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(SinglePlayer.this, SinglePlayerDialog.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        //Home Button
-        builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(SinglePlayer.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-        AlertDialog alertDialog=builder.create();
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.show();
+        Intent intent = new Intent(SinglePlayer.this,SinglePlayerEndGame.class);
+        intent.putExtra("Heading",game.resultString());
+        intent.putExtra("Result",result);
+        intent.putExtra("Activity","Single");
+        startActivity(intent);
+        finish();
+        //Showing Final Dialog Box
+//        AlertDialog.Builder builder = new AlertDialog.Builder(SinglePlayer.this);
+////        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+////            builder = new AlertDialog.Builder(SinglePlayer.this, android.R.style.Theme_Material_Light_Dialog_Alert);
+////        } else {
+////            builder = new AlertDialog.Builder(SinglePlayer.this);
+////        }
+//        builder.setTitle(game.resultString());
+//
+//        //Showing final ScoreBoard
+//        TextView textView = new TextView(getApplicationContext());
+//        textView.setPadding(60, 50, 20, 40);
+//        textView.setLineSpacing(1.5f, 1.5f);
+//        textView.setTextSize(16);
+//        String result = "";
+//        for (int i = 0; i < 2; i++) {
+//            if (i == 1) {
+//                result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore();
+//            } else {
+//                result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore() + "\n";
+//            }
+//        }
+//        textView.setText(result);
+//        builder.setView(textView);
+//
+//        //Replay Button
+//        builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                Intent intent = new Intent(SinglePlayer.this, SinglePlayerDialog.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
+//
+//        //Home Button
+//        builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                Intent intent = new Intent(SinglePlayer.this, MainActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
+//        AlertDialog alertDialog=builder.create();
+//        alertDialog.setCanceledOnTouchOutside(false);
+//        alertDialog.show();
     }
 }
 

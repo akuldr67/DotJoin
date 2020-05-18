@@ -196,15 +196,8 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                 scoreViewVector.elementAt(game.getCurrentPlayer()).setText(game.players.get(game.getCurrentPlayer()).getName()+" - "+game.players.get(game.getCurrentPlayer()).getScore());
                                                 if (game.gameCompleted()) {
 
-                                                    //Showing Final Dialog Box
-                                                    AlertDialog.Builder builder = new AlertDialog.Builder(MultiPlayerOffline.this);
-                                                    builder.setTitle(game.resultString());
+                                                    Intent resultIntent = new Intent(MultiPlayerOffline.this,SinglePlayerEndGame.class);
 
-                                                    //Showing final ScoreBoard
-                                                    TextView textView = new TextView(getApplicationContext());
-                                                    textView.setPadding(60, 50, 20, 40);
-                                                    textView.setLineSpacing(1.5f, 1.5f);
-                                                    textView.setTextSize(16);
                                                     String result = "";
                                                     for (int i = 0; i < noOfPlayers; i++) {
                                                         if (i == noOfPlayers - 1) {
@@ -213,31 +206,54 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                             result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore() + "\n";
                                                         }
                                                     }
-                                                    textView.setText(result);
-                                                    builder.setView(textView);
+                                                    resultIntent.putExtra("Heading",game.resultString());
+                                                    resultIntent.putExtra("Result",result);
+                                                    resultIntent.putExtra("Activity","MultiPlayerOffline");
+                                                    startActivity(resultIntent);
+                                                    finish();
 
-                                                    //Replay Button
-                                                    builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            Intent intent = new Intent(MultiPlayerOffline.this, MultiPlayerOfflineDialog.class);
-                                                            startActivity(intent);
-                                                            finish();
-                                                        }
-                                                    });
-
-                                                    //Home Button
-                                                    builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            Intent intent = new Intent(MultiPlayerOffline.this, MainActivity.class);
-                                                            startActivity(intent);
-                                                            finish();
-                                                        }
-                                                    });
-                                                    AlertDialog alertDialog=builder.create();
-                                                    alertDialog.setCanceledOnTouchOutside(false);
-                                                    alertDialog.show();
+                                                    //Showing Final Dialog Box
+//                                                    AlertDialog.Builder builder = new AlertDialog.Builder(MultiPlayerOffline.this);
+//                                                    builder.setTitle(game.resultString());
+//
+//                                                    //Showing final ScoreBoard
+//                                                    TextView textView = new TextView(getApplicationContext());
+//                                                    textView.setPadding(60, 50, 20, 40);
+//                                                    textView.setLineSpacing(1.5f, 1.5f);
+//                                                    textView.setTextSize(16);
+//                                                    String result = "";
+//                                                    for (int i = 0; i < noOfPlayers; i++) {
+//                                                        if (i == noOfPlayers - 1) {
+//                                                            result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore();
+//                                                        } else {
+//                                                            result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore() + "\n";
+//                                                        }
+//                                                    }
+//                                                    textView.setText(result);
+//                                                    builder.setView(textView);
+//
+//                                                    //Replay Button
+//                                                    builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                            Intent intent = new Intent(MultiPlayerOffline.this, MultiPlayerOfflineDialog.class);
+//                                                            startActivity(intent);
+//                                                            finish();
+//                                                        }
+//                                                    });
+//
+//                                                    //Home Button
+//                                                    builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                            Intent intent = new Intent(MultiPlayerOffline.this, MainActivity.class);
+//                                                            startActivity(intent);
+//                                                            finish();
+//                                                        }
+//                                                    });
+//                                                    AlertDialog alertDialog=builder.create();
+//                                                    alertDialog.setCanceledOnTouchOutside(false);
+//                                                    alertDialog.show();
                                                 }
                                             }
                                             Log.d("pos", "current player " + game.currentPlayer + "\n");
