@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -147,36 +148,38 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         mCurrentUserName=mSharedPreferences.getString("UserName","");
         if(mCurrentUserName.equals("")){
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enter Your Name");
-            final EditText input = new EditText(getApplicationContext());
-            builder.setView(input);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if(input.getText().toString().equals("")){
-                        Toast.makeText(getApplicationContext(),"Please Enter Your Name",Toast.LENGTH_LONG).show();
-                    }
-                    else if(input.getText().toString().length()>8){
-                        Toast.makeText(getApplicationContext(),"Maximum 8 characters are allowed",Toast.LENGTH_LONG).show();
-                    }
-                    else{
-                        myEdit=mSharedPreferences.edit();
-                        mCurrentUserName=input.getText().toString();
-                        myEdit.putString("UserName",mCurrentUserName);
-                        myEdit.apply();
-                    }
-                }
-            });
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            LayoutInflater inflater = this.getLayoutInflater();
+            View dialogView=inflater.inflate(R.layout.name_dialog,null);
+            builder.setView(dialogView);
+            final EditText input = dialogView.findViewById(R.id.name_input);
+            final Button submit = dialogView.findViewById(R.id.name_submit_button);
 
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
             AlertDialog alertDialog = builder.create();
             alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(final DialogInterface dialog) {
+                    submit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(input.getText().toString().equals("")){
+                                Toast.makeText(getApplicationContext(),"Please Enter Your Name",Toast.LENGTH_LONG).show();
+                            }
+                            else if(input.getText().toString().length()>8){
+                                Toast.makeText(getApplicationContext(),"Maximum 8 characters are allowed",Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                myEdit=mSharedPreferences.edit();
+                                mCurrentUserName=input.getText().toString();
+                                myEdit.putString("UserName",mCurrentUserName);
+                                myEdit.apply();
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+                }
+            });
             alertDialog.show();
         }
 //        //Storing Player No in Shared Preferences
