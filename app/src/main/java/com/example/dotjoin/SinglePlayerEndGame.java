@@ -26,8 +26,12 @@ public class SinglePlayerEndGame extends AppCompatActivity {
     }
 
     public void onHomeClicked(View view){
-        Intent intent = new Intent(SinglePlayerEndGame.this, MainActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(SinglePlayerEndGame.this, MainActivity.class);
+//        startActivity(intent);
+        if(activity.equals("Single"))
+            SinglePlayer.AcSinglePlayer.finish();
+        else if(activity.equals("MultiPlayerOffline"))
+            MultiPlayerOffline.AcMultiPlayerOffline.finish();
         finish();
     }
 
@@ -35,11 +39,13 @@ public class SinglePlayerEndGame extends AppCompatActivity {
         if(activity.equals("Single")){
             Intent intent = new Intent(SinglePlayerEndGame.this, SinglePlayerDialog.class);
             startActivity(intent);
+            SinglePlayer.AcSinglePlayer.finish();
             finish();
         }
         else if(activity.equals("MultiPlayerOffline")){
             Intent intent = new Intent(SinglePlayerEndGame.this, MultiPlayerOfflineDialog.class);
             startActivity(intent);
+            MultiPlayerOffline.AcMultiPlayerOffline.finish();
             finish();
         }
     }

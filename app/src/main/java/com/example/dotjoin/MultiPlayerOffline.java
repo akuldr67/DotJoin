@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -54,11 +55,15 @@ public class MultiPlayerOffline extends AppCompatActivity {
 
     private AdView bannerAdView;
 
+    public static Activity AcMultiPlayerOffline;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_player_offline);
+
+        AcMultiPlayerOffline = this;
 
 
         //**** banner ad ****
@@ -240,7 +245,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     resultIntent.putExtra("Result",result);
                                                     resultIntent.putExtra("Activity","MultiPlayerOffline");
                                                     startActivity(resultIntent);
-                                                    finish();
+//                                                    finish();
 
                                                     //Showing Final Dialog Box
 //                                                    AlertDialog.Builder builder = new AlertDialog.Builder(MultiPlayerOffline.this);
