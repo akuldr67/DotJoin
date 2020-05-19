@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -51,10 +52,14 @@ public class SinglePlayer extends AppCompatActivity {
 
     private AdView bannerAdView;
 
+    public static Activity AcSinglePlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) throws RuntimeException {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_player);
+
+        AcSinglePlayer = this;
 
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -331,7 +336,7 @@ public class SinglePlayer extends AppCompatActivity {
         intent.putExtra("Result",result);
         intent.putExtra("Activity","Single");
         startActivity(intent);
-        finish();
+//        finish();
         //Showing Final Dialog Box
 //        AlertDialog.Builder builder = new AlertDialog.Builder(SinglePlayer.this);
 ////        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
