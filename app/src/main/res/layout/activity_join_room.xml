@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".JoinRoom"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <TextView
+        android:id="@+id/join_room_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter Room Id"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="20dp"
+        android:textSize="30sp"
+        android:padding="10dp"
+        android:background="#00000000"/>
+    
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/join_room_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/join_room_heading"
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:textColor="#ffffff"
+        android:background="@drawable/button_background"
+        />
+
+   <Button
+       android:id="@+id/join_room_submit"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       app:layout_constraintLeft_toLeftOf="parent"
+       app:layout_constraintRight_toRightOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/join_room_input"
+       app:layout_constraintBottom_toBottomOf="parent"
+       android:layout_margin="20dp"
+       android:background="@drawable/selected_button_background"
+       android:textColor="#000000"
+       android:text="OK"
+       />
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/join_room_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="#00000000"
+        android:progressTint="#ffffff"
+        android:visibility="invisible"
+        />
+</RelativeLayout>

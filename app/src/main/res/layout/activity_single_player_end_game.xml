@@ -13,7 +13,8 @@
     android:textSize="30sp"
     android:gravity="center"
     android:layout_margin="20dp"
-    android:padding="10dp"/>
+    android:padding="10dp"
+    android:background="#00000000"/>
 
     <TextView
         android:id="@+id/single_endgame_final_score"
