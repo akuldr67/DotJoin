@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".OnlineGamePlayEndGame">
+    <TextView
+        android:id="@+id/onlinegameplay_endgame_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sample Text"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:background="#00000000"/>
+
+    <TextView
+        android:id="@+id/onlinegameplay_endgame_final_score"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="sample text where scores will be displayed"
+        android:layout_below="@+id/onlinegameplay_endgame_title"
+        android:layout_margin="20dp"
+        android:textSize="18sp"
+        android:padding="15dp"/>
+
+        <Button
+            android:id="@+id/onlinegameplay_endgame_home_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/onlinegameplay_endgame_final_score"
+            android:layout_margin="10dp"
+            android:background="@drawable/selected_button_background"
+            android:textColor="#000000"
+            android:text="HOME"
+            android:onClick="onHomeClicked"
+            android:textSize="25sp"/>
+
+</RelativeLayout>

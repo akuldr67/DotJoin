@@ -14,31 +14,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".OnlineGamePlayEndGame"
+            android:screenOrientation="portrait"
+            android:theme="@style/dialog"/>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-5980384053078399~8290579752" />
 
-        <activity android:name=".JoinRoom"
-            android:theme="@style/dialog"
-            android:screenOrientation="portrait"/>
-
+        <activity
+            android:name=".JoinRoom"
+            android:screenOrientation="portrait"
+            android:theme="@style/dialog" />
         <activity
             android:name=".ExitGameDialog"
-            android:theme="@style/dialog"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/dialog" />
         <activity
             android:name=".SinglePlayerEndGame"
-            android:theme="@style/dialog"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/dialog" />
         <activity
             android:name=".MultiPlayerOfflineDialog"
-            android:theme="@style/dialog"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/dialog" />
         <activity
             android:name=".SinglePlayerDialog"
-            android:theme="@style/dialog"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/dialog" />
         <activity
             android:name=".aboutUs"
             android:screenOrientation="portrait" />
