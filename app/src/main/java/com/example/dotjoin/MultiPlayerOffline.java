@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -56,6 +57,9 @@ public class MultiPlayerOffline extends AppCompatActivity {
     private AdView bannerAdView;
 
     public static Activity AcMultiPlayerOffline;
+    public static View rootViewShare;
+
+    private int bannerHeight = dpToPx(50);
 
 
     @Override
@@ -64,7 +68,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
         setContentView(R.layout.activity_multi_player_offline);
 
         AcMultiPlayerOffline = this;
-
+        rootViewShare = getWindow().getDecorView().findViewById(R.id.constraint);
 
         //**** banner ad ****
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -156,8 +160,8 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                 imageWidth = boardImage.getWidth();
 
                                 //Initializing Board, Game, and layoutUtils
-                                layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2),0);
-                                board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
+                                layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),0);
+                                board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2), imageWidth);
                                 ArrayList<Player> players = new ArrayList<Player>();
 //                                players.setSize(noOfPlayers);
                                 int color=0;
@@ -220,7 +224,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     scoreViewVector.elementAt(game.getCurrentPlayer()).setTextColor(ContextCompat.getColor(MultiPlayerOffline.this,R.color.black));
 //                                                    scoreViewVector.elementAt(game.getCurrentPlayer()).setBackgroundResource(R.drawable.border);
 
-                                                    layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2),game.getCurrentPlayer());
+                                                    layoutUtils.drawBoard(boardSize, boardSize, MultiPlayerOffline.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),game.getCurrentPlayer());
                                                 } else {
                                                     ArrayList<Integer> newBoxNodes = game.board.isBoxCompleted(game.lastEdgeUpdated);
                                                     for (int i = 0; i < NoOfNewBox; i++) {
@@ -308,5 +312,9 @@ public class MultiPlayerOffline extends AppCompatActivity {
 //                alertDialog.show();
 //            }
 //        });
+    }
+
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 }

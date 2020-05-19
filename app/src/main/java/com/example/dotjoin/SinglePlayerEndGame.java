@@ -1,11 +1,21 @@
 package com.example.dotjoin;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class SinglePlayerEndGame extends AppCompatActivity {
     private TextView Heading,Result;
@@ -47,6 +57,65 @@ public class SinglePlayerEndGame extends AppCompatActivity {
             startActivity(intent);
             MultiPlayerOffline.AcMultiPlayerOffline.finish();
             finish();
+        }
+    }
+
+    public void onShareClicked(View view){
+        View rootViewShare = getWindow().getDecorView().findViewById(android.R.id.content);
+        if(activity.equals("Single"))
+            rootViewShare = SinglePlayer.rootViewShare;
+        else if(activity.equals("MultiPlayerOffline"))
+            rootViewShare = MultiPlayerOffline.rootViewShare;
+
+        Bitmap b = getScreenShot(rootViewShare);
+        File f = store(b,"screenshotShare.png");
+        shareImage(f);
+
+    }
+
+    public static Bitmap getScreenShot(View view) {
+        View screenView = view.getRootView();
+        screenView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
+        screenView.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    public File store(Bitmap bm, String fileName){
+//        final String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots";
+        File imagePath = new File(this.getExternalCacheDir() + "/screenshot.png");
+//        File dir = new File(dirPath);
+//        if(!dir.exists())
+//            dir.mkdirs();
+//        File file = new File(dirPath, fileName);
+        try {
+//            FileOutputStream fOut = new FileOutputStream(file);
+            FileOutputStream fOut = new FileOutputStream(imagePath);
+            bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return imagePath;
+    }
+
+    private void shareImage(File file){
+//        Uri uri = Uri.fromFile(file);
+        Uri uri = FileProvider.getUriForFile(SinglePlayerEndGame.this, SinglePlayerEndGame.this.getApplicationContext().getPackageName() + ".provider", file);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("image/*");
+
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        try {
+            startActivity(Intent.createChooser(intent, "Share Screenshot"));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getApplicationContext(), "No App Available", Toast.LENGTH_SHORT).show();
         }
     }
 

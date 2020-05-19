@@ -30,9 +30,32 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@id/single_endgame_final_score"
-        android:weightSum="2"
+        android:weightSum="3"
         android:layout_margin="20dp"
         android:background="#00000000">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:background="@drawable/selected_button_background"
+            android:textColor="#000000"
+            android:text="Share"
+            android:onClick="onShareClicked"
+            android:textSize="25sp" />
+
+<!--        <ImageButton-->
+<!--            android:src="@drawable/ic_share_24dp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:background="@drawable/selected_button_background"-->
+<!--            android:textColor="#000000"-->
+<!--            android:onClick="onShareClicked"-->
+<!--            />-->
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -11,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -76,6 +77,8 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Vector<Vector<ImageView> >greenDots;
 
     private AdView bannerAdView;
+
+    private int bannerHeight = dpToPx(50);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,8 +237,8 @@ public class OnlineGamePlay extends AppCompatActivity {
                             game = room.getGame();
                             board = game.getBoard();
                             boardSize = board.getRows();
-                            layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2),-1);
-                            mainBoard = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
+                            layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),-1);
+                            mainBoard = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2), imageWidth);
                             Log.d("checkkk","mainBoard initialized with boardSize "+boardSize+" mainBoard vala total Edges "+mainBoard.getTotalEdges());
                             //Getting Last updated Edge
                             lastUpdatedEdge = game.getLastEdgeUpdated();
@@ -785,5 +788,9 @@ public class OnlineGamePlay extends AppCompatActivity {
             redDots.get(pNo).get(2).setVisibility(View.VISIBLE);
         }
 
+    }
+
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 }

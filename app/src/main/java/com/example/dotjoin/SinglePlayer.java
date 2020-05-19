@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,7 +53,11 @@ public class SinglePlayer extends AppCompatActivity {
 
     private AdView bannerAdView;
 
+    private int bannerHeight = dpToPx(50);
+
     public static Activity AcSinglePlayer;
+
+    public static View rootViewShare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) throws RuntimeException {
@@ -60,6 +65,7 @@ public class SinglePlayer extends AppCompatActivity {
         setContentView(R.layout.activity_single_player);
 
         AcSinglePlayer = this;
+        rootViewShare = getWindow().getDecorView().findViewById(R.id.constraint);
 
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -149,8 +155,8 @@ public class SinglePlayer extends AppCompatActivity {
                                 imageWidth = boardImage.getWidth();
 
                                 //Initializing Board, Game, and layoutUtils
-                                layoutUtils.drawBoard(boardSize, boardSize, SinglePlayer.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth) / 2),-1);
-                                board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth) / 2), imageWidth);
+                                layoutUtils.drawBoard(boardSize, boardSize, SinglePlayer.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),-1);
+                                board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2), imageWidth);
                                 game = new Game(0, 2,  board,new ArrayList<Player>());
 
                                 game.players.add(new Player("You",R.drawable.colour_box_blue,0,0,"",0,1,0));
@@ -385,6 +391,8 @@ public class SinglePlayer extends AppCompatActivity {
 //        alertDialog.setCanceledOnTouchOutside(false);
 //        alertDialog.show();
     }
-}
 
-//ToDo: sleep (if required later) computer for some time in continuous manner after every consecutive turn of computer, not in one go
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+}
