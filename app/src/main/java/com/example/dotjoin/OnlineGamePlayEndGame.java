@@ -2,8 +2,12 @@ package com.example.dotjoin;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -20,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class OnlineGamePlayEndGame extends AppCompatActivity {
@@ -88,6 +94,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                OnlineGamePlay.AcOnlineGamePlay.finish();
                                 Log.d("checkk","finishing OnlineGamePlay");
                                 finish();
                                 Log.d("checkk","Starting Main Activity");
@@ -107,6 +114,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                OnlineGamePlay.AcOnlineGamePlay.finish();
                                 Log.d("checkk","finishing OnlineGamePlay");
                                 finish();
                                 Log.d("checkk","Starting intent for MainActivity");
@@ -139,4 +147,64 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
         }
         return super.onTouchEvent(event);
     }
+
+
+
+
+    public void onShareClicked(View view){
+        View rootViewShare = OnlineGamePlay.rootViewShare;
+
+        Bitmap b = getScreenShot(rootViewShare);
+        File f = store(b,"screenshotShare.png");
+        shareImage(f);
+
+    }
+
+    public static Bitmap getScreenShot(View view) {
+        View screenView = view.getRootView();
+        screenView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache());
+        screenView.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    public File store(Bitmap bm, String fileName){
+//        final String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Screenshots";
+        File imagePath = new File(this.getExternalCacheDir() + "/screenshot.png");
+//        File dir = new File(dirPath);
+//        if(!dir.exists())
+//            dir.mkdirs();
+//        File file = new File(dirPath, fileName);
+        try {
+//            FileOutputStream fOut = new FileOutputStream(file);
+            FileOutputStream fOut = new FileOutputStream(imagePath);
+            bm.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return imagePath;
+    }
+
+    private void shareImage(File file){
+//        Uri uri = Uri.fromFile(file);
+        Uri uri = FileProvider.getUriForFile(OnlineGamePlayEndGame.this, OnlineGamePlayEndGame.this.getApplicationContext().getPackageName() + ".provider", file);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("image/*");
+
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, "");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        try {
+            startActivity(Intent.createChooser(intent, "Share Screenshot"));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getApplicationContext(), "No App Available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }

@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -80,6 +81,9 @@ public class OnlineGamePlay extends AppCompatActivity {
 
     private int bannerHeight = dpToPx(50);
 
+    public static Activity AcOnlineGamePlay;
+    public static View rootViewShare;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boardImage=null;
@@ -97,6 +101,10 @@ public class OnlineGamePlay extends AppCompatActivity {
         setContentView(R.layout.activity_online_game_play);
 
         Log.d("checkk","onCreate OnlineGamePlay started");
+
+
+        AcOnlineGamePlay = this;
+        rootViewShare = getWindow().getDecorView().findViewById(R.id.online_constraint);
 
 
 
