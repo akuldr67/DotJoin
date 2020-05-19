@@ -206,6 +206,18 @@ public class OnlineGamePlay extends AppCompatActivity {
 
         redDots.add(p1);redDots.add(p2);redDots.add(p3);redDots.add(p4);
 
+        //just trying
+        chatButton = findViewById(R.id.chat);
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent chatIntent = new Intent(getApplicationContext(),PopUpChat.class);
+                chatIntent.putExtra("RoomId",roomId);
+//                        chatIntent.putExtra("")
+                startActivity(chatIntent);
+            }
+        });
+
         //Getting ViewTreeObserver of the board Image
         ViewTreeObserver vto = boardImage.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -306,33 +318,11 @@ public class OnlineGamePlay extends AppCompatActivity {
                                 }
                             };
                             timer.start();
-                        }
-                        else{
-                            finish();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                };
-                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(firstValueEventListener);
 
 
 
 
-                //just trying
-                chatButton = findViewById(R.id.chat);
-                chatButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent chatIntent = new Intent(getApplicationContext(),PopUpChat.class);
-                        chatIntent.putExtra("RoomId",roomId);
-//                        chatIntent.putExtra("")
-                        startActivity(chatIntent);
-                    }
-                });
+
 
 
 
@@ -340,6 +330,7 @@ public class OnlineGamePlay extends AppCompatActivity {
         mainValueEventListener=new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 Log.d("checkk","started 2nd main value event listener in OnlineGamePlay");
                 activeGame = dataSnapshot.getValue(Game.class);
                 Log.d("checkk","Checking if room is null");
@@ -486,6 +477,33 @@ public class OnlineGamePlay extends AppCompatActivity {
         };
                 mDatabase.child("Rooms").child(roomId).child("game").addValueEventListener(mainValueEventListener);
 
+
+                        }
+                        else{
+                            finish();
+                        }
+                    }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        };
+                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(firstValueEventListener);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             }
         });
 
@@ -597,17 +615,6 @@ public class OnlineGamePlay extends AppCompatActivity {
         //Setting ready of this player false
         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo + "").child("ready").setValue(0);
 
-        Log.d("checkk","Started creating alertDialog Builder");
-        //Showing Final Dialog Box
-        AlertDialog.Builder builder = new AlertDialog.Builder(OnlineGamePlay.this);
-        builder.setTitle(activeGame.resultString());
-
-        Log.d("checkk","Creating Text view for dialog");
-        //Showing final ScoreBoard
-        TextView textView = new TextView(getApplicationContext());
-        textView.setPadding(60, 50, 20, 40);
-        textView.setLineSpacing(1.5f, 1.5f);
-        textView.setTextSize(16);
         String result = "";
         for (int i = 0; i < noOfPlayers; i++) {
             if (i == noOfPlayers - 1) {
@@ -616,9 +623,35 @@ public class OnlineGamePlay extends AppCompatActivity {
                 result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore() + "\n";
             }
         }
-        Log.d("checkk","Setting result in the text view");
-        textView.setText(result);
-        builder.setView(textView);
+
+        Intent intent = new Intent(OnlineGamePlay.this,OnlineGamePlayEndGame.class);
+        intent.putExtra("Heading",activeGame.resultString());
+        intent.putExtra("Result",result);
+        intent.putExtra("RoomId",roomId);
+        intent.putExtra("PlayerNo",playerNo);
+        startActivity(intent);
+//        Log.d("checkk","Started creating alertDialog Builder");
+//        //Showing Final Dialog Box
+//        AlertDialog.Builder builder = new AlertDialog.Builder(OnlineGamePlay.this);
+//        builder.setTitle(activeGame.resultString());
+//
+//        Log.d("checkk","Creating Text view for dialog");
+//        //Showing final ScoreBoard
+//        TextView textView = new TextView(getApplicationContext());
+//        textView.setPadding(60, 50, 20, 40);
+//        textView.setLineSpacing(1.5f, 1.5f);
+//        textView.setTextSize(16);
+//        String result = "";
+//        for (int i = 0; i < noOfPlayers; i++) {
+//            if (i == noOfPlayers - 1) {
+//                result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore();
+//            } else {
+//                result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore() + "\n";
+//            }
+//        }
+//        Log.d("checkk","Setting result in the text view");
+//        textView.setText(result);
+//        builder.setView(textView);
 
         //Replay Button
 //        builder.setPositiveButton("Replay", new DialogInterface.OnClickListener() {
@@ -663,82 +696,82 @@ public class OnlineGamePlay extends AppCompatActivity {
 //        });
 
         //Home Button
-        builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.d("checkk","Click on Home Detected");
-                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                        Room room = dataSnapshot.getValue(Room.class);
-                        Log.d("checkk","Loaded room");
-                        players = room.getPlayers();
-                        Log.d("checkk","Removing player from room");
-                        for(int i=0;i<players.size();i++){
-                            if(players.get(i).getPlayerNumber()==playerNo){
-                                players.remove(i);
-                            }
-                        }
-//                        players.remove(playerNo);
-
-
-                        if (players == null || players.size() < 1) {
-                            Log.d("checkk","All players gone");
-                            Log.d("checkk","Deleting room");
-                            mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        Log.d("checkk","finishing OnlineGamePlay");
-                                        finish();
-                                        Log.d("checkk","Starting Main Activity");
-                                        startActivity(intent);
-                                    } else {
-                                        Toast.makeText(OnlineGamePlay.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        } else {
-                            Log.d("checkk","all player not gone");
-                            room.setPlayers(players);
-                            Log.d("checkk","updating room with the player removed");
-                            mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        Log.d("checkk","finishing OnlineGamePlay");
-                                        finish();
-                                        Log.d("checkk","Starting intent for MainActivity");
-                                        startActivity(intent);
-//                                                    finish();
-                                    } else {
-                                        Toast.makeText(OnlineGamePlay.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-        });
-        Log.d("checkk","Creating alert Dialog Box from Builder");
-        alertDialog = builder.create();
-        Log.d("checkk","Setting Outside touch false");
-        alertDialog.setCanceledOnTouchOutside(false);
-        Log.d("checkk","Checking if activity is not finished");
-        if (!isFinishing())
-            Log.d("checkk","Finally showing the dialog box");
-            alertDialog.show();
+//        builder.setNegativeButton("Home", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                Log.d("checkk","Click on Home Detected");
+//                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        Room room = dataSnapshot.getValue(Room.class);
+//                        Log.d("checkk","Loaded room");
+//                        players = room.getPlayers();
+//                        Log.d("checkk","Removing player from room");
+//                        for(int i=0;i<players.size();i++){
+//                            if(players.get(i).getPlayerNumber()==playerNo){
+//                                players.remove(i);
+//                            }
+//                        }
+////                        players.remove(playerNo);
+//
+//
+//                        if (players == null || players.size() < 1) {
+//                            Log.d("checkk","All players gone");
+//                            Log.d("checkk","Deleting room");
+//                            mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//                                    if (task.isSuccessful()) {
+//                                        Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
+//                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                        Log.d("checkk","finishing OnlineGamePlay");
+//                                        finish();
+//                                        Log.d("checkk","Starting Main Activity");
+//                                        startActivity(intent);
+//                                    } else {
+//                                        Toast.makeText(OnlineGamePlay.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            });
+//                        } else {
+//                            Log.d("checkk","all player not gone");
+//                            room.setPlayers(players);
+//                            Log.d("checkk","updating room with the player removed");
+//                            mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//                                    if (task.isSuccessful()) {
+//                                        Intent intent = new Intent(OnlineGamePlay.this, MainActivity.class);
+//                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                        Log.d("checkk","finishing OnlineGamePlay");
+//                                        finish();
+//                                        Log.d("checkk","Starting intent for MainActivity");
+//                                        startActivity(intent);
+////                                                    finish();
+//                                    } else {
+//                                        Toast.makeText(OnlineGamePlay.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//            }
+//        });
+//        Log.d("checkk","Creating alert Dialog Box from Builder");
+//        alertDialog = builder.create();
+//        Log.d("checkk","Setting Outside touch false");
+//        alertDialog.setCanceledOnTouchOutside(false);
+//        Log.d("checkk","Checking if activity is not finished");
+//        if (!isFinishing())
+//            Log.d("checkk","Finally showing the dialog box");
+//            alertDialog.show();
 
     }
 
@@ -794,3 +827,5 @@ public class OnlineGamePlay extends AppCompatActivity {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 }
+
+//TODO Crash if  users removes from memory when game has ended
