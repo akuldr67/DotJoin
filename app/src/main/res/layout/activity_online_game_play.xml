@@ -191,11 +191,11 @@
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="70dp"
         android:gravity="center"
         android:padding="5dp"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/bannerAdOnlineGamePlay"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
     <ProgressBar
         android:id="@+id/online_bar_player3"
@@ -272,8 +272,8 @@
         android:layout_width="wrap_content"
 
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@id/bannerAdOnlineGamePlay"
+        android:layout_marginBottom="82dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/online_player4"
         app:layout_constraintHorizontal_bias="0.481"
         app:layout_constraintStart_toEndOf="@+id/online_player3">
@@ -305,11 +305,11 @@
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="70dp"
         android:gravity="center"
         android:padding="5dp"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/bannerAdOnlineGamePlay"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
     <ProgressBar
         android:id="@+id/online_bar_player4"
