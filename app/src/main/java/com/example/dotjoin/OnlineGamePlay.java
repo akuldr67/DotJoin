@@ -263,7 +263,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                             game = room.getGame();
                             board = game.getBoard();
                             boardSize = board.getRows();
-                            layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),-1);
+                            layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),0);
                             mainBoard = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2), imageWidth);
                             Log.d("checkkk","mainBoard initialized with boardSize "+boardSize+" mainBoard vala total Edges "+mainBoard.getTotalEdges());
                             //Getting Last updated Edge
@@ -439,6 +439,8 @@ public class OnlineGamePlay extends AppCompatActivity {
                         scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setBackgroundResource(highlightedBoxes.get(activeGame.getCurrentPlayer()));
                         scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTypeface(Typeface.DEFAULT_BOLD);
                         scoreViewVector.elementAt(activeGame.getCurrentPlayer()).setTextColor(ContextCompat.getColor(OnlineGamePlay.this, R.color.black));
+
+                        layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),activeGame.getCurrentPlayer());
 
                         Log.d("checkk","unHighlighting previous player");
                         scoreViewVector.elementAt(previousActivePlayer).setBackgroundResource(unhighlightedBoxes.get(previousActivePlayer));

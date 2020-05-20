@@ -155,7 +155,7 @@ public class SinglePlayer extends AppCompatActivity {
                                 imageWidth = boardImage.getWidth();
 
                                 //Initializing Board, Game, and layoutUtils
-                                layoutUtils.drawBoard(boardSize, boardSize, SinglePlayer.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),-1);
+                                layoutUtils.drawBoard(boardSize, boardSize, SinglePlayer.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),0);
                                 board = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2), imageWidth);
                                 game = new Game(0, 2,  board,new ArrayList<Player>());
 
@@ -181,6 +181,7 @@ public class SinglePlayer extends AppCompatActivity {
                                     public void onChanged(Integer integer) {
                                         Log.d("checkk","onChange Triggered");
                                         if(game.getCurrentPlayer()==0){
+                                            layoutUtils.drawBoard(boardSize, boardSize, SinglePlayer.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),0);
                                             view.setOnTouchListener(new View.OnTouchListener() {
                                                 @Override
                                                 public boolean onTouch(View v, MotionEvent event) {
@@ -200,6 +201,7 @@ public class SinglePlayer extends AppCompatActivity {
                                             });
                                         }
                                         else if(game.getCurrentPlayer()==1){
+                                            layoutUtils.drawBoard(boardSize, boardSize, SinglePlayer.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),1);
                                             view.setEnabled(false);
                                             timer = new CountDownTimer(500,100) {
                                                 @Override
