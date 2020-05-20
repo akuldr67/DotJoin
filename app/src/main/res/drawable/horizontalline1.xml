@@ -5,8 +5,12 @@
         android:height="15dp"
         />
 
+<!--    <solid-->
+<!--        android:color="#504A4B"-->
+
+<!--        />-->
     <solid
-        android:color="#504A4B"
+        android:color="@color/gameBackground2"
         />
     <corners
         android:radius="7.5dp"

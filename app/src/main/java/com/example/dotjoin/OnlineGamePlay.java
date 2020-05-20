@@ -69,7 +69,6 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Board activeBoard,mainBoard;
     private ArrayList<Player>players;
     private CountDownTimer timer;
-    private AlertDialog alertDialog;
     private ValueEventListener mainValueEventListener,firstValueEventListener;
     private ImageButton chatButton;
     private ImageView redDot;
@@ -483,7 +482,8 @@ public class OnlineGamePlay extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         };
-                mDatabase.child("Rooms").child(roomId).child("game").addValueEventListener(mainValueEventListener);
+        Log.d("checkk","Adding Main Value Event Listener");
+        mDatabase.child("Rooms").child(roomId).child("game").addValueEventListener(mainValueEventListener);
 
 
                         }
@@ -541,11 +541,11 @@ public class OnlineGamePlay extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d("checkk","onDestroy Called");
-        if(alertDialog!=null){
-            Log.d("checkk","dialog box was found not null hence dismissing the dialog box");
-            alertDialog.dismiss();
-            alertDialog=null;
-        }
+//        if(alertDialog!=null){
+//            Log.d("checkk","dialog box was found not null hence dismissing the dialog box");
+//            alertDialog.dismiss();
+//            alertDialog=null;
+//        }
     }
 
     @Override
@@ -607,7 +607,7 @@ public class OnlineGamePlay extends AppCompatActivity {
     private void endGame(){
         Log.d("checkk","Removing MainValueEventListener");
         //Removing MainValueEventListener
-        mDatabase.child("Rooms").child(roomId).removeEventListener(mainValueEventListener);
+        mDatabase.child("Rooms").child(roomId).child("game").removeEventListener(mainValueEventListener);
         mainValueEventListener=null;
         firstValueEventListener=null;
 

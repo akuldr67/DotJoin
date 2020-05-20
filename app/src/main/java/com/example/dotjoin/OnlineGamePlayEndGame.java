@@ -116,10 +116,9 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 OnlineGamePlay.AcOnlineGamePlay.finish();
                                 Log.d("checkk","finishing OnlineGamePlay");
-                                finish();
                                 Log.d("checkk","Starting intent for MainActivity");
                                 startActivity(intent);
-//                                                    finish();
+                                finish();
                             } else {
                                 Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
                             }
