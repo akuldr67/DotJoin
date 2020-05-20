@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WaitingPlace">
+    tools:context=".WaitingPlace"
+    android:background="@drawable/main_background_without_text"
+    >
 
 
     <LinearLayout
@@ -28,7 +30,7 @@
             android:layout_margin="5dp"
             android:fontFamily="sans-serif"
             android:text="Id:"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@android:color/white"
             android:textSize="35sp" />
 
         <TextView
@@ -46,7 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/copy" />
+            android:src="@drawable/ic_content_copy"
+            />
 
     </LinearLayout>
 
@@ -76,7 +79,7 @@
                 android:fontFamily="cursive"
                 android:paddingStart="10dp"
                 android:text="Player1"
-                android:textColor="#4660F4"
+                android:textColor="@android:color/white"
                 android:textSize="30sp"
                 android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
@@ -107,7 +110,7 @@
                 android:fontFamily="cursive"
                 android:paddingStart="10dp"
                 android:text="Player2"
-                android:textColor="#4660F4"
+                android:textColor="@android:color/white"
                 android:textSize="30sp"
                 android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
@@ -138,7 +141,7 @@
                 android:fontFamily="cursive"
                 android:paddingStart="10dp"
                 android:text="Player3"
-                android:textColor="#4660F4"
+                android:textColor="@android:color/white"
                 android:textSize="30sp"
                 android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
@@ -169,7 +172,7 @@
                 android:fontFamily="cursive"
                 android:paddingStart="10dp"
                 android:text="Player4"
-                android:textColor="#4660F4"
+                android:textColor="@android:color/white"
                 android:textSize="30sp"
                 android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="parent"
@@ -200,7 +203,7 @@
                 android:enabled="false"
                 android:fontFamily="sans-serif"
                 android:text="Start Game"
-                android:textColor="#247A1D"
+                android:textColor="#48FF00"
                 android:textSize="20sp"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -215,7 +218,7 @@
                 android:background="@android:color/transparent"
                 android:fontFamily="serif"
                 android:text="Exit Room"
-                android:textColor="#E71717"
+                android:textColor="#FF1100"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -276,7 +279,7 @@
         android:layout_marginTop="24dp"
         android:fontFamily="serif"
         android:text="Host will start the game"
-        android:textColor="#817F7F"
+        android:textColor="#FBFBFB"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

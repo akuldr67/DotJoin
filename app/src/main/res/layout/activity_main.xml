@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_activity_background"
+    android:background="@drawable/main_background_with_text"
     tools:context=".MainActivity"
     >
 
@@ -30,7 +30,7 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginBottom="25dp">
+        >
 
         <Button
             android:id="@+id/main_button_single_player"
