@@ -550,10 +550,10 @@ public class WaitingPlace extends AppCompatActivity {
                                     if(task.isSuccessful()){
                                         Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        Log.d("checkk","Finishing WatingPlace");
-                                        finish();
                                         Log.d("checkk","Starting MainActivity");
                                         startActivity(intent);
+                                        Log.d("checkk","Finishing WatingPlace");
+                                        finish();
                                     }
                                     else{
                                         Toast.makeText(WaitingPlace.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
@@ -593,25 +593,50 @@ public class WaitingPlace extends AppCompatActivity {
                         mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Log.d("checkk", "SingleValueEventListener, OnDataChange triggered");
                                 mDatabase.child("Rooms").child(roomId).removeEventListener(this);
                                 Room room = dataSnapshot.getValue(Room.class);
-                                players=room.getPlayers();
+                                Log.d("checkk", "Getting Players and removing currentPlayer");
+                                players = room.getPlayers();
                                 players.remove(playerNo);
-                                room.setPlayers(players);
-                                mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            Toast.makeText(WaitingPlace.this,"You left the room successfully",Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
-                                            startActivity(intent);
-                                            finish();
+                                Log.d("checkk", "Checking if this is the last player");
+                                if (players == null || players.size() < 1) {
+                                    Log.d("checkk", "Players has become null removing room");
+                                    mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                Log.d("checkk", "Finishing Waiting Place");
+                                                finish();
+                                                Log.d("checkk", "Starting MainActivity");
+                                                startActivity(intent);
+                                            } else {
+                                                Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
-                                        else{
-                                            Toast.makeText(WaitingPlace.this,"Unable to remove player",Toast.LENGTH_SHORT).show();
+                                    });
+                                } else {
+                                    Log.d("checkk", "Its not the last player");
+                                    room.setPlayers(players);
+                                    Log.d("checkk", "Updating room");
+                                    mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                Log.d("checkk", "Starting MainActivity");
+                                                startActivity(intent);
+                                                Log.d("checkk", "Finishing WatingPlace");
+                                                finish();
+                                            } else {
+                                                Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
 
                             @Override
