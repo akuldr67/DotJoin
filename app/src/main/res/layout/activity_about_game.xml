@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/about_background"
+    android:background="@drawable/main_background_without_text"
     tools:context=".aboutGame">
 
     <LinearLayout
@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="DotJoin"
-            android:textColor="#F80202"
+            android:textColor="#FF0000"
             android:textSize="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,7 +41,7 @@
         android:lineSpacingMultiplier="1.0"
         android:padding="10dp"
         android:text="TextView"
-        android:textColor="#000000"
+        android:textColor="@color/white"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
