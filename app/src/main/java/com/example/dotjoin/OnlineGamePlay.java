@@ -17,9 +17,12 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -58,7 +61,7 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Game game;
     private View view;
     private float posX,posY;
-    private int noOfPlayers,boardSize,playerNo,lastUpdatedEdge,noOfChancesMissed;
+    private int noOfPlayers,boardSize,playerNo,lastUpdatedEdge,noOfChancesMissed,flag;
     private LayoutUtils layoutUtils;
     private Vector<TextView> scoreViewVector;
     private Vector<ProgressBar> progressBars;
@@ -224,6 +227,10 @@ public class OnlineGamePlay extends AppCompatActivity {
                 startActivity(chatIntent);
             }
         });
+
+        flag=0;
+
+        view.setEnabled(false);
 
         //Getting ViewTreeObserver of the board Image
         ViewTreeObserver vto = boardImage.getViewTreeObserver();
@@ -448,7 +455,24 @@ public class OnlineGamePlay extends AppCompatActivity {
                     }
                     //If its this Users turn
                     if (playerNo == activeGame.getCurrentPlayer()) {
-                        view.setEnabled(true);
+                        if(flag==0){
+                            CountDownTimer startTimer = new CountDownTimer(2000,500) {
+                                @Override
+                                public void onTick(long millisUntilFinished) {
+
+                                }
+
+                                @Override
+                                public void onFinish() {
+                                    view.setEnabled(true);
+                                }
+                            };
+                            startTimer.start();
+                            flag=1;
+                        }
+                        else{
+                            view.setEnabled(true);
+                        }
                         view.setOnTouchListener(new View.OnTouchListener() {
                             @SuppressLint("ClickableViewAccessibility")
                             @Override
@@ -534,7 +558,50 @@ public class OnlineGamePlay extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView=inflater.inflate(R.layout.leaving_online_gameplay_dialog,null);
+        builder.setView(dialogView);
+        final Button yes = dialogView.findViewById(R.id.online_leave_dialog_YES);
+        final Button no = dialogView.findViewById(R.id.online_leave_dialog_NO);
 
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    mDatabase.child("Rooms").child(roomId).child("game").child("players").child(playerNo+"").child("active").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+            }
+        });
+        alertDialog.show();
     }
 
     @Override

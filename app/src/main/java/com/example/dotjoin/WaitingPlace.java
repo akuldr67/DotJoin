@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.icu.text.DateFormat;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -574,6 +575,62 @@ public class WaitingPlace extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView=inflater.inflate(R.layout.leaving_online_gameplay_dialog,null);
+        builder.setView(dialogView);
+        final Button yes = dialogView.findViewById(R.id.online_leave_dialog_YES);
+        final Button no = dialogView.findViewById(R.id.online_leave_dialog_NO);
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                yes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                                Room room = dataSnapshot.getValue(Room.class);
+                                players=room.getPlayers();
+                                players.remove(playerNo);
+                                room.setPlayers(players);
+                                mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Toast.makeText(WaitingPlace.this,"You left the room successfully",Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                        else{
+                                            Toast.makeText(WaitingPlace.this,"Unable to remove player",Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
+
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+            }
+        });
+        alertDialog.show();
 
     }
 
