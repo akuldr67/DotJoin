@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +60,7 @@ public class WaitingPlace extends AppCompatActivity {
     private int playerNo,boardSize;
     private Button exitRoom,startGame;
     private String roomId;
-    private Vector<ImageView> playerReadyViews;
+    private Vector<LinearLayout> playerViews;
 
     private AdView bannerAdView;
 
@@ -117,11 +118,11 @@ public class WaitingPlace extends AppCompatActivity {
         playerButtonViews.add((ImageButton)findViewById(R.id.removePlayer3));
         playerButtonViews.add((ImageButton)findViewById(R.id.removePlayer4));
 
-        playerReadyViews = new Vector<ImageView>();
-        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer1));
-        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer2));
-        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer3));
-        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer4));
+        playerViews = new Vector<LinearLayout>();
+        playerViews.add((LinearLayout)findViewById(R.id.waiting_p1_ll));
+        playerViews.add((LinearLayout)findViewById(R.id.waiting_p2_ll));
+        playerViews.add((LinearLayout) findViewById(R.id.waiting_p3_ll));
+        playerViews.add((LinearLayout) findViewById(R.id.waiting_p4_ll));
 
 
         //Getting firebase Database Reference
@@ -192,24 +193,27 @@ public class WaitingPlace extends AppCompatActivity {
                             }
 
                             //setting readyViews invisible initially
-                            for(int i=0;i<4;i++){
-                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
-                            }
+//                            for(int i=0;i<4;i++){
+//                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+//                            }
 
                             for (int i = 0; i < players.size(); i++) {
                                 playerTextViews.elementAt(i).setText(players.get(i).getName());
                                 playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
+                                playerViews.elementAt(i).setVisibility(View.VISIBLE);
                                 Log.d("checkk","Checking if player ready or not");
                                 if (players.get(i).getReady() == 1) {
                                     Log.d("checkk","Player found ready, making bold");
 //                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
 //                                    playerTe  xtViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
-                                    playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
+//                                    playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
+                                    playerViews.elementAt(i).setBackground(ContextCompat.getDrawable(WaitingPlace.this,R.drawable.button_background));
                                 } else if (players.get(i).getReady() == 0) {
                                     Log.d("checkk","Player not ready, making thin text");
 //                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.grey));
 //                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
-                                    playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+                                    playerViews.elementAt(i).setBackground(null);
+//                                    playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
                                 }
 
                                 Log.d("checkk","Checking if PlayerNo Changed");
@@ -231,7 +235,8 @@ public class WaitingPlace extends AppCompatActivity {
                             for (int i = players.size(); i < 4; i++) {
                                 playerTextViews.elementAt(i).setText("");
                                 playerTextViews.elementAt(i).setVisibility(View.INVISIBLE);
-                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+                                playerViews.elementAt(i).setVisibility(View.INVISIBLE);
+//                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
                             }
 
                             //setting start game visible for host
