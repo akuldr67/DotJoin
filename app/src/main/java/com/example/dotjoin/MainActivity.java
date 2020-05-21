@@ -237,4 +237,5 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         Intent exitGameIntent = new Intent(MainActivity.this, ExitGameDialog.class);
         startActivity(exitGameIntent);
     }
+
 }
