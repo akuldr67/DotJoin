@@ -30,28 +30,69 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="50dp"
         >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/constraintLayoutLinear">
 
-        <Button
-            android:id="@+id/main_button_single_player"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="Single Player" />
+            <ImageView
+                android:id="@+id/main_button_single_player"
+                android:layout_width="@dimen/mainButtonWidth"
+                android:layout_height="@dimen/mainButtonHeight"
+                android:layout_marginStart="32dp"
+                android:clickable="true"
+                android:onClick="onClickSinglePlayer"
+                android:src="@drawable/single_player_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/main_button_multi_offline"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="Multi Player" />
+            <ImageView
+                android:id="@+id/main_button_multi_offline"
+                android:layout_width="@dimen/mainButtonWidth"
+                android:layout_height="@dimen/mainButtonHeight"
+                android:layout_marginTop="75dp"
+                android:layout_marginEnd="32dp"
+                android:clickable="true"
+                android:onClick="onClickMultiPlayerOffline"
+                android:src="@drawable/multi_player_1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/main_button_multi_online"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="Play with Friends" />
+            <ImageView
+                android:id="@+id/main_button_multi_online"
+                android:layout_width="@dimen/mainButtonWidth"
+                android:layout_height="@dimen/mainButtonHeight"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="50dp"
+                android:clickable="true"
+                android:onClick="onClickMultiPlayerOnline"
+                android:src="@drawable/multi_player_online_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/main_button_single_player" />
+
+            <!--        <Button-->
+<!--            android:id="@+id/main_button_single_player"-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="20dp"-->
+<!--            android:text="Single Player" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/main_button_multi_offline"-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="20dp"-->
+<!--            android:text="Multi Player" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/main_button_multi_online"-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="20dp"-->
+<!--            android:text="Play with Friends" />-->
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 

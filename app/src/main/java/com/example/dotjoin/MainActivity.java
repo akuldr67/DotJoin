@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -37,11 +38,11 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     private DatabaseReference mDatabaseRef;
 
     //Layout
-    private Button singlePlayer;
-    private Button multiPlayerOffline;
-    private Button multiPlayerOnline;
+//    private ImageView singlePlayer;
+//    private ImageView multiPlayerOffline;
+//    private ImageView multiPlayerOnline;
 
-    //Shared Prefrences
+    //Shared Preferences
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor myEdit;
 
@@ -97,18 +98,18 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         mDatabaseRef.child("Rooms");
 
         //finding Layouts
-        singlePlayer = findViewById(R.id.main_button_single_player);
-        multiPlayerOffline=findViewById(R.id.main_button_multi_offline);
-        multiPlayerOnline=findViewById(R.id.main_button_multi_online);
+//        singlePlayer = findViewById(R.id.main_button_single_player);
+//        multiPlayerOffline=findViewById(R.id.main_button_multi_offline);
+//        multiPlayerOnline=findViewById(R.id.main_button_multi_online);
 
         //Creating Intent for each button in respective onClick listeners
 
         //singlePlayer
-        singlePlayer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,SinglePlayerDialog.class);
-                startActivity(intent);
+//        singlePlayer.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent=new Intent(MainActivity.this,SinglePlayerDialog.class);
+//                startActivity(intent);
 
 //                mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
@@ -121,27 +122,11 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 //                    startActivity(intent);
 //                }
 //                interstitialAdEvents();
+//
+//            }
+//        });
 
-            }
-        });
 
-        //multiPlayerOffline
-        multiPlayerOffline.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,MultiPlayerOfflineDialog.class);
-                startActivity(intent);
-            }
-        });
-
-        //multiPlayerOnline
-        multiPlayerOnline.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent= new Intent(MainActivity.this,MultiPlayerOnline.class);
-                startActivity(intent);
-            }
-        });
 
         mSharedPreferences = getSharedPreferences("com.example.dotjoin.file",Context.MODE_PRIVATE);
 
@@ -218,7 +203,30 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     }
 
 
-//    private void interstitialAdEvents(){
+    public void onClickSinglePlayer(View view){
+        Intent intent=new Intent(MainActivity.this,SinglePlayerDialog.class);
+        startActivity(intent);
+    }
+
+    public void onClickMultiPlayerOffline(View view){
+        Intent intent=new Intent(MainActivity.this,MultiPlayerOfflineDialog.class);
+        startActivity(intent);
+    }
+
+    public void onClickMultiPlayerOnline(View view) {
+        Intent intent= new Intent(MainActivity.this,MultiPlayerOnline.class);
+        startActivity(intent);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        Intent exitGameIntent = new Intent(MainActivity.this, ExitGameDialog.class);
+        startActivity(exitGameIntent);
+    }
+
+
+    //    private void interstitialAdEvents(){
 //        //listener for single player start interstitial ad
 //        mInterstitialAd.setAdListener(new AdListener(){
 //
@@ -230,12 +238,5 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 //
 //        });
 //    }
-
-
-    @Override
-    public void onBackPressed() {
-        Intent exitGameIntent = new Intent(MainActivity.this, ExitGameDialog.class);
-        startActivity(exitGameIntent);
-    }
 
 }
