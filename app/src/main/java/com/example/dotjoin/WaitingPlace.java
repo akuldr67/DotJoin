@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class WaitingPlace extends AppCompatActivity {
     private ImageButton copyButton;
     private Vector<TextView>playerTextViews;
     private Vector<ImageButton>playerButtonViews;
+    private Vector<ImageView>playerReadyViews;
     private static int maxPlayers=4;
     private DatabaseReference mDatabase;
     private ArrayList<Player>players;
@@ -89,7 +91,7 @@ public class WaitingPlace extends AppCompatActivity {
         bannerAdView.loadAd(adRequest);
 
 
-
+        boardSize=4;
 
         Log.d("checkk","Getting Intent Extras");
         //Getting Data from previous activity
@@ -123,6 +125,12 @@ public class WaitingPlace extends AppCompatActivity {
         playerViews.add((LinearLayout)findViewById(R.id.waiting_p2_ll));
         playerViews.add((LinearLayout) findViewById(R.id.waiting_p3_ll));
         playerViews.add((LinearLayout) findViewById(R.id.waiting_p4_ll));
+
+        playerReadyViews = new Vector<ImageView>();
+        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer1));
+        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer2));
+        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer3));
+        playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer4));
 
 
         //Getting firebase Database Reference
@@ -192,7 +200,7 @@ public class WaitingPlace extends AppCompatActivity {
 //                                startActivity(intent);
                             }
 
-                            //setting readyViews invisible initially
+//                            setting readyViews invisible initially
 //                            for(int i=0;i<4;i++){
 //                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
 //                            }
@@ -201,19 +209,20 @@ public class WaitingPlace extends AppCompatActivity {
                                 playerTextViews.elementAt(i).setText(players.get(i).getName());
                                 playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
                                 playerViews.elementAt(i).setVisibility(View.VISIBLE);
+                                playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
                                 Log.d("checkk","Checking if player ready or not");
                                 if (players.get(i).getReady() == 1) {
                                     Log.d("checkk","Player found ready, making bold");
 //                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
 //                                    playerTe  xtViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
-//                                    playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
+                                    playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
                                     playerViews.elementAt(i).setBackground(ContextCompat.getDrawable(WaitingPlace.this,R.drawable.button_background));
                                 } else if (players.get(i).getReady() == 0) {
                                     Log.d("checkk","Player not ready, making thin text");
 //                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.grey));
 //                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
                                     playerViews.elementAt(i).setBackground(null);
-//                                    playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+                                    playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
                                 }
 
                                 Log.d("checkk","Checking if PlayerNo Changed");
@@ -236,7 +245,7 @@ public class WaitingPlace extends AppCompatActivity {
                                 playerTextViews.elementAt(i).setText("");
                                 playerTextViews.elementAt(i).setVisibility(View.INVISIBLE);
                                 playerViews.elementAt(i).setVisibility(View.INVISIBLE);
-//                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
                             }
 
                             //setting start game visible for host
@@ -308,71 +317,68 @@ public class WaitingPlace extends AppCompatActivity {
                              Log.d("checkk", "Found suitable player no");
                              Log.d("checkk", "Started Creating Dialog to accept board size");
                              //Dialog Box that accepts board size
-                             CharSequence[] sizeOptions = new CharSequence[]{"3*3 ", "4*4", "5*5", "6*6", "7*7"};
 
-                             AlertDialog.Builder sizeDialog = new AlertDialog.Builder(WaitingPlace.this);
-                             sizeDialog.setTitle("Size");
-                             sizeDialog.setItems(sizeOptions, new DialogInterface.OnClickListener() {
+                             final AlertDialog.Builder builder = new AlertDialog.Builder(WaitingPlace.this);
+                             LayoutInflater inflater = WaitingPlace.this.getLayoutInflater();
+                             View dialogView=inflater.inflate(R.layout.online_size_dialog,null);
+                             builder.setView(dialogView);
+                             final Button startGame = dialogView.findViewById(R.id.online_start_game_button);
+
+                             final AlertDialog alertDialog = builder.create();
+                             alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                                  @Override
-                                 public void onClick(DialogInterface dialog, int which) {
-                                     if (which == 0) boardSize = 4;
-                                     else if (which == 1) boardSize = 5;
-                                     else if (which == 2) boardSize = 6;
-                                     else if (which == 3) boardSize = 7;
-                                     else if (which == 4) boardSize = 8;
-
-
-                                     //Value Event Listener for room
-                                     mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                 public void onShow(DialogInterface dialog) {
+                                     startGame.setOnClickListener(new View.OnClickListener() {
                                          @Override
-                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                             Log.d("checkk", "onDataChange started, SingleValueEventListener");
-                                             mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                                             Room room = dataSnapshot.getValue(Room.class);
-                                             ArrayList<Player> players = room.getPlayers();
-                                             int flag = 1;
-                                             for (int i = 0; i < players.size(); i++) {
-                                                 if (players.get(i).getReady() == 0) {
-                                                     flag = 0;
+                                         public void onClick(View v) {
+                                             //Value Event Listener for room
+                                             mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                 @Override
+                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                     Log.d("checkk", "onDataChange started, SingleValueEventListener");
+                                                     mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                                                     Room room = dataSnapshot.getValue(Room.class);
+                                                     ArrayList<Player> players = room.getPlayers();
+                                                     int flag = 1;
+                                                     for (int i = 0; i < players.size(); i++) {
+                                                         if (players.get(i).getReady() == 0) {
+                                                             flag = 0;
+                                                         }
+                                                     }
+                                                     if (flag == 1) {
+                                                         Log.d("checkk", "Initializing Board");
+                                                         Board board = new Board(boardSize, boardSize, 0, 0, 0);
+                                                         for (int i = 0; i < players.size(); i++) {
+                                                             if (i == 0)
+                                                                 players.get(i).setColor(R.drawable.colour_box_blue);
+                                                             else if (i == 1)
+                                                                 players.get(i).setColor(R.drawable.colour_box_red);
+                                                             else if (i == 2)
+                                                                 players.get(i).setColor(R.drawable.colour_box_green);
+                                                             else if (i == 3)
+                                                                 players.get(i).setColor(R.drawable.colour_box_yellow);
+                                                         }
+                                                         Log.d("checkk", "Initializing Game with players in room");
+                                                         Game game = new Game(-1, room.getPlayers().size(), board, players);
+                                                         room.setGame(game);
+                                                         Log.d("checkk", "Setting isGameStarted true");
+                                                         room.setIsGameStarted(true);
+                                                         Log.d("checkk", "Updating to server, updated room");
+                                                         mDatabase.child("Rooms").child(roomId).setValue(room);
+                                                     } else {
+                                                         Toast.makeText(WaitingPlace.this, "All Players are not Ready!!", Toast.LENGTH_LONG).show();
+                                                     }
                                                  }
-                                             }
-                                             if(flag==1) {
-                                                 Log.d("checkk", "Initializing Board");
-                                                 Board board = new Board(boardSize, boardSize, 0, 0, 0);
-                                                 for (int i = 0; i < players.size(); i++) {
-                                                     if (i == 0)
-                                                         players.get(i).setColor(R.drawable.colour_box_blue);
-                                                     else if (i == 1)
-                                                         players.get(i).setColor(R.drawable.colour_box_red);
-                                                     else if (i == 2)
-                                                         players.get(i).setColor(R.drawable.colour_box_green);
-                                                     else if (i == 3)
-                                                         players.get(i).setColor(R.drawable.colour_box_yellow);
+                                                 @Override
+                                                 public void onCancelled(@NonNull DatabaseError databaseError) {
                                                  }
-                                                 Log.d("checkk", "Initializing Game with players in room");
-                                                 Game game = new Game(-1, room.getPlayers().size(), board, players);
-                                                 room.setGame(game);
-                                                 Log.d("checkk", "Setting isGameStarted true");
-                                                 room.setIsGameStarted(true);
-                                                 Log.d("checkk", "Updating to server, updated room");
-                                                 mDatabase.child("Rooms").child(roomId).setValue(room);
-                                             }
-                                             else {
-                                                 Toast.makeText(WaitingPlace.this,"All Players are not Ready!!",Toast.LENGTH_LONG).show();
-                                             }
-                                         }
+                                             });
 
-                                         @Override
-                                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                          }
                                      });
                                  }
                              });
-                             Log.d("checkk", "Creating dialog from builder");
-                             AlertDialog alertDialog = sizeDialog.create();
-                             alertDialog.setCanceledOnTouchOutside(false);
-                             Log.d("checkk", "Showing dialog");
                              alertDialog.show();
                          }
                      }
@@ -661,7 +667,6 @@ public class WaitingPlace extends AppCompatActivity {
             }
         });
         alertDialog.show();
-
     }
 
     @Override
@@ -793,6 +798,37 @@ public class WaitingPlace extends AppCompatActivity {
 //            }
 //        });
 //    }
+public void onSizeClicked(View view){
+    boolean checked = ((RadioButton)view).isChecked();
+    switch(view.getId()) {
+        case R.id.online_size_dialog_three:
+            if (checked){
+                boardSize=4;
+            }
+            break;
+        case R.id.online_size_dialog_four:
+            if (checked){
+                boardSize=5;
+            }
+            break;
+        case R.id.online_size_dialog_five:
+            if (checked){
+                boardSize=6;
+            }
+            break;
+        case R.id.online_size_dialog_six:
+            if (checked){
+                boardSize=7;
+            }
+            break;
+        case R.id.online_size_dialog_seven:
+            if (checked){
+                boardSize=8;
+            }
+            break;
+    }
+}
+
 }
 
 //ToDo - Check after every players/room object use, if it null/empty, if null go back to previous activity and delete room from database
