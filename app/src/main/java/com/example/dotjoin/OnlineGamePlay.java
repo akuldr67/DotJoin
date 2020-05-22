@@ -525,19 +525,6 @@ public class OnlineGamePlay extends AppCompatActivity {
                         };
                 mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(firstValueEventListener);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
             }
         });
 
@@ -583,9 +570,27 @@ public class OnlineGamePlay extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
-                                                Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
-                                                startActivity(intent);
-                                                finish();
+                                                if(activeGame.getCurrentPlayer()==playerNo){
+                                                    activeGame.nextTurn();
+                                                    while(activeGame.getPlayers().get(activeGame.getCurrentPlayer()).getActive()==0){
+                                                        activeGame.nextTurn();
+                                                    }
+                                                    mDatabase.child("Rooms").child(roomId).child("game").setValue(activeGame).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                         if(task.isSuccessful()){
+                                                             Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
+                                                             startActivity(intent);
+                                                             finish();
+                                                         }
+                                                        }
+                                                    });
+                                                }
+                                                else{
+                                                    Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
                                             }
                                         }
                                     });
