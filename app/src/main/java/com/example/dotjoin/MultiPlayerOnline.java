@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -46,12 +47,12 @@ public class MultiPlayerOnline extends AppCompatActivity {
     private String roomId;
 
     //Buttons
-    private Button createRoom,joinRoom;
+    private LinearLayout createRoom,joinRoom;
     private SharedPreferences mSharedPreferences;
 
     //ProgressBar
     private ProgressBar mProgressBar;
-
+    private LinearLayout linearLayout;
     private AdView bannerAdView;
 
     @Override
@@ -74,7 +75,7 @@ public class MultiPlayerOnline extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
 
-
+        ;
 
         mDatabaseRef=FirebaseDatabase.getInstance().getReference();
 
