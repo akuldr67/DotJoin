@@ -48,7 +48,6 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 
         setContentView(R.layout.activity_online_game_play_end_game);
 
-        endGameProgressBar = findViewById(R.id.online_game_end_progressbar);
 
         Intent intent = getIntent();
         String heading = intent.getStringExtra("Heading");
@@ -59,6 +58,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
             Log.d("playerNo","Did not get the player No");
         }
 
+        endGameProgressBar = findViewById(R.id.online_game_end_progressbar);
 
         Heading=findViewById(R.id.onlinegameplay_endgame_title);
         Result=findViewById(R.id.onlinegameplay_endgame_final_score);
@@ -97,11 +97,11 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 Log.d("checkk","Starting Main Activity");
                                 endGameProgressBar.setVisibility(View.GONE);
-                                startActivity(intent);
+//                                startActivity(intent);
                                 OnlineGamePlay.AcOnlineGamePlay.finish();
                                 Log.d("checkk","finishing OnlineGamePlay");
                                 finish();
@@ -120,11 +120,11 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 Log.d("checkk","Starting intent for MainActivity");
                                 endGameProgressBar.setVisibility(View.GONE);
-                                startActivity(intent);
+//                                startActivity(intent);
                                 OnlineGamePlay.AcOnlineGamePlay.finish();
                                 Log.d("checkk","finishing OnlineGamePlay");
                                 finish();

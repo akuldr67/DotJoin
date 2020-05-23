@@ -68,7 +68,7 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Vector<Integer>highlightedBoxes,unhighlightedBoxes;
     private Vector<Vector<ImageView> >redDots;
     private Vector<Vector<ImageView> >greenDots;
-    private ProgressBar onlineGamePlayLeaveProgressBar;
+//    private ProgressBar onlineGamePlayLeaveProgressBar;
 
     private AdView bannerAdView;
 
@@ -95,7 +95,6 @@ public class OnlineGamePlay extends AppCompatActivity {
 
         Log.d("checkk","onCreate OnlineGamePlay started");
 
-        onlineGamePlayLeaveProgressBar = findViewById(R.id.leaving_online_game_progress_bar);
 
 
         AcOnlineGamePlay = this;
@@ -117,8 +116,6 @@ public class OnlineGamePlay extends AppCompatActivity {
 
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
-
-
 
 
 
@@ -552,10 +549,11 @@ public class OnlineGamePlay extends AppCompatActivity {
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
+//                onlineGamePlayLeaveProgressBar = findViewById(R.id.leaving_online_game_progress_bar);
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onlineGamePlayLeaveProgressBar.setVisibility(View.VISIBLE);
+//                        onlineGamePlayLeaveProgressBar.setVisibility(View.VISIBLE);
                         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -573,35 +571,35 @@ public class OnlineGamePlay extends AppCompatActivity {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                          if(task.isSuccessful()){
-                                                             Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
-                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
-                                                             startActivity(intent);
+//                                                             Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
+//                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+//                                                             startActivity(intent);
                                                              finish();
                                                          }
                                                          else{
                                                              Toast.makeText(getApplicationContext(),"Sorry unable to leave",Toast.LENGTH_SHORT).show();
-                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+//                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
                                                          }
                                                         }
                                                     });
                                                 }
                                                 else{
-                                                    Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
-                                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
-                                                    startActivity(intent);
+//                                                    Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
+//                                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+//                                                    startActivity(intent);
                                                     finish();
                                                 }
                                             }
                                             else{
                                                 Toast.makeText(getApplicationContext(),"Sorry unable to leave",Toast.LENGTH_SHORT).show();
-                                                onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+//                                                onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
                                             }
                                         }
                                     });
                                 }
                                 else{
                                     Toast.makeText(getApplicationContext(),"Sorry unable to leave",Toast.LENGTH_SHORT).show();
-                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+//                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
                                 }
                             }
                         });

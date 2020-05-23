@@ -3,6 +3,7 @@ package com.arpitakuldr.dotjoin;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,10 +42,14 @@ public class MultiPlayerOnline extends AppCompatActivity {
     private LinearLayout linearLayout;
     private AdView bannerAdView;
 
+    public static Activity AcMultiPlayerOnline;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_player_online);
+
+        AcMultiPlayerOnline = this;
 
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -140,6 +145,7 @@ public class MultiPlayerOnline extends AppCompatActivity {
                             mProgressBar.setVisibility(View.GONE);
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                             startActivity(waitingRoomIntent);
+                            finish();
                         }
                         else{
                             mProgressBar.setVisibility(View.GONE);

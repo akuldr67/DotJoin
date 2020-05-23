@@ -108,6 +108,8 @@ public class JoinRoom extends AppCompatActivity {
                                                         mProgressBar.setVisibility(View.GONE);
                                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                         startActivity(waitingRoomIntent);
+                                                        finish();
+                                                        MultiPlayerOnline.AcMultiPlayerOnline.finish();
                                                     } else {
                                                         mProgressBar.setVisibility(View.GONE);
                                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
