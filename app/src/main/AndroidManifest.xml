@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.dotjoin">
+    package="com.arpitakuldr.dotjoin">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -14,12 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".OnlineGamePlayEndGame"
+        <activity android:name="com.arpitakuldr.dotjoin.OnlineGamePlayEndGame"
             android:screenOrientation="portrait"
             android:theme="@style/dialog"/>
 
         <provider
-            android:name=".GenericFileProvider"
+            android:name="com.arpitakuldr.dotjoin.GenericFileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -33,52 +33,52 @@
             android:value="ca-app-pub-5980384053078399~8290579752" />
 
         <activity
-            android:name=".JoinRoom"
+            android:name="com.arpitakuldr.dotjoin.JoinRoom"
             android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
-            android:name=".ExitGameDialog"
+            android:name="com.arpitakuldr.dotjoin.ExitGameDialog"
             android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
-            android:name=".SinglePlayerEndGame"
+            android:name="com.arpitakuldr.dotjoin.SinglePlayerEndGame"
             android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
-            android:name=".MultiPlayerOfflineDialog"
+            android:name="com.arpitakuldr.dotjoin.MultiPlayerOfflineDialog"
             android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
-            android:name=".SinglePlayerDialog"
+            android:name="com.arpitakuldr.dotjoin.SinglePlayerDialog"
             android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
-            android:name=".aboutUs"
+            android:name="com.arpitakuldr.dotjoin.aboutUs"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".aboutGame"
+            android:name="com.arpitakuldr.dotjoin.aboutGame"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ChangeName"
+            android:name="com.arpitakuldr.dotjoin.ChangeName"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".PopUpChat"
+            android:name="com.arpitakuldr.dotjoin.PopUpChat"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUp" />
         <activity
-            android:name=".OnlineGamePlay"
+            android:name="com.arpitakuldr.dotjoin.OnlineGamePlay"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".WaitingPlace"
+            android:name="com.arpitakuldr.dotjoin.WaitingPlace"
             android:screenOrientation="portrait" />
-        <activity android:name=".MultiPlayerOnline" />
+        <activity android:name="com.arpitakuldr.dotjoin.MultiPlayerOnline" />
         <activity
-            android:name=".MultiPlayerOffline"
+            android:name="com.arpitakuldr.dotjoin.MultiPlayerOffline"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SinglePlayer"
+            android:name="com.arpitakuldr.dotjoin.SinglePlayer"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.arpitakuldr.dotjoin.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -87,7 +87,7 @@
         </activity>
 
         <service
-            android:name=".EndService"
+            android:name="com.arpitakuldr.dotjoin.EndService"
             android:enabled="true"
             android:exported="true"
             android:stopWithTask="false" />
