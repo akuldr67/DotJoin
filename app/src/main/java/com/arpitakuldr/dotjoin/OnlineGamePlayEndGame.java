@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     private String roomId;
     private int playerNo;
     private ArrayList<Player> players;
+    private ProgressBar endGameProgressBar;
 
 
     @Override
@@ -46,6 +48,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 
         setContentView(R.layout.activity_online_game_play_end_game);
 
+
         Intent intent = getIntent();
         String heading = intent.getStringExtra("Heading");
         String result = intent.getStringExtra("Result");
@@ -55,6 +58,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
             Log.d("playerNo","Did not get the player No");
         }
 
+        endGameProgressBar = findViewById(R.id.online_game_end_progressbar);
 
         Heading=findViewById(R.id.onlinegameplay_endgame_title);
         Result=findViewById(R.id.onlinegameplay_endgame_final_score);
@@ -68,6 +72,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     }
 
     public void onHomeClicked(View view){
+        endGameProgressBar.setVisibility(View.VISIBLE);
         Log.d("checkk","Click on Home Detected");
         mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -92,16 +97,18 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 Log.d("checkk","Starting Main Activity");
-                                startActivity(intent);
+                                endGameProgressBar.setVisibility(View.GONE);
+//                                startActivity(intent);
                                 OnlineGamePlay.AcOnlineGamePlay.finish();
                                 Log.d("checkk","finishing OnlineGamePlay");
                                 finish();
 
                             } else {
                                 Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
+                                endGameProgressBar.setVisibility(View.GONE);
                             }
                         }
                     });
@@ -113,15 +120,17 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 Log.d("checkk","Starting intent for MainActivity");
-                                startActivity(intent);
+                                endGameProgressBar.setVisibility(View.GONE);
+//                                startActivity(intent);
                                 OnlineGamePlay.AcOnlineGamePlay.finish();
                                 Log.d("checkk","finishing OnlineGamePlay");
                                 finish();
                             } else {
                                 Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
+                                endGameProgressBar.setVisibility(View.GONE);
                             }
                         }
                     });

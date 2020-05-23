@@ -79,4 +79,14 @@
 
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/online_game_end_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="#00000000"
+        android:progressTint="#ffffff"
+        android:visibility="invisible"
+        />
+
 </RelativeLayout>

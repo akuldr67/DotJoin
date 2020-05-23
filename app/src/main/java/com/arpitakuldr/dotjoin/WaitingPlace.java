@@ -534,12 +534,12 @@ public class WaitingPlace extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
+//                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         Log.d("checkk","Finishing Waiting Place");
                                         finish();
                                         Log.d("checkk","Starting MainActivity");
-                                        startActivity(intent);
+//                                        startActivity(intent);
                                     }
                                     else{
                                         Toast.makeText(WaitingPlace.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
@@ -554,10 +554,10 @@ public class WaitingPlace extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
+//                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         Log.d("checkk","Starting MainActivity");
-                                        startActivity(intent);
+//                                        startActivity(intent);
                                         Log.d("checkk","Finishing WatingPlace");
                                         finish();
                                     }
@@ -612,12 +612,12 @@ public class WaitingPlace extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 Log.d("checkk", "Finishing Waiting Place");
                                                 finish();
                                                 Log.d("checkk", "Starting MainActivity");
-                                                startActivity(intent);
+//                                                startActivity(intent);
                                             } else {
                                                 Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
                                             }
@@ -631,10 +631,10 @@ public class WaitingPlace extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 Log.d("checkk", "Starting MainActivity");
-                                                startActivity(intent);
+//                                                startActivity(intent);
                                                 Log.d("checkk", "Finishing WatingPlace");
                                                 finish();
                                             } else {

@@ -24,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -67,6 +68,7 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Vector<Integer>highlightedBoxes,unhighlightedBoxes;
     private Vector<Vector<ImageView> >redDots;
     private Vector<Vector<ImageView> >greenDots;
+    private ProgressBar onlineGamePlayLeaveProgressBar;
 
     private AdView bannerAdView;
 
@@ -94,6 +96,7 @@ public class OnlineGamePlay extends AppCompatActivity {
         Log.d("checkk","onCreate OnlineGamePlay started");
 
 
+
         AcOnlineGamePlay = this;
         rootViewShare = getWindow().getDecorView().findViewById(R.id.online_constraint);
 
@@ -113,8 +116,6 @@ public class OnlineGamePlay extends AppCompatActivity {
 
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
-
-
 
 
 
@@ -542,6 +543,7 @@ public class OnlineGamePlay extends AppCompatActivity {
         builder.setView(dialogView);
         final Button yes = dialogView.findViewById(R.id.online_leave_dialog_YES);
         final Button no = dialogView.findViewById(R.id.online_leave_dialog_NO);
+        onlineGamePlayLeaveProgressBar = dialogView.findViewById(R.id.leaving_online_game_progress_bar);
 
         final AlertDialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
@@ -551,6 +553,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        onlineGamePlayLeaveProgressBar.setVisibility(View.VISIBLE);
                         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -568,21 +571,35 @@ public class OnlineGamePlay extends AppCompatActivity {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                          if(task.isSuccessful()){
-                                                             Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
-                                                             startActivity(intent);
+//                                                             Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
+                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+//                                                             startActivity(intent);
                                                              finish();
+                                                         }
+                                                         else{
+                                                             Toast.makeText(getApplicationContext(),"Sorry unable to leave",Toast.LENGTH_SHORT).show();
+                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
                                                          }
                                                         }
                                                     });
                                                 }
                                                 else{
-                                                    Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
-                                                    startActivity(intent);
+//                                                    Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
+                                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+//                                                    startActivity(intent);
                                                     finish();
                                                 }
                                             }
+                                            else{
+                                                Toast.makeText(getApplicationContext(),"Sorry unable to leave",Toast.LENGTH_SHORT).show();
+                                                onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+                                            }
                                         }
                                     });
+                                }
+                                else{
+                                    Toast.makeText(getApplicationContext(),"Sorry unable to leave",Toast.LENGTH_SHORT).show();
+                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
                                 }
                             }
                         });

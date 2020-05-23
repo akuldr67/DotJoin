@@ -48,4 +48,16 @@
         android:layout_margin="10dp"
         android:background="@drawable/selected_button_background"
         android:text="NO"/>
+
+    <ProgressBar
+        android:id="@+id/leaving_online_game_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00000000"
+        android:progressTint="#ffffff"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/online_leave_dialog_YES"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/online_leave_dialog_title" />
 </androidx.constraintlayout.widget.ConstraintLayout>
