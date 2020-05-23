@@ -68,7 +68,7 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Vector<Integer>highlightedBoxes,unhighlightedBoxes;
     private Vector<Vector<ImageView> >redDots;
     private Vector<Vector<ImageView> >greenDots;
-//    private ProgressBar onlineGamePlayLeaveProgressBar;
+    private ProgressBar onlineGamePlayLeaveProgressBar;
 
     private AdView bannerAdView;
 
@@ -543,17 +543,17 @@ public class OnlineGamePlay extends AppCompatActivity {
         builder.setView(dialogView);
         final Button yes = dialogView.findViewById(R.id.online_leave_dialog_YES);
         final Button no = dialogView.findViewById(R.id.online_leave_dialog_NO);
+        onlineGamePlayLeaveProgressBar = dialogView.findViewById(R.id.leaving_online_game_progress_bar);
 
         final AlertDialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-//                onlineGamePlayLeaveProgressBar = findViewById(R.id.leaving_online_game_progress_bar);
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        onlineGamePlayLeaveProgressBar.setVisibility(View.VISIBLE);
+                        onlineGamePlayLeaveProgressBar.setVisibility(View.VISIBLE);
                         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -572,34 +572,34 @@ public class OnlineGamePlay extends AppCompatActivity {
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                          if(task.isSuccessful()){
 //                                                             Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
-//                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
 //                                                             startActivity(intent);
                                                              finish();
                                                          }
                                                          else{
                                                              Toast.makeText(getApplicationContext(),"Sorry unable to leave",Toast.LENGTH_SHORT).show();
-//                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+                                                             onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
                                                          }
                                                         }
                                                     });
                                                 }
                                                 else{
 //                                                    Intent intent = new Intent(OnlineGamePlay.this,MainActivity.class);
-//                                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+                                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
 //                                                    startActivity(intent);
                                                     finish();
                                                 }
                                             }
                                             else{
                                                 Toast.makeText(getApplicationContext(),"Sorry unable to leave",Toast.LENGTH_SHORT).show();
-//                                                onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+                                                onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
                                             }
                                         }
                                     });
                                 }
                                 else{
                                     Toast.makeText(getApplicationContext(),"Sorry unable to leave",Toast.LENGTH_SHORT).show();
-//                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
+                                    onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
                                 }
                             }
                         });
