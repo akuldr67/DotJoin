@@ -94,11 +94,12 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                Log.d("checkk","Starting Main Activity");
+                                startActivity(intent);
                                 OnlineGamePlay.AcOnlineGamePlay.finish();
                                 Log.d("checkk","finishing OnlineGamePlay");
                                 finish();
-                                Log.d("checkk","Starting Main Activity");
-                                startActivity(intent);
+
                             } else {
                                 Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
                             }
@@ -114,10 +115,10 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                OnlineGamePlay.AcOnlineGamePlay.finish();
-                                Log.d("checkk","finishing OnlineGamePlay");
                                 Log.d("checkk","Starting intent for MainActivity");
                                 startActivity(intent);
+                                OnlineGamePlay.AcOnlineGamePlay.finish();
+                                Log.d("checkk","finishing OnlineGamePlay");
                                 finish();
                             } else {
                                 Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
