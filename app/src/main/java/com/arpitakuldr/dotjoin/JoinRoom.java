@@ -64,6 +64,7 @@ public class JoinRoom extends AppCompatActivity {
                 //If User does not give input
                 if(roomId_input.getText().toString().equals("")){
                     Toast.makeText(getApplicationContext(),"Please Enter Room Id",Toast.LENGTH_LONG).show();
+                    mProgressBar.setVisibility(View.GONE);
                 }
                 else{
                     //Saving User input in this string
