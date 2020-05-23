@@ -54,7 +54,7 @@
         <ImageButton
             android:layout_width="@dimen/mainButtonWidth"
             android:layout_height="@dimen/mainButtonHeight"
-            android:src="@drawable/main_vs_computer"
+            android:src="@drawable/main_vs_comp"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
