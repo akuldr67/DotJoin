@@ -8,39 +8,54 @@
     tools:context=".PopUpChat">
 
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_above="@id/chat_linear_layout"
+        android:layout_margin="10dp">
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <LinearLayout
+        android:id="@+id/chat_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:weightSum="10"
+        android:gravity="center_vertical">
+
+
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
+            android:background="@drawable/chat_input_background"
             android:id="@+id/writeNewText"
             android:hint="Type a Message"
             android:padding="10dp"
-            android:paddingEnd="40dp"
             android:textSize="22sp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
+            android:layout_weight="8"
+            android:layout_margin="5dp"
             >
         </EditText>
 
         <ImageButton
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_height="match_parent"
             android:src="@drawable/ic_send_button"
-            android:background="#FFFFFF"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
+            android:background="@drawable/chat_send_background"
+            android:layout_weight="2"
+            android:layout_margin="5dp"
             />
+    </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/writeNewText"
-        android:id="@+id/recyclerView">
-
-
-    </androidx.recyclerview.widget.RecyclerView>
 
 
 </RelativeLayout>

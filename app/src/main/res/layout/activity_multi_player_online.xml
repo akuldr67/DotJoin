@@ -32,7 +32,8 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_person_pin"/>
+                android:src="@drawable/ic_person_pin"
+                android:layout_gravity="center"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -41,7 +42,7 @@
                 android:text="CREATE ROOM"
                 android:layout_margin="30dp"
                 android:gravity="center"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"/>
 
 
@@ -61,6 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_person_add"
+                android:layout_gravity="center"
                 android:scaleY="0.85"
                 android:scaleX="0.85"/>
 
@@ -71,7 +73,7 @@
                 android:text="JOIN ROOM"
                 android:layout_margin="30dp"
                 android:gravity="center"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"/>
         </LinearLayout>
     </LinearLayout>
