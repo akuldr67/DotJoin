@@ -554,6 +554,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         onlineGamePlayLeaveProgressBar.setVisibility(View.VISIBLE);
+                        mDatabase.child("Rooms").child(roomId).child("game").removeEventListener(mainValueEventListener);
                         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
