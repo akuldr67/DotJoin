@@ -324,11 +324,22 @@ public class SinglePlayer extends AppCompatActivity {
     protected void endGame(){
         timer.cancel();
         String result = "";
+
+        //sorting score
+        Vector <Integer> sortOrderScore = new Vector<>();
+        if(game.players.get(0).getScore()<game.players.get(1).getScore()){
+            sortOrderScore.add(1);
+            sortOrderScore.add(0);
+        } else {
+            sortOrderScore.add(0);
+            sortOrderScore.add(1);
+        }
+
         for (int i = 0; i < 2; i++) {
             if (i == 1) {
-                result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore();
+                result = result + game.players.get(sortOrderScore.get(i)).getName() + " - " + game.players.get(sortOrderScore.get(i)).getScore();
             } else {
-                result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore() + "\n";
+                result = result + game.players.get(sortOrderScore.get(i)).getName() + " - " + game.players.get(sortOrderScore.get(i)).getScore() + "\n";
             }
         }
 
