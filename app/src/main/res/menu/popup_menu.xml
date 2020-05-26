@@ -7,6 +7,12 @@
     <item android:id="@+id/AboutGame"
         android:title="About Game"/>
 
+    <item android:id="@+id/ShareApp"
+        android:title="Share Game"/>
+
+    <item android:id="@+id/RateUs"
+        android:title="Rate Us"/>
+
     <item android:id="@+id/AboutUs"
         android:title="About Developers"/>
 
