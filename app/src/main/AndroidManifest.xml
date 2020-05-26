@@ -15,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.arpitakuldr.dotjoin.OnlineGamePlayEndGame"
-            android:screenOrientation="portrait"
             android:theme="@style/dialog"/>
 
         <provider
@@ -34,23 +33,18 @@
 
         <activity
             android:name="com.arpitakuldr.dotjoin.JoinRoom"
-            android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
             android:name="com.arpitakuldr.dotjoin.ExitGameDialog"
-            android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
             android:name="com.arpitakuldr.dotjoin.SinglePlayerEndGame"
-            android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
             android:name="com.arpitakuldr.dotjoin.MultiPlayerOfflineDialog"
-            android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
             android:name="com.arpitakuldr.dotjoin.SinglePlayerDialog"
-            android:screenOrientation="portrait"
             android:theme="@style/dialog" />
         <activity
             android:name="com.arpitakuldr.dotjoin.aboutUs"
@@ -63,7 +57,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="com.arpitakuldr.dotjoin.PopUpChat"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUp" />
         <activity
             android:name="com.arpitakuldr.dotjoin.OnlineGamePlay"
@@ -78,7 +71,8 @@
         <activity
             android:name="com.arpitakuldr.dotjoin.SinglePlayer"
             android:screenOrientation="portrait" />
-        <activity android:name="com.arpitakuldr.dotjoin.MainActivity">
+        <activity android:name="com.arpitakuldr.dotjoin.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

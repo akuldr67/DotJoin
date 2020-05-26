@@ -2,6 +2,7 @@ package com.arpitakuldr.dotjoin;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             LayoutInflater inflater = this.getLayoutInflater();
             View dialogView=inflater.inflate(R.layout.name_dialog,null);
             builder.setView(dialogView);
-            final EditText input = dialogView.findViewById(R.id.name_input);
+            final AppCompatEditText input = dialogView.findViewById(R.id.name_input);
             final Button submit = dialogView.findViewById(R.id.name_submit_button);
 
             AlertDialog alertDialog = builder.create();
