@@ -40,6 +40,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Vector;
 
 public class OnlineGamePlay extends AppCompatActivity {
@@ -705,11 +706,31 @@ public class OnlineGamePlay extends AppCompatActivity {
         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo + "").child("ready").setValue(0);
 
         String result = "";
+
+        // sorting result
+        Vector<Integer> sortOrderResult = new Vector<>();
+        Vector<Integer> scores = new Vector<>();
+        Vector<Boolean> scoreUsed = new Vector<>();
+        for(int i=0; i<noOfPlayers; i++){
+            scores.add(activeGame.players.get(i).getScore());
+            scoreUsed.add(Boolean.FALSE);
+        }
+        Collections.sort(scores, Collections.<Integer>reverseOrder());
+        for(int i=0;i<noOfPlayers; i++){
+            for(int j=0;j<noOfPlayers;j++) {
+                if(scores.get(i)==activeGame.players.get(j).getScore() && !scoreUsed.get(j)) {
+                    sortOrderResult.add(j);
+                    scoreUsed.set(j,Boolean.TRUE);
+                }
+            }
+        }
+
+
         for (int i = 0; i < noOfPlayers; i++) {
             if (i == noOfPlayers - 1) {
-                result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore();
+                result = result + activeGame.players.get(sortOrderResult.get(i)).getName() + " - " + activeGame.players.get(sortOrderResult.get(i)).getScore();
             } else {
-                result = result + activeGame.players.get(i).getName() + " - " + activeGame.players.get(i).getScore() + "\n";
+                result = result + activeGame.players.get(sortOrderResult.get(i)).getName() + " - " + activeGame.players.get(sortOrderResult.get(i)).getScore() + "\n";
             }
         }
 

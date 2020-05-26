@@ -23,6 +23,7 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Vector;
 
 public class MultiPlayerOffline extends AppCompatActivity {
@@ -223,11 +224,30 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     Intent resultIntent = new Intent(MultiPlayerOffline.this,SinglePlayerEndGame.class);
 
                                                     String result = "";
+
+                                                    //sorting score
+                                                    Vector<Integer> sortOrderResult = new Vector<>();
+                                                    Vector<Integer> scores = new Vector<>();
+                                                    Vector<Boolean> scoreUsed = new Vector<>();
+                                                    for(int i=0; i<noOfPlayers; i++){
+                                                        scores.add(game.players.get(i).getScore());
+                                                        scoreUsed.add(Boolean.FALSE);
+                                                    }
+                                                    Collections.sort(scores, Collections.<Integer>reverseOrder());
+                                                    for(int i=0;i<noOfPlayers; i++){
+                                                        for(int j=0;j<noOfPlayers;j++) {
+                                                            if(scores.get(i)==game.players.get(j).getScore() && !scoreUsed.get(j)) {
+                                                                sortOrderResult.add(j);
+                                                                scoreUsed.set(j,Boolean.TRUE);
+                                                            }
+                                                        }
+                                                    }
+
                                                     for (int i = 0; i < noOfPlayers; i++) {
                                                         if (i == noOfPlayers - 1) {
-                                                            result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore();
+                                                            result = result + game.players.get(sortOrderResult.get(i)).getName() + " - " + game.players.get(sortOrderResult.get(i)).getScore();
                                                         } else {
-                                                            result = result + game.players.get(i).getName() + " - " + game.players.get(i).getScore() + "\n";
+                                                            result = result + game.players.get(sortOrderResult.get(i)).getName() + " - " + game.players.get(sortOrderResult.get(i)).getScore() + "\n";
                                                         }
                                                     }
                                                     resultIntent.putExtra("Heading",game.resultString());
