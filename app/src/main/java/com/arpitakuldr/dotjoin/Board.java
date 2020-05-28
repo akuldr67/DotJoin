@@ -1,6 +1,7 @@
 package com.arpitakuldr.dotjoin;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -226,9 +227,9 @@ public class Board implements Cloneable{
         return EdgeCordinates;
     }
 
-    public void placeEdgeGivenEdgeNo(int EdgeNo, Context context, ConstraintLayout root){
+    public void placeEdgeGivenEdgeNo(final int EdgeNo, Context context, ConstraintLayout root){
         if(EdgeNo!=-1) {
-            ImageView lineImage = new ImageView(context);
+            final ImageView lineImage = new ImageView(context);
             lineImage.bringToFront();
             lineImage.setTranslationZ(2f);
             lineImage.setVisibility(View.VISIBLE);
@@ -236,17 +237,33 @@ public class Board implements Cloneable{
             Pair<Float, Float> EdgeCordinates = findEdgeCordinates(EdgeNo);
 
             if (isEdgeNoHorizontal(EdgeNo)) {
-                lineImage.setImageResource(R.drawable.horizontalline1);
+                lineImage.setImageResource(R.drawable.highlighted_horizontal_line);
                 params = new ConstraintLayout.LayoutParams((int) (boxLength+dotDia), (int) dotDia);
                 lineImage.setX(EdgeCordinates.first-(dotDia/2));
                 lineImage.setY(EdgeCordinates.second-(dotDia/2));
             } else {
-                lineImage.setImageResource(R.drawable.verticalline1);
+                lineImage.setImageResource(R.drawable.highlighted_vertical_line);
                 params = new ConstraintLayout.LayoutParams((int) dotDia, (int)(boxLength+dotDia));
                 lineImage.setX(EdgeCordinates.first-(dotDia/2));
                 lineImage.setY(EdgeCordinates.second-(dotDia/2));
             }
             root.addView(lineImage, params);
+            CountDownTimer timer = new CountDownTimer(700,100) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    if(isEdgeNoHorizontal(EdgeNo)){
+                        lineImage.setImageResource(R.drawable.horizontalline1);
+                    }
+                    else{
+                        lineImage.setImageResource(R.drawable.verticalline1);
+                    }
+                }
+            }.start();
         }
     }
 
