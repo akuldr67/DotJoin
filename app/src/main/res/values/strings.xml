@@ -2,5 +2,5 @@
     <string name="app_name">DotJoin</string>
     <string name="create_a_room">Create A Room</string>
     <string name="join_a_room">Join A Room</string>
-    <string name="instruction">NOTE - For Creating a Line kindly tap between the two dots, between which you want to place the line</string>
+    <string name="instruction">NOTE - For Creating a Line between two dots, kindly Tap between them. </string>
 </resources>
