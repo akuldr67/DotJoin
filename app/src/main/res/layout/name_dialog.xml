@@ -56,6 +56,7 @@
         app:layout_constraintTop_toBottomOf="@id/name_submit_button"
         app:layout_constraintBottom_toBottomOf="parent"
         android:textColor="@color/white"
+        android:gravity="center"
         android:text="@string/instruction"
         android:textSize="18sp"
         />
