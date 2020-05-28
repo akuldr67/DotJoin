@@ -116,27 +116,94 @@ public class Board implements Cloneable{
         this.horizontalEdge = false;
 
         float relX = x-this.gridFirstCol;
-        float tempX = relX % this.boxLength;
+        float tempX = relX % this.boxLength; //will be negative if relX negative..means only for tapped left of first Column
+        float relY = y-this.gridFirstRow;
+        float tempY = relY % this.boxLength; //will be negative if relY negative..means only for tapped top of first Row
+
+        //tapped on right of vertical edge
         if(tempX <= this.buffer){
-            onColumn=true;
+            if(tempY<=0)
+                onColumn=true;
+            else{
+                //tapped on top overlapping area
+                if(tempY <= this.buffer) {
+                    if(tempX <= tempY)
+                        onColumn = true;
+                }
+                //tapped on bottom overlapping area
+                else if(this.boxLength-tempY <= this.buffer){
+                    if(tempX <= this.boxLength-tempY) {
+                        onColumn = true;
+                    }
+                }
+                else onColumn = true;
+
+            }
             ColumnNo = (int)(relX/this.boxLength)+1;
         }
+        //tapped on left of vertical edge
         else if(Math.abs(tempX-this.boxLength)<=this.buffer){
-            onColumn=true;
+            if(tempY<=0)
+                onColumn=true;
+            else{
+                //tapped on top overlapping area
+                if(tempY <= this.buffer){
+                    if(this.boxLength-tempX <= tempY)
+                        onColumn = true;
+                }
+                //tapped on bottom overlapping area
+                else if(this.boxLength-tempY <= this.buffer){
+                    if(this.boxLength-tempX <= this.boxLength-tempY) {
+                        onColumn = true;
+                    }
+                }
+                else onColumn = true;
+            }
             ColumnNo = (int)(relX/this.boxLength)+2;
         }
 
-        float relY = y-this.gridFirstRow;
-        float tempY = relY % this.boxLength;
+        //tapped on bottom of horizontal edge
         if(tempY <= this.buffer){
-            onRow=true;
+            if(tempX<=0)
+                onRow=true;
+            else{
+                //tapped on left overlapping area
+                if(tempX <= this.buffer){
+                    if(tempY <= tempX)
+                        onRow = true;
+                }
+                //tapped on right overlapping area
+                else if(this.boxLength-tempX <= this.buffer){
+                    if(tempY <= this.boxLength-tempX) {
+                        onRow = true;
+                    }
+                }
+                else onRow = true;
+            }
             RowNo = (int)(relY/this.boxLength)+1;
         }
+        //tapped on top of horizontal edge
         else if(Math.abs(relY-this.boxLength)<=this.buffer){
-            onRow=true;
+            if(tempX<=0)
+                onRow=true;
+            else{
+                //tapped on left overlapping area
+                if(tempX <= this.buffer){
+                    if(this.boxLength-tempY <= tempX)
+                        onRow = true;
+                }
+                //tapped on right overlapping area
+                else if(this.boxLength-tempX <= this.buffer){
+                    if(this.boxLength-tempY <= this.boxLength-tempX) {
+                        onRow = true;
+                    }
+                }
+                else onRow = true;
+            }
             RowNo = (int)(relY/this.boxLength)+2;
         }
 
+        //preference removed now (updated)
         //Preference Column > Row... means vertical edge > horizontal edge
         // Can change.. if instead of else below changed to if(onRow && NodeNumber == -1) .. also change in fn edgeNoGivenCor.
         // also can add possible change: in if below: if(NodeNumber!=-1) this.verticalEdge = true;
