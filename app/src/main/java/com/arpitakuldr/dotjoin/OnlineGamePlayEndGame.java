@@ -44,34 +44,46 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
 
-        setFinishOnTouchOutside(false);
-
-        setContentView(R.layout.activity_online_game_play_end_game);
-
-
         Intent intent = getIntent();
-        String heading = intent.getStringExtra("Heading");
-        String result = intent.getStringExtra("Result");
+        final String heading = intent.getStringExtra("Heading");
+        final String result = intent.getStringExtra("Result");
         roomId=intent.getStringExtra("RoomId");
         playerNo=intent.getIntExtra("PlayerNo",-1);
         if(playerNo==-1){
             Log.d("playerNo","Did not get the player No");
         }
 
-        endGameProgressBar = findViewById(R.id.online_game_end_progressbar);
 
-        Heading=findViewById(R.id.onlinegameplay_endgame_title);
-        Result=findViewById(R.id.onlinegameplay_endgame_final_score);
-
-        Heading.setText(heading);
-        Result.setText(result);
-
+        setFinishOnTouchOutside(false);
         mDatabase= FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                setContentView(R.layout.activity_online_game_play_end_game);
+                endGameProgressBar = findViewById(R.id.online_game_end_progressbar);
 
+
+                Heading=findViewById(R.id.onlinegameplay_endgame_title);
+                Result=findViewById(R.id.onlinegameplay_endgame_final_score);
+
+                Heading.setText(heading);
+                Result.setText(result);
+
+            }
+        });
+    }
+
+    public void onOnlineReplayClicked(View veiw){
+        Intent intent = new Intent(OnlineGamePlayEndGame.this,WaitingPlace.class);
+        intent.putExtra("RoomId",roomId);
+        intent.putExtra("PlayerNo",playerNo);
+        startActivity(intent);
+        OnlineGamePlay.AcOnlineGamePlay.finish();
+        finish();
 
     }
 
-    public void onHomeClicked(View view){
+    public void onOnlineHomeClicked(View view){
         endGameProgressBar.setVisibility(View.VISIBLE);
         Log.d("checkk","Click on Home Detected");
         mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {

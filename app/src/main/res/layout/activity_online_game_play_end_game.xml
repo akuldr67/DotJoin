@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@id/onlinegameplay_endgame_linear_layout_1"
-        android:weightSum="1"
+        android:weightSum="2"
         android:layout_margin="20dp"
         android:background="#00000000">
 
@@ -74,7 +74,18 @@
             android:background="@drawable/selected_button_background"
             android:textColor="#000000"
             android:text="HOME"
-            android:onClick="onHomeClicked"
+            android:onClick="onOnlineHomeClicked"
+            android:textSize="25sp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:background="@drawable/selected_button_background"
+            android:textColor="#000000"
+            android:text="REPLAY"
+            android:onClick="onOnlineReplayClicked"
             android:textSize="25sp"/>
 
     </LinearLayout>
