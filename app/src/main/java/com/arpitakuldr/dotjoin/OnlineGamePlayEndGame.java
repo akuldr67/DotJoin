@@ -13,17 +13,22 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,10 +41,13 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     private int playerNo;
     private ArrayList<Player> players;
     private ProgressBar endGameProgressBar;
+    private Button replay,home;
+    private ValueEventListener onCreateValueEventListener;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("checkk","Online End Game onCreate started");
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
@@ -53,13 +61,31 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
             Log.d("playerNo","Did not get the player No");
         }
 
-
+        Log.d("checkk","got Extras from intent");
         setFinishOnTouchOutside(false);
         mDatabase= FirebaseDatabase.getInstance().getReference();
         mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                Log.d("checkk","set value of ready completed");
                 setContentView(R.layout.activity_online_game_play_end_game);
+                replay=findViewById(R.id.onlinegameplay_endgame_replay);
+                home=findViewById(R.id.onlinegameplay_endgame_home_button);
+
+                replay.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onOnlineReplayClicked();
+                    }
+                });
+
+                home.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onOnlineHomeClicked();
+                    }
+                });
+
                 endGameProgressBar = findViewById(R.id.online_game_end_progressbar);
 
 
@@ -69,21 +95,88 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                 Heading.setText(heading);
                 Result.setText(result);
 
+                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                    @Override
+                    public void onSuccess(final InstanceIdResult instanceIdResult) {
+
+
+                        onCreateValueEventListener=new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                                ArrayList<Player>players=dataSnapshot.getValue(t);
+                                //checking if that player is present or removed by host
+                                Boolean isPresent = false;
+                                assert players != null;
+                                for (int i = 0; i < players.size(); i++) {
+                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                        isPresent = true;
+                                    }
+                                }
+                                if (!isPresent) {
+//                                Toast.makeText(getApplicationContext(), "You are no longer member of the room", Toast.LENGTH_SHORT).show();
+//                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
+                                    OnlineGamePlay.AcOnlineGamePlay.finish();
+                                    finish();
+//                                startActivity(intent);
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        };
+                        mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(onCreateValueEventListener);
+
+                    }
+                });
+
+            }
+
+        });
+    }
+
+    public void onOnlineReplayClicked(){
+
+        //Finding the correct playerNo
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(final InstanceIdResult instanceIdResult) {
+                Log.d("checkk", "Successfully got FirebaseInstanceId");
+                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
+                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                        ArrayList<Player>players=dataSnapshot.getValue(t);
+                        assert players != null;
+                        for(int i = 0; i<players.size(); i++){
+                            if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                playerNo = i;
+                            }
+                        }
+                        mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(onCreateValueEventListener);
+                        Intent intent = new Intent(OnlineGamePlayEndGame.this,WaitingPlace.class);
+                        intent.putExtra("RoomId",roomId);
+                        intent.putExtra("PlayerNo",playerNo);
+                        startActivity(intent);
+                        OnlineGamePlay.AcOnlineGamePlay.finish();
+                        finish();
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
             }
         });
     }
 
-    public void onOnlineReplayClicked(View veiw){
-        Intent intent = new Intent(OnlineGamePlayEndGame.this,WaitingPlace.class);
-        intent.putExtra("RoomId",roomId);
-        intent.putExtra("PlayerNo",playerNo);
-        startActivity(intent);
-        OnlineGamePlay.AcOnlineGamePlay.finish();
-        finish();
-
-    }
-
-    public void onOnlineHomeClicked(View view){
+    public void onOnlineHomeClicked(){
+        mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(onCreateValueEventListener);
         endGameProgressBar.setVisibility(View.VISIBLE);
         Log.d("checkk","Click on Home Detected");
         mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
