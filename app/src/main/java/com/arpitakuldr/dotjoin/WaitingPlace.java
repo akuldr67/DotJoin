@@ -58,6 +58,8 @@ public class WaitingPlace extends AppCompatActivity {
     private Button exitRoom,startGame;
     private String roomId;
     private Vector<LinearLayout> playerViews;
+    private int flag_player_self_exited=0;
+    private ValueEventListener waiting_main_listener;
 
     private AdView bannerAdView;
 
@@ -160,7 +162,7 @@ public class WaitingPlace extends AppCompatActivity {
             @Override
             public void onSuccess(final InstanceIdResult instanceIdResult) {
                 Log.d("checkk","Successfully got FirebaseInstanceId");
-                mDatabase.child("Rooms").child(roomId).addValueEventListener(new ValueEventListener() {
+                waiting_main_listener=new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Log.d("checkk","Value Event Listener OnData Change Called");
@@ -188,9 +190,13 @@ public class WaitingPlace extends AppCompatActivity {
                                 }
                             }
                             if (!isPresent) {
+                                if(flag_player_self_exited==0){
+                                    Toast.makeText(getApplicationContext(),"Host Removed You ",Toast.LENGTH_LONG).show();
+                                }
 //                                Toast.makeText(getApplicationContext(), "You are no longer member of the room", Toast.LENGTH_SHORT).show();
 //                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
 //                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
                                 finish();
 //                                startActivity(intent);
                             }
@@ -285,7 +291,8 @@ public class WaitingPlace extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
-                });
+                };
+                mDatabase.child("Rooms").child(roomId).addValueEventListener(waiting_main_listener);
             }
         });
             }
@@ -333,6 +340,7 @@ public class WaitingPlace extends AppCompatActivity {
                                                  public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                      Log.d("checkk", "onDataChange started, SingleValueEventListener");
                                                      mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                                                     mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
                                                      Room room = dataSnapshot.getValue(Room.class);
                                                      ArrayList<Player> players = room.getPlayers();
                                                      int flag = 1;
@@ -518,6 +526,7 @@ public class WaitingPlace extends AppCompatActivity {
         exitRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                flag_player_self_exited=1;
                 Log.d("checkk","Click on ExitRoom Detected");
                 mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
