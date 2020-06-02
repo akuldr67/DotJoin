@@ -340,7 +340,7 @@ public class WaitingPlace extends AppCompatActivity {
                                                  public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                      Log.d("checkk", "onDataChange started, SingleValueEventListener");
                                                      mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                                                     mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+//                                                     mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
                                                      Room room = dataSnapshot.getValue(Room.class);
                                                      ArrayList<Player> players = room.getPlayers();
                                                      int flag = 1;
