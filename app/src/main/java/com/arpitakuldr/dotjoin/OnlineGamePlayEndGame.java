@@ -117,6 +117,8 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 //                                Toast.makeText(getApplicationContext(), "You are no longer member of the room", Toast.LENGTH_SHORT).show();
 //                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
 //                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    Toast toast=Toast.makeText(getApplicationContext(),"You have been removed by the host",Toast.LENGTH_LONG);
+                                    toast.show();
                                     mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
                                     OnlineGamePlay.AcOnlineGamePlay.finish();
                                     finish();
