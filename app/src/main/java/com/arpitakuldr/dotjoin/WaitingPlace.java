@@ -762,9 +762,14 @@ public class WaitingPlace extends AppCompatActivity {
                             //Host was crashing here when only he was present in room and he exits too.
                             if (players != null && players.size() > 0) {
                                 for (int i = 0; i < players.size(); i++) {
-                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-                                        Log.d("checkk", "onPause Setting this player not ready");
-                                        curr_player_no = i;
+                                    if(players.get(i).getDeviceToken()==null){
+                                        mDatabase.child("Rooms").child(roomId).child("players").child(i+"").setValue(null);
+                                    }
+                                    else {
+                                        if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                            Log.d("checkk", "onPause Setting this player not ready");
+                                            curr_player_no = i;
+                                        }
                                     }
                                 }
 
