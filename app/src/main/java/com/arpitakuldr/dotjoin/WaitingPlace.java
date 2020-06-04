@@ -190,8 +190,14 @@ public class WaitingPlace extends AppCompatActivity {
                             //checking if that player is present or removed by host
                             Boolean isPresent = false;
                             for (int i = 0; i < players.size(); i++) {
-                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-                                    isPresent = true;
+                                if(players.get(i).getDeviceToken()==null){
+                                    mDatabase.child("Rooms").child(roomId).child("players").child(i+"").setValue(null);
+                                    players.remove(i);
+                                }
+                                else {
+                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                        isPresent=true;
+                                    }
                                 }
                             }
                             if (!isPresent) {
