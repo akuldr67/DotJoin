@@ -54,12 +54,12 @@ public class WaitingPlace extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private ArrayList<Player>players;
     private SharedPreferences mSharedPreferences;
-    private int playerNo,boardSize;
+    private int playerNo,boardSize,curr_player_no,activity_status;
     private Button exitRoom,startGame;
     private String roomId;
     private Vector<LinearLayout> playerViews;
     private int flag_player_self_exited=0;
-    private ValueEventListener waiting_main_listener;
+    private ValueEventListener waiting_main_listener,pause_listener;
 
     private AdView bannerAdView;
 
@@ -89,6 +89,7 @@ public class WaitingPlace extends AppCompatActivity {
 
 
         boardSize=4;
+        activity_status=1;
 
         Log.d("checkk","Getting Intent Extras");
         //Getting Data from previous activity
@@ -171,6 +172,8 @@ public class WaitingPlace extends AppCompatActivity {
                         //null checking..for crash checking..
                         if(room==null){
                             Log.d("checkk","Room found null, finishing");
+                            mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                            activity_status=0;
                             finish();
                         }
                         else {
@@ -179,6 +182,8 @@ public class WaitingPlace extends AppCompatActivity {
 
                             if (players == null || players.size() < 1) {
                                 Log.d("checkk","Players null, finishing");
+                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                activity_status=0;
                                 finish();
                             }
 
@@ -197,6 +202,7 @@ public class WaitingPlace extends AppCompatActivity {
 //                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
 //                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                activity_status=0;
                                 finish();
 //                                startActivity(intent);
                             }
@@ -233,7 +239,8 @@ public class WaitingPlace extends AppCompatActivity {
                                     players.get(i).setPlayerNumber(i);
                                     room.setPlayers(players);
                                     Log.d("checkk","Updating room which updated playerNo");
-                                    mDatabase.child("Rooms").child(roomId).setValue(room);
+//                                    mDatabase.child("Rooms").child(roomId).setValue(room);
+                                    mDatabase.child("Rooms").child(roomId).child("players").child(i+"").child("playerNumber").setValue(i);
                                 }
 
                                 //telling who is host in waiting place
@@ -340,7 +347,7 @@ public class WaitingPlace extends AppCompatActivity {
                                                  public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                      Log.d("checkk", "onDataChange started, SingleValueEventListener");
                                                      mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                                                     mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+//                                                     mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
                                                      Room room = dataSnapshot.getValue(Room.class);
                                                      ArrayList<Player> players = room.getPlayers();
                                                      int flag = 1;
@@ -547,6 +554,8 @@ public class WaitingPlace extends AppCompatActivity {
 //                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
 //                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         Log.d("checkk","Finishing Waiting Place");
+                                        mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                        activity_status=0;
                                         finish();
                                         Log.d("checkk","Starting MainActivity");
 //                                        startActivity(intent);
@@ -569,6 +578,8 @@ public class WaitingPlace extends AppCompatActivity {
                                         Log.d("checkk","Starting MainActivity");
 //                                        startActivity(intent);
                                         Log.d("checkk","Finishing WatingPlace");
+                                        mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                        activity_status=0;
                                         finish();
                                     }
                                     else{
@@ -625,6 +636,8 @@ public class WaitingPlace extends AppCompatActivity {
 //                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
 //                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 Log.d("checkk", "Finishing Waiting Place");
+                                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                                activity_status=0;
                                                 finish();
                                                 Log.d("checkk", "Starting MainActivity");
 //                                                startActivity(intent);
@@ -646,6 +659,8 @@ public class WaitingPlace extends AppCompatActivity {
                                                 Log.d("checkk", "Starting MainActivity");
 //                                                startActivity(intent);
                                                 Log.d("checkk", "Finishing WatingPlace");
+                                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                                activity_status=0;
                                                 finish();
                                             } else {
                                                 Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
@@ -691,14 +706,19 @@ public class WaitingPlace extends AppCompatActivity {
                         ArrayList<Player>players=dataSnapshot.getValue(t);
 
                         for(int i=0; i<players.size();i++){
-                            if(players.get(i).getDeviceToken().equals(instanceIdResult.getToken())){
-                                Log.d("checkk","onResume Setting this player ready");
-                                players.get(i).setReady(1);
+                            if(players.get(i).getDeviceToken()==null){
+                                mDatabase.child("Rooms").child(roomId).child("players").child(i+"").setValue(null);
+                            }
+                            else {
+                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                    Log.d("checkk", "onResume Setting this player ready");
+                                    curr_player_no = i;
+                                }
                             }
                         }
 
                         Log.d("checkk","onResume Uploading this change to database");
-                        mDatabase.child("Rooms").child(roomId).child("players").setValue(players).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        mDatabase.child("Rooms").child(roomId).child("players").child(curr_player_no+"").child("ready").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d("checkk","onResume Uploaded onReady set true successfully");
@@ -713,54 +733,69 @@ public class WaitingPlace extends AppCompatActivity {
                 });
             }
         });
-
+//        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                Log.d("checkk","onResume Uploaded onReady set true successfully");
+//            }
+//        });
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d("checkk","onPause of WaitingPlace triggered");
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-            @Override
-            public void onSuccess(final InstanceIdResult instanceIdResult) {
-                Log.d("checkk","onPause Got FirebaseInstanceId");
-                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d("checkk","onPause SingleValueEventListener onPause, onDataChange triggered");
-                        mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
-                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
-                        ArrayList<Player>players=dataSnapshot.getValue(t);
+        if(activity_status==1) {
+            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                @Override
+                public void onSuccess(final InstanceIdResult instanceIdResult) {
+                    Log.d("checkk", "onPause Got FirebaseInstanceId");
+                    pause_listener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Log.d("checkk", "onPause SingleValueEventListener onPause, onDataChange triggered");
+                            mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
+                            GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {
+                            };
+                            ArrayList<Player> players = dataSnapshot.getValue(t);
 
-                        //Host was crashing here when only he was present in room and he exits too.
-                        if(players!=null &&  players.size()>0) {
-                            for (int i = 0; i < players.size(); i++) {
-                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-                                    Log.d("checkk","onPause Setting this player not ready");
-                                    players.get(i).setReady(0);
+                            //Host was crashing here when only he was present in room and he exits too.
+                            if (players != null && players.size() > 0) {
+                                for (int i = 0; i < players.size(); i++) {
+                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                        Log.d("checkk", "onPause Setting this player not ready");
+                                        curr_player_no = i;
+                                    }
                                 }
+
+                                Log.d("checkk", "onPause Uploading this chang to database (onPause)");
+                                mDatabase.child("Rooms").child(roomId).child("players").child(curr_player_no + "").child("ready").setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d("checkk", "onPause change on Ready false successful");
+                                    }
+                                });
+                            } else {
+                                Log.d("checkk", "onPause players null hence finishing");
+                                finish();
                             }
-
-                            Log.d("checkk","onPause Uploading this chang to database (onPause)");
-                            mDatabase.child("Rooms").child(roomId).child("players").setValue(players).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("checkk", "onPause change on Ready false successful");
-                                }
-                            });
-                        }else{
-                            Log.d("checkk","onPause players null hence finishing");
-                            finish();
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d("Problem","problem");
-                    }
-                });
-            }
-        });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.d("Problem", "problem");
+                        }
+                    };
+                    mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(pause_listener);
+                }
+            });
+        }
+//        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                Log.d("checkk","onPause Uploaded onReady set false successfully");
+//            }
+//        });
     }
 
 //    @Override
