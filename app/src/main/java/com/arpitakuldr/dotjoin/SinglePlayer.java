@@ -19,8 +19,10 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -52,6 +54,8 @@ public class SinglePlayer extends AppCompatActivity {
 
     public static View rootViewShare;
 
+    private InterstitialAd mSinglePlayerInterstitialAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) throws RuntimeException {
         super.onCreate(savedInstanceState);
@@ -75,6 +79,10 @@ public class SinglePlayer extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
 
+
+        mSinglePlayerInterstitialAd = new InterstitialAd(this);
+        mSinglePlayerInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mSinglePlayerInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
         Intent intent = getIntent();
@@ -347,7 +355,22 @@ public class SinglePlayer extends AppCompatActivity {
         intent.putExtra("Heading",game.resultString());
         intent.putExtra("Result",result);
         intent.putExtra("Activity","Single");
-        startActivity(intent);
+//        startActivity(intent);
+
+
+        if(mSinglePlayerInterstitialAd.isLoaded()){
+            mSinglePlayerInterstitialAd.show();
+        }
+        else{
+            Log.d("check"," Single Player EndGame interstitial ad wasn't loaded");
+            startActivity(intent);
+        }
+        interstitialAdEvents(intent);
+
+
+
+
+
 //        finish();
         //Showing Final Dialog Box
 //        AlertDialog.Builder builder = new AlertDialog.Builder(SinglePlayer.this);
@@ -400,5 +423,18 @@ public class SinglePlayer extends AppCompatActivity {
 
     public static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+
+    private void interstitialAdEvents(final Intent EndGameIntent){
+        //listener for single player start interstitial ad
+        mSinglePlayerInterstitialAd.setAdListener(new AdListener(){
+
+            @Override
+            public void onAdClosed() {
+                startActivity(EndGameIntent);
+            }
+
+        });
     }
 }

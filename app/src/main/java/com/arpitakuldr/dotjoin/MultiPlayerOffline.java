@@ -16,8 +16,10 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -47,6 +49,8 @@ public class MultiPlayerOffline extends AppCompatActivity {
 
     private int bannerHeight = dpToPx(50);
 
+    private InterstitialAd mOfflineInterstitialAd;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,11 @@ public class MultiPlayerOffline extends AppCompatActivity {
 
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
+
+
+        mOfflineInterstitialAd = new InterstitialAd(this);
+        mOfflineInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mOfflineInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
 
@@ -253,7 +262,23 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     resultIntent.putExtra("Heading",game.resultString());
                                                     resultIntent.putExtra("Result",result);
                                                     resultIntent.putExtra("Activity","MultiPlayerOffline");
-                                                    startActivity(resultIntent);
+//                                                    startActivity(resultIntent);
+
+
+                                                    if(mOfflineInterstitialAd.isLoaded()){
+                                                        mOfflineInterstitialAd.show();
+                                                    }
+                                                    else{
+                                                        Log.d("check"," multi Player Offline interstitial ad wasn't loaded");
+                                                        startActivity(resultIntent);
+                                                    }
+                                                    interstitialAdEvents(resultIntent);
+
+
+
+
+
+
 //                                                    finish();
 
                                                     //Showing Final Dialog Box
@@ -322,4 +347,18 @@ public class MultiPlayerOffline extends AppCompatActivity {
     public static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
+
+
+    private void interstitialAdEvents(final Intent EndGameIntent){
+        //listener for single player start interstitial ad
+        mOfflineInterstitialAd.setAdListener(new AdListener(){
+
+            @Override
+            public void onAdClosed() {
+                startActivity(EndGameIntent);
+            }
+
+        });
+    }
+
 }

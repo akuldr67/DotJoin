@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -78,6 +79,8 @@ public class OnlineGamePlay extends AppCompatActivity {
     public static Activity AcOnlineGamePlay;
     public static View rootViewShare;
 
+//    private InterstitialAd mOnlineInterstitialAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boardImage=null;
@@ -118,6 +121,10 @@ public class OnlineGamePlay extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
 
+
+//        mOnlineInterstitialAd = new InterstitialAd(this);
+//        mOnlineInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+//        mOnlineInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
         //Initializing noOfChancesMissed
