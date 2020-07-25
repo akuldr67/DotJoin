@@ -224,19 +224,10 @@ public class WaitingPlace extends AppCompatActivity {
                                                 if (flag_player_self_exited == 0) {
                                                     Toast.makeText(getApplicationContext(), "Host Removed You ", Toast.LENGTH_LONG).show();
                                                 }
-//                                Toast.makeText(getApplicationContext(), "You are no longer member of the room", Toast.LENGTH_SHORT).show();
-//                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
-//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
                                                 activity_status = 0;
                                                 finish();
-//                                startActivity(intent);
                                             }
-
-//                            setting readyViews invisible initially
-//                            for(int i=0;i<4;i++){
-//                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
-//                            }
 
                                             for (int i = 0; i < players.size(); i++) {
                                                 setUI(i);
@@ -244,13 +235,9 @@ public class WaitingPlace extends AppCompatActivity {
                                                 if (players.get(i).getReady() == 1) {
                                                     readyUI(i);
                                                     Log.d("checkk", "Player found ready, making bold");
-//                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
-//                                    playerTe  xtViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
 
                                                 } else if (players.get(i).getReady() == 0) {
                                                     Log.d("checkk", "Player not ready, making thin text");
-//                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.grey));
-//                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
                                                     notReadyUI(i);
                                                 }
 
@@ -261,7 +248,6 @@ public class WaitingPlace extends AppCompatActivity {
                                                     players.get(i).setPlayerNumber(i);
                                                     room.setPlayers(players);
                                                     Log.d("checkk", "Updating room which updated playerNo");
-//                                    mDatabase.child("Rooms").child(roomId).setValue(room);
                                                     mDatabase.child("Rooms").child(roomId).child("players").child(i + "").child("playerNumber").setValue(i);
                                                 }
 
@@ -328,140 +314,6 @@ public class WaitingPlace extends AppCompatActivity {
                             }
                         });
 
-//                        Log.d("checkk","Value Event Listener OnData Change Called");
-//                        Room room = dataSnapshot.getValue(Room.class);
-//
-//                        //null checking..for crash checking..
-//                        if(room==null){
-//                            Log.d("checkk","Room found null, finishing");
-//                            mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-//                            activity_status=0;
-//                            finish();
-//                        }
-//                        else {
-//                            Log.d("checkk","Room not found null, getting players");
-//                            players = room.getPlayers();
-//
-//                            if (players == null || players.size() < 1) {
-//                                Log.d("checkk","Players null, finishing");
-//                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-//                                activity_status=0;
-//                                Log.d("checkk","just before finish");
-//                                finish();
-//                                Log.d("checkk","now finished");
-//                            }
-//
-//                            //checking if that player is present or removed by host
-//                            Boolean isPresent = false;
-//                            for (int i = 0; i < players.size(); i++) {
-//                                if(players.get(i).getDeviceToken()==null){
-//                                    mDatabase.child("Rooms").child(roomId).child("players").child(i+"").setValue(null);
-//                                    players.remove(i);
-//                                }
-//                                else {
-//                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-//                                        isPresent=true;
-//                                    }
-//                                }
-//                            }
-//                            if (!isPresent) {
-//                                if(flag_player_self_exited==0){
-//                                    Toast.makeText(getApplicationContext(),"Host Removed You ",Toast.LENGTH_LONG).show();
-//                                }
-////                                Toast.makeText(getApplicationContext(), "You are no longer member of the room", Toast.LENGTH_SHORT).show();
-////                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
-////                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-//                                activity_status=0;
-//                                finish();
-////                                startActivity(intent);
-//                            }
-//
-////                            setting readyViews invisible initially
-////                            for(int i=0;i<4;i++){
-////                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
-////                            }
-//
-//                            for (int i = 0; i < players.size(); i++) {
-//                                playerTextViews.elementAt(i).setText(players.get(i).getName());
-//                                playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
-//                                playerViews.elementAt(i).setVisibility(View.VISIBLE);
-//                                playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
-//                                Log.d("checkk","Checking if player ready or not");
-//                                if (players.get(i).getReady() == 1) {
-//                                    Log.d("checkk","Player found ready, making bold");
-////                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
-////                                    playerTe  xtViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
-//                                    playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
-//                                    playerViews.elementAt(i).setBackground(ContextCompat.getDrawable(WaitingPlace.this,R.drawable.button_background));
-//                                } else if (players.get(i).getReady() == 0) {
-//                                    Log.d("checkk","Player not ready, making thin text");
-////                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.grey));
-////                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
-//                                    playerViews.elementAt(i).setBackground(null);
-//                                    playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
-//                                }
-//
-//                                Log.d("checkk","Checking if PlayerNo Changed");
-//                                //Updating the player no. if it has changed
-//                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-//                                    playerNo = i;
-//                                    players.get(i).setPlayerNumber(i);
-//                                    room.setPlayers(players);
-//                                    Log.d("checkk","Updating room which updated playerNo");
-////                                    mDatabase.child("Rooms").child(roomId).setValue(room);
-//                                    mDatabase.child("Rooms").child(roomId).child("players").child(i+"").child("playerNumber").setValue(i);
-//                                }
-//
-//                                //telling who is host in waiting place
-//                                if (room.getHost() == i) {
-//                                    playerTextViews.elementAt(i).setText(players.get(i).getName() + "  (Host)");
-//                                }
-//                            }
-//                            //Making TextView invisible for the players who have left
-//                            for (int i = players.size(); i < 4; i++) {
-//                                playerTextViews.elementAt(i).setText("");
-//                                playerTextViews.elementAt(i).setVisibility(View.INVISIBLE);
-//                                playerViews.elementAt(i).setVisibility(View.INVISIBLE);
-//                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
-//                            }
-//
-//                            //setting start game visible for host
-//                            if (room.getHost() == playerNo) {
-//                                startGame.setVisibility(View.VISIBLE);
-//                                startGame.setEnabled(true);
-//                            }
-//
-//                            Log.d("checkk","Setting Room Buttons visible for host ");
-//                            //setting remove players visible for host and invisible when removed
-//                            if (room.getHost() == playerNo) {
-//                                for (int i = 0; i < players.size(); i++) {
-//                                    if (i != playerNo) {
-//                                        playerButtonViews.elementAt(i).setVisibility(View.VISIBLE);
-//                                        playerButtonViews.elementAt(i).setEnabled(true);
-//                                    }
-//                                }
-//                                for (int i = players.size(); i < 4; i++) {
-//                                    playerButtonViews.elementAt(i).setVisibility(View.INVISIBLE);
-//                                    playerButtonViews.elementAt(i).setEnabled(false);
-//                                }
-//                            }
-//
-//                            Log.d("checkk","Checking if game has started");
-//                            if (room.getIsGameStarted()) {
-//                                Log.d("checkk","Game has started, Removing ValueEventListener");
-//                                mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-//                                Intent intent = new Intent(WaitingPlace.this, OnlineGamePlay.class);
-//                                intent.putExtra("RoomId", roomId);
-//                                intent.putExtra("PlayerNo", playerNo);
-//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                                Log.d("checkk","Starting Online GamePlay");
-//                                startActivity(intent);
-//                                Log.d("checkk","finishing Waiting Place");
-//                                finish();
-//
-//                            }
-//                        }
                     }
 
                     @Override
@@ -472,8 +324,6 @@ public class WaitingPlace extends AppCompatActivity {
                 mDatabase.child("Rooms").child(roomId).addValueEventListener(waiting_main_listener);
             }
         });
-//            }
-//        });
 
 
         //Starting startGame Click Listener
@@ -909,51 +759,8 @@ public class WaitingPlace extends AppCompatActivity {
                         }
                     }
                 });
-
-
-
-//                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        Log.d("checkk","onResume SingleValueEventListener of onResume, onDataChange trigerred");
-//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-//                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
-//                        ArrayList<Player>players=dataSnapshot.getValue(t);
-//
-//                        for(int i=0; i<players.size();i++){
-//                            if(players.get(i).getDeviceToken()==null){
-//                                mDatabase.child("Rooms").child(roomId).child("players").child(i+"").setValue(null);
-//                            }
-//                            else {
-//                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-//                                    Log.d("checkk", "onResume Setting this player ready");
-//                                    curr_player_no = i;
-//                                }
-//                            }
-//                        }
-//
-//                        Log.d("checkk","onResume Uploading this change to database");
-//                        mDatabase.child("Rooms").child(roomId).child("players").child(curr_player_no+"").child("ready").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void aVoid) {
-//                                Log.d("checkk","onResume Uploaded onReady set true successfully");
-//                            }
-//                        });
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//                        Log.d("Problem","problem");
-//                    }
-//                });
             }
         });
-//        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void aVoid) {
-//                Log.d("checkk","onResume Uploaded onReady set true successfully");
-//            }
-//        });
     }
 
     @Override
@@ -1010,54 +817,9 @@ public class WaitingPlace extends AppCompatActivity {
                 }
             });
         }
-//        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void aVoid) {
-//                Log.d("checkk","onPause Uploaded onReady set false successfully");
-//            }
-//        });
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        Log.d("checkk","waitingActivity is destroyed");
-//        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-//            @Override
-//            public void onSuccess(final InstanceIdResult instanceIdResult) {
-//                mDatabase.child("Rooms").child(roomId).child("game").child("players").addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
-//                        ArrayList<Player>players=dataSnapshot.getValue(t);
-//
-//                        if(players!=null &&  players.size()>0) {
-//                            for (int i = 0; i < players.size(); i++) {
-//                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-//                                    players.get(i).setActive(0);
-//                                }
-//                            }
-//
-//                            mDatabase.child("Rooms").child(roomId).child("game").child("players").setValue(players).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                @Override
-//                                public void onSuccess(Void aVoid) {
-//                                    Log.d("checkk", "ready set to false");
-//                                }
-//                            });
-//                        }else{
-//                            Log.d("ceck","***reached here too***");
-//                            finish();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//                        Log.d("Problem","problem");
-//                    }
-//                });
-//            }
-//        });
-//    }
+
 public void onSizeClicked(View view){
     boolean checked = ((RadioButton)view).isChecked();
     switch(view.getId()) {
@@ -1173,13 +935,3 @@ void setUI(final int i){
     }
 
 }
-
-//ToDo - Check after every players/room object use, if it null/empty, if null go back to previous activity and delete room from database
-//Todo - Check if there are at least two people in the room when game starts (done)
-//Todo - Delete Room after some time of inactivity (cant do)
-//Todo - Timer for each turn
-//Todo - Check if the user is ready or not
-//Todo - AutoRotate Off
-//Todo - Change repo from public to private
-//Todo - App Crash if all leave (done hopefully)
-//Todo - onStop of OnlineGamePlay
