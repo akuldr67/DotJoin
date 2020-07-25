@@ -1,6 +1,7 @@
 package com.arpitakuldr.dotjoin;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -36,6 +37,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -60,6 +63,7 @@ public class WaitingPlace extends AppCompatActivity {
     private Vector<LinearLayout> playerViews;
     private int flag_player_self_exited=0;
     private ValueEventListener waiting_main_listener,pause_listener;
+    private Room room;
 
     private AdView bannerAdView;
 
@@ -151,12 +155,11 @@ public class WaitingPlace extends AppCompatActivity {
 //        mSharedPreferences=getSharedPreferences("com.arpitakuldr.dotjoin.file",Context.MODE_PRIVATE);
 //        final String name=mSharedPreferences.getString("UserName","");
 
-        Log.d("checkk","setting Ready value 1");
-        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(1).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Log.d("checkk","ready value successfully set to 1");
-
+//        Log.d("checkk","setting Ready value 1");
+//        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(1).addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                Log.d("checkk","ready value successfully set to 1");
 
         //Retrieving Players
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
@@ -166,138 +169,299 @@ public class WaitingPlace extends AppCompatActivity {
                 waiting_main_listener=new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d("checkk","Value Event Listener OnData Change Called");
-                        Room room = dataSnapshot.getValue(Room.class);
 
-                        //null checking..for crash checking..
-                        if(room==null){
-                            Log.d("checkk","Room found null, finishing");
-                            mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-                            activity_status=0;
-                            finish();
-                        }
-                        else {
-                            Log.d("checkk","Room not found null, getting players");
-                            players = room.getPlayers();
-
-                            if (players == null || players.size() < 1) {
-                                Log.d("checkk","Players null, finishing");
-                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-                                activity_status=0;
-                                finish();
+                        //From here
+                        mDatabase.child("Rooms").child(roomId).runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                Log.d("checkk","Value Event Listener OnData Change Called");
+                                room = mutableData.getValue(Room.class);
+                                if(room==null){
+                                    return Transaction.success(mutableData);
+                                }
+                                return Transaction.success(mutableData);
                             }
 
-                            //checking if that player is present or removed by host
-                            Boolean isPresent = false;
-                            for (int i = 0; i < players.size(); i++) {
-                                if(players.get(i).getDeviceToken()==null){
-                                    mDatabase.child("Rooms").child(roomId).child("players").child(i+"").setValue(null);
-                                    players.remove(i);
-                                }
-                                else {
-                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-                                        isPresent=true;
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                if(databaseError==null) {
+
+                                    if (room == null) {
+                                        Log.d("checkk","Room found null, finishing");
+                                        mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                        activity_status=0;
+                                        finish();
                                     }
-                                }
-                            }
-                            if (!isPresent) {
-                                if(flag_player_self_exited==0){
-                                    Toast.makeText(getApplicationContext(),"Host Removed You ",Toast.LENGTH_LONG).show();
-                                }
+                                    else {
+
+                                        Log.d("checkk", "Room not found null, getting players");
+                                        players = room.getPlayers();
+
+                                        if (players == null || players.size() < 1) {
+                                            Log.d("checkk", "Players null, finishing");
+                                            mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                            activity_status = 0;
+                                            Log.d("checkk", "just before finish");
+                                            finish();
+                                            Log.d("checkk", "now finished");
+                                        } else {
+
+
+                                            //checking if that player is present or removed by host
+                                            Boolean isPresent = false;
+                                            for (int i = 0; i < players.size(); i++) {
+                                                if (players.get(i).getDeviceToken() == null) {
+                                                    mDatabase.child("Rooms").child(roomId).child("players").child(i + "").setValue(null);
+                                                    players.remove(i);
+                                                } else {
+                                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                                        isPresent = true;
+                                                    }
+                                                }
+                                            }
+                                            if (!isPresent) {
+                                                if (flag_player_self_exited == 0) {
+                                                    Toast.makeText(getApplicationContext(), "Host Removed You ", Toast.LENGTH_LONG).show();
+                                                }
 //                                Toast.makeText(getApplicationContext(), "You are no longer member of the room", Toast.LENGTH_SHORT).show();
 //                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
 //                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-                                activity_status=0;
-                                finish();
+                                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                                activity_status = 0;
+                                                finish();
 //                                startActivity(intent);
-                            }
+                                            }
 
 //                            setting readyViews invisible initially
 //                            for(int i=0;i<4;i++){
 //                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
 //                            }
 
-                            for (int i = 0; i < players.size(); i++) {
-                                playerTextViews.elementAt(i).setText(players.get(i).getName());
-                                playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
-                                playerViews.elementAt(i).setVisibility(View.VISIBLE);
-                                playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
-                                Log.d("checkk","Checking if player ready or not");
-                                if (players.get(i).getReady() == 1) {
-                                    Log.d("checkk","Player found ready, making bold");
+                                            for (int i = 0; i < players.size(); i++) {
+                                                setUI(i);
+                                                Log.d("checkk", "Checking if player ready or not");
+                                                if (players.get(i).getReady() == 1) {
+                                                    readyUI(i);
+                                                    Log.d("checkk", "Player found ready, making bold");
 //                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
 //                                    playerTe  xtViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
-                                    playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
-                                    playerViews.elementAt(i).setBackground(ContextCompat.getDrawable(WaitingPlace.this,R.drawable.button_background));
-                                } else if (players.get(i).getReady() == 0) {
-                                    Log.d("checkk","Player not ready, making thin text");
+
+                                                } else if (players.get(i).getReady() == 0) {
+                                                    Log.d("checkk", "Player not ready, making thin text");
 //                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.grey));
 //                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
-                                    playerViews.elementAt(i).setBackground(null);
-                                    playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
-                                }
+                                                    notReadyUI(i);
+                                                }
 
-                                Log.d("checkk","Checking if PlayerNo Changed");
-                                //Updating the player no. if it has changed
-                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-                                    playerNo = i;
-                                    players.get(i).setPlayerNumber(i);
-                                    room.setPlayers(players);
-                                    Log.d("checkk","Updating room which updated playerNo");
+                                                Log.d("checkk", "Checking if PlayerNo Changed");
+                                                //Updating the player no. if it has changed
+                                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                                    playerNo = i;
+                                                    players.get(i).setPlayerNumber(i);
+                                                    room.setPlayers(players);
+                                                    Log.d("checkk", "Updating room which updated playerNo");
 //                                    mDatabase.child("Rooms").child(roomId).setValue(room);
-                                    mDatabase.child("Rooms").child(roomId).child("players").child(i+"").child("playerNumber").setValue(i);
-                                }
+                                                    mDatabase.child("Rooms").child(roomId).child("players").child(i + "").child("playerNumber").setValue(i);
+                                                }
 
-                                //telling who is host in waiting place
-                                if (room.getHost() == i) {
-                                    playerTextViews.elementAt(i).setText(players.get(i).getName() + "  (Host)");
-                                }
-                            }
-                            //Making TextView invisible for the players who have left
-                            for (int i = players.size(); i < 4; i++) {
-                                playerTextViews.elementAt(i).setText("");
-                                playerTextViews.elementAt(i).setVisibility(View.INVISIBLE);
-                                playerViews.elementAt(i).setVisibility(View.INVISIBLE);
-                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
-                            }
+                                                //telling who is host in waiting place
+                                                if (room.getHost() == i) {
+                                                    //**
+                                                    addingHostText(i);
+                                                    //**
+                                                }
+                                            }
+                                            //Making TextView invisible for the players who have left
+                                            for (int i = players.size(); i < 4; i++) {
+                                                //**
+                                                removingPlayer(i);
+                                                //**
+                                            }
 
-                            //setting start game visible for host
-                            if (room.getHost() == playerNo) {
-                                startGame.setVisibility(View.VISIBLE);
-                                startGame.setEnabled(true);
-                            }
+                                            //setting start game visible for host
+                                            if (room.getHost() == playerNo) {
+                                                //**
+                                                startButtonVisible();
+                                                //**
+                                            }
 
-                            Log.d("checkk","Setting Room Buttons visible for host ");
-                            //setting remove players visible for host and invisible when removed
-                            if (room.getHost() == playerNo) {
-                                for (int i = 0; i < players.size(); i++) {
-                                    if (i != playerNo) {
-                                        playerButtonViews.elementAt(i).setVisibility(View.VISIBLE);
-                                        playerButtonViews.elementAt(i).setEnabled(true);
+                                            Log.d("checkk", "Setting Remove Buttons visible for host ");
+                                            //setting remove players visible for host and invisible when removed
+                                            if (room.getHost() == playerNo) {
+                                                for (int i = 0; i < players.size(); i++) {
+                                                    if (i != playerNo) {
+                                                        //**
+                                                        removeButtonVisible(i);
+                                                        //**
+                                                    }
+                                                }
+                                                for (int i = players.size(); i < 4; i++) {
+                                                    //**
+                                                    removeButtonInvisible(i);
+                                                    //**
+                                                }
+                                            }
+
+                                            Log.d("checkk", "Checking if game has started");
+                                            if (room.getIsGameStarted()) {
+                                                Log.d("checkk", "Game has started, Removing ValueEventListener");
+                                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                                Intent intent = new Intent(WaitingPlace.this, OnlineGamePlay.class);
+                                                intent.putExtra("RoomId", roomId);
+                                                intent.putExtra("PlayerNo", playerNo);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                Log.d("checkk", "Starting Online GamePlay");
+                                                startActivity(intent);
+                                                Log.d("checkk", "finishing Waiting Place");
+                                                finish();
+
+                                            }
+                                        }
+                                        Log.d("checkk", "Data change transaction success");
                                     }
                                 }
-                                for (int i = players.size(); i < 4; i++) {
-                                    playerButtonViews.elementAt(i).setVisibility(View.INVISIBLE);
-                                    playerButtonViews.elementAt(i).setEnabled(false);
+                                else{
+                                    Log.d("checkk", "ERRrr " + databaseError.getMessage());
                                 }
-                            }
-
-                            Log.d("checkk","Checking if game has started");
-                            if (room.getIsGameStarted()) {
-                                Log.d("checkk","Game has started, Removing ValueEventListener");
-                                mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                                Intent intent = new Intent(WaitingPlace.this, OnlineGamePlay.class);
-                                intent.putExtra("RoomId", roomId);
-                                intent.putExtra("PlayerNo", playerNo);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                Log.d("checkk","Starting Online GamePlay");
-                                startActivity(intent);
-                                Log.d("checkk","finishing Waiting Place");
-                                finish();
 
                             }
-                        }
+                        });
+
+//                        Log.d("checkk","Value Event Listener OnData Change Called");
+//                        Room room = dataSnapshot.getValue(Room.class);
+//
+//                        //null checking..for crash checking..
+//                        if(room==null){
+//                            Log.d("checkk","Room found null, finishing");
+//                            mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+//                            activity_status=0;
+//                            finish();
+//                        }
+//                        else {
+//                            Log.d("checkk","Room not found null, getting players");
+//                            players = room.getPlayers();
+//
+//                            if (players == null || players.size() < 1) {
+//                                Log.d("checkk","Players null, finishing");
+//                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+//                                activity_status=0;
+//                                Log.d("checkk","just before finish");
+//                                finish();
+//                                Log.d("checkk","now finished");
+//                            }
+//
+//                            //checking if that player is present or removed by host
+//                            Boolean isPresent = false;
+//                            for (int i = 0; i < players.size(); i++) {
+//                                if(players.get(i).getDeviceToken()==null){
+//                                    mDatabase.child("Rooms").child(roomId).child("players").child(i+"").setValue(null);
+//                                    players.remove(i);
+//                                }
+//                                else {
+//                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+//                                        isPresent=true;
+//                                    }
+//                                }
+//                            }
+//                            if (!isPresent) {
+//                                if(flag_player_self_exited==0){
+//                                    Toast.makeText(getApplicationContext(),"Host Removed You ",Toast.LENGTH_LONG).show();
+//                                }
+////                                Toast.makeText(getApplicationContext(), "You are no longer member of the room", Toast.LENGTH_SHORT).show();
+////                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+////                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+//                                activity_status=0;
+//                                finish();
+////                                startActivity(intent);
+//                            }
+//
+////                            setting readyViews invisible initially
+////                            for(int i=0;i<4;i++){
+////                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+////                            }
+//
+//                            for (int i = 0; i < players.size(); i++) {
+//                                playerTextViews.elementAt(i).setText(players.get(i).getName());
+//                                playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
+//                                playerViews.elementAt(i).setVisibility(View.VISIBLE);
+//                                playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
+//                                Log.d("checkk","Checking if player ready or not");
+//                                if (players.get(i).getReady() == 1) {
+//                                    Log.d("checkk","Player found ready, making bold");
+////                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.black));
+////                                    playerTe  xtViews.elementAt(i).setTypeface(Typeface.DEFAULT_BOLD);
+//                                    playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
+//                                    playerViews.elementAt(i).setBackground(ContextCompat.getDrawable(WaitingPlace.this,R.drawable.button_background));
+//                                } else if (players.get(i).getReady() == 0) {
+//                                    Log.d("checkk","Player not ready, making thin text");
+////                                    playerTextViews.elementAt(i).setTextColor(ContextCompat.getColor(WaitingPlace.this, R.color.grey));
+////                                    playerTextViews.elementAt(i).setTypeface(Typeface.DEFAULT);
+//                                    playerViews.elementAt(i).setBackground(null);
+//                                    playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+//                                }
+//
+//                                Log.d("checkk","Checking if PlayerNo Changed");
+//                                //Updating the player no. if it has changed
+//                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+//                                    playerNo = i;
+//                                    players.get(i).setPlayerNumber(i);
+//                                    room.setPlayers(players);
+//                                    Log.d("checkk","Updating room which updated playerNo");
+////                                    mDatabase.child("Rooms").child(roomId).setValue(room);
+//                                    mDatabase.child("Rooms").child(roomId).child("players").child(i+"").child("playerNumber").setValue(i);
+//                                }
+//
+//                                //telling who is host in waiting place
+//                                if (room.getHost() == i) {
+//                                    playerTextViews.elementAt(i).setText(players.get(i).getName() + "  (Host)");
+//                                }
+//                            }
+//                            //Making TextView invisible for the players who have left
+//                            for (int i = players.size(); i < 4; i++) {
+//                                playerTextViews.elementAt(i).setText("");
+//                                playerTextViews.elementAt(i).setVisibility(View.INVISIBLE);
+//                                playerViews.elementAt(i).setVisibility(View.INVISIBLE);
+//                                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+//                            }
+//
+//                            //setting start game visible for host
+//                            if (room.getHost() == playerNo) {
+//                                startGame.setVisibility(View.VISIBLE);
+//                                startGame.setEnabled(true);
+//                            }
+//
+//                            Log.d("checkk","Setting Room Buttons visible for host ");
+//                            //setting remove players visible for host and invisible when removed
+//                            if (room.getHost() == playerNo) {
+//                                for (int i = 0; i < players.size(); i++) {
+//                                    if (i != playerNo) {
+//                                        playerButtonViews.elementAt(i).setVisibility(View.VISIBLE);
+//                                        playerButtonViews.elementAt(i).setEnabled(true);
+//                                    }
+//                                }
+//                                for (int i = players.size(); i < 4; i++) {
+//                                    playerButtonViews.elementAt(i).setVisibility(View.INVISIBLE);
+//                                    playerButtonViews.elementAt(i).setEnabled(false);
+//                                }
+//                            }
+//
+//                            Log.d("checkk","Checking if game has started");
+//                            if (room.getIsGameStarted()) {
+//                                Log.d("checkk","Game has started, Removing ValueEventListener");
+//                                mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                                Intent intent = new Intent(WaitingPlace.this, OnlineGamePlay.class);
+//                                intent.putExtra("RoomId", roomId);
+//                                intent.putExtra("PlayerNo", playerNo);
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                Log.d("checkk","Starting Online GamePlay");
+//                                startActivity(intent);
+//                                Log.d("checkk","finishing Waiting Place");
+//                                finish();
+//
+//                            }
+//                        }
                     }
 
                     @Override
@@ -308,8 +472,8 @@ public class WaitingPlace extends AppCompatActivity {
                 mDatabase.child("Rooms").child(roomId).addValueEventListener(waiting_main_listener);
             }
         });
-            }
-        });
+//            }
+//        });
 
 
         //Starting startGame Click Listener
@@ -703,13 +867,20 @@ public class WaitingPlace extends AppCompatActivity {
             @Override
             public void onSuccess(final InstanceIdResult instanceIdResult) {
                 Log.d("checkk","onResume Got FirebaseInstanceId");
-                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
+
+                //Starting transaction
+                mDatabase.child("Rooms").child(roomId).child("players").runTransaction(new Transaction.Handler() {
+                    @NonNull
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d("checkk","onResume SingleValueEventListener of onResume, onDataChange trigerred");
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
                         GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
-                        ArrayList<Player>players=dataSnapshot.getValue(t);
+                        ArrayList<Player>players=mutableData.getValue(t);
+
+                        Log.d("checkk","Resume transaction started, players retrieved");
+                        if(players==null){
+                            Log.d("checkk","players is null");
+                            return Transaction.success(mutableData);
+                        }
 
                         for(int i=0; i<players.size();i++){
                             if(players.get(i).getDeviceToken()==null){
@@ -723,20 +894,58 @@ public class WaitingPlace extends AppCompatActivity {
                             }
                         }
 
-                        Log.d("checkk","onResume Uploading this change to database");
-                        mDatabase.child("Rooms").child(roomId).child("players").child(curr_player_no+"").child("ready").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("checkk","onResume Uploaded onReady set true successfully");
-                            }
-                        });
+                        players.get(curr_player_no).setReady(1);
+                        mutableData.setValue(players);
+                        return Transaction.success(mutableData);
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d("Problem","problem");
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if(databaseError==null){
+                            Log.d("checkk","onResume Uploaded onReady set true successfully");
+                        }
+                        else{
+                            Log.d("checkk","Error in transaction "+databaseError.getMessage());
+                        }
                     }
                 });
+
+
+
+//                mDatabase.child("Rooms").child(roomId).child("players").addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        Log.d("checkk","onResume SingleValueEventListener of onResume, onDataChange trigerred");
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+//                        ArrayList<Player>players=dataSnapshot.getValue(t);
+//
+//                        for(int i=0; i<players.size();i++){
+//                            if(players.get(i).getDeviceToken()==null){
+//                                mDatabase.child("Rooms").child(roomId).child("players").child(i+"").setValue(null);
+//                            }
+//                            else {
+//                                if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+//                                    Log.d("checkk", "onResume Setting this player ready");
+//                                    curr_player_no = i;
+//                                }
+//                            }
+//                        }
+//
+//                        Log.d("checkk","onResume Uploading this change to database");
+//                        mDatabase.child("Rooms").child(roomId).child("players").child(curr_player_no+"").child("ready").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Log.d("checkk","onResume Uploaded onReady set true successfully");
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                        Log.d("Problem","problem");
+//                    }
+//                });
             }
         });
 //        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -879,6 +1088,89 @@ public void onSizeClicked(View view){
             break;
     }
 }
+
+void setUI(final int i){
+    runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+            playerTextViews.elementAt(i).setText(players.get(i).getName());
+            playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
+            playerViews.elementAt(i).setVisibility(View.VISIBLE);
+            playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
+        }
+    });
+}
+
+    void readyUI(final int i){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
+                playerViews.elementAt(i).setBackground(ContextCompat.getDrawable(WaitingPlace.this,R.drawable.button_background));
+            }
+        });
+    }
+
+    void notReadyUI(final int i){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerViews.elementAt(i).setBackground(null);
+                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    void addingHostText(final int i){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerTextViews.elementAt(i).setText(players.get(i).getName() + "  (Host)");
+            }
+        });
+    }
+
+    void removingPlayer(final int i){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerTextViews.elementAt(i).setText("");
+                playerTextViews.elementAt(i).setVisibility(View.INVISIBLE);
+                playerViews.elementAt(i).setVisibility(View.INVISIBLE);
+                playerReadyViews.elementAt(i).setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    void startButtonVisible(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                startGame.setVisibility(View.VISIBLE);
+                startGame.setEnabled(true);
+            }
+        });
+    }
+
+    void removeButtonVisible(final int i){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerButtonViews.elementAt(i).setVisibility(View.VISIBLE);
+                playerButtonViews.elementAt(i).setEnabled(true);
+            }
+        });
+    }
+
+    void removeButtonInvisible(final int i){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                playerButtonViews.elementAt(i).setVisibility(View.INVISIBLE);
+                playerButtonViews.elementAt(i).setEnabled(false);
+            }
+        });
+    }
 
 }
 

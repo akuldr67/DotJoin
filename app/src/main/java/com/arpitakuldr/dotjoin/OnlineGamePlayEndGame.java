@@ -1,6 +1,7 @@
 package com.arpitakuldr.dotjoin;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
@@ -26,6 +27,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -181,21 +184,22 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
         mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(onCreateValueEventListener);
         endGameProgressBar.setVisibility(View.VISIBLE);
         Log.d("checkk","Click on Home Detected");
-        mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        //Starting transaction
+        mDatabase.child("Rooms").child(roomId).child("players").runTransaction(new Transaction.Handler() {
+            @NonNull
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                Room room = dataSnapshot.getValue(Room.class);
-                Log.d("checkk","Loaded room");
-                players = room.getPlayers();
-                Log.d("checkk","Removing player from room");
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                ArrayList<Player>players=mutableData.getValue(t);
+                if(players==null){
+                    return Transaction.success(mutableData);
+                }
                 for(int i=0;i<players.size();i++){
                     if(players.get(i).getPlayerNumber()==playerNo){
                         players.remove(i);
                     }
                 }
-//                        players.remove(playerNo);
-
 
                 if (players == null || players.size() < 1) {
                     Log.d("checkk","All players gone");
@@ -219,36 +223,103 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                             }
                         }
                     });
+                    return Transaction.success(mutableData);
                 } else {
                     Log.d("checkk","all player not gone");
-                    room.setPlayers(players);
                     Log.d("checkk","updating room with the player removed");
-                    mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-//                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
-//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                Log.d("checkk","Starting intent for MainActivity");
-                                endGameProgressBar.setVisibility(View.GONE);
-//                                startActivity(intent);
-                                OnlineGamePlay.AcOnlineGamePlay.finish();
-                                Log.d("checkk","finishing OnlineGamePlay");
-                                finish();
-                            } else {
-                                Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
-                                endGameProgressBar.setVisibility(View.GONE);
-                            }
-                        }
-                    });
+                    mutableData.setValue(players);
+                    return Transaction.success(mutableData);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                if(databaseError==null){
+                    Log.d("checkk","Starting intent for MainActivity");
+                    endGameProgressBar.setVisibility(View.GONE);
+//                                startActivity(intent);
+                    OnlineGamePlay.AcOnlineGamePlay.finish();
+                    Log.d("checkk","finishing OnlineGamePlay");
+                    finish();
+                }
+                else {
+                    Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
+                    endGameProgressBar.setVisibility(View.GONE);
+                }
             }
         });
+
+
+
+
+//        mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                Room room = dataSnapshot.getValue(Room.class);
+//                Log.d("checkk","Loaded room");
+//                players = room.getPlayers();
+//                Log.d("checkk","Removing player from room");
+//                for(int i=0;i<players.size();i++){
+//                    if(players.get(i).getPlayerNumber()==playerNo){
+//                        players.remove(i);
+//                    }
+//                }
+////                        players.remove(playerNo);
+//
+//
+//                if (players == null || players.size() < 1) {
+//                    Log.d("checkk","All players gone");
+//                    Log.d("checkk","Deleting room");
+//                    mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()) {
+////                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
+////                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                Log.d("checkk","Starting Main Activity");
+//                                endGameProgressBar.setVisibility(View.GONE);
+////                                startActivity(intent);
+//                                OnlineGamePlay.AcOnlineGamePlay.finish();
+//                                Log.d("checkk","finishing OnlineGamePlay");
+//                                finish();
+//
+//                            } else {
+//                                Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
+//                                endGameProgressBar.setVisibility(View.GONE);
+//                            }
+//                        }
+//                    });
+//                } else {
+//                    Log.d("checkk","all player not gone");
+//                    room.setPlayers(players);
+//                    Log.d("checkk","updating room with the player removed");
+//                    mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()) {
+////                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
+////                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                Log.d("checkk","Starting intent for MainActivity");
+//                                endGameProgressBar.setVisibility(View.GONE);
+////                                startActivity(intent);
+//                                OnlineGamePlay.AcOnlineGamePlay.finish();
+//                                Log.d("checkk","finishing OnlineGamePlay");
+//                                finish();
+//                            } else {
+//                                Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
+//                                endGameProgressBar.setVisibility(View.GONE);
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
     }
 
     @Override
