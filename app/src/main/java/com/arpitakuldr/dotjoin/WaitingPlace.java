@@ -355,6 +355,7 @@ public class WaitingPlace extends AppCompatActivity {
                              final Button startGame = dialogView.findViewById(R.id.online_start_game_button);
 
                              final AlertDialog alertDialog = builder.create();
+
                              alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                                  @Override
                                  public void onShow(DialogInterface dialog) {
@@ -395,6 +396,7 @@ public class WaitingPlace extends AppCompatActivity {
                                                          Log.d("checkk", "Setting isGameStarted true");
                                                          room.setIsGameStarted(true);
                                                          Log.d("checkk", "Updating to server, updated room");
+                                                         alertDialog.dismiss();
                                                          mDatabase.child("Rooms").child(roomId).setValue(room);
                                                      } else {
                                                          Toast.makeText(WaitingPlace.this, "All Players are not Ready!!", Toast.LENGTH_LONG).show();
