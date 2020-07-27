@@ -660,6 +660,7 @@ public class WaitingPlace extends AppCompatActivity {
                                                 Log.d("checkk", "Finishing Waiting Place");
                                                 mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
                                                 activity_status=0;
+                                                alertDialog.dismiss();
                                                 finish();
                                                 Log.d("checkk", "Starting MainActivity");
 //                                                startActivity(intent);
@@ -683,6 +684,7 @@ public class WaitingPlace extends AppCompatActivity {
                                                 Log.d("checkk", "Finishing WatingPlace");
                                                 mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
                                                 activity_status=0;
+                                                alertDialog.dismiss();
                                                 finish();
                                             } else {
                                                 Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();

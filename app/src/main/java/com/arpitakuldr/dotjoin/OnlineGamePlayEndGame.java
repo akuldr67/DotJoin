@@ -76,82 +76,102 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
         Log.d("checkk","got Extras from intent");
         setFinishOnTouchOutside(false);
         mDatabase= FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("Rooms").child(roomId).child("players").child(playerNo+"").child("ready").setValue(0).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Log.d("checkk","set value of ready completed");
-                setContentView(R.layout.activity_online_game_play_end_game);
-                replay=findViewById(R.id.onlinegameplay_endgame_replay);
-                home=findViewById(R.id.onlinegameplay_endgame_home_button);
-
-                replay.setOnClickListener(new View.OnClickListener() {
+                //Removing Players that are inactive
+                mDatabase.child("Rooms").child(roomId).child("game").child("players").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onClick(View v) {
-                        onOnlineReplayClicked();
-                    }
-                });
-
-                home.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onOnlineHomeClicked();
-                    }
-                });
-
-                endGameProgressBar = findViewById(R.id.online_game_end_progressbar);
-
-
-                Heading=findViewById(R.id.onlinegameplay_endgame_title);
-                Result=findViewById(R.id.onlinegameplay_endgame_final_score);
-
-                Heading.setText(heading);
-                Result.setText(result);
-
-                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                    @Override
-                    public void onSuccess(final InstanceIdResult instanceIdResult) {
-
-
-                        onCreateValueEventListener=new ValueEventListener() {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                        ArrayList<Player>game_players=dataSnapshot.getValue(t);
+                        mDatabase.child("Rooms").child(roomId).child("game").child("players").removeEventListener(this);
+                        for(int i=0;i<game_players.size();i++){
+                            if(game_players.get(i).getActive()==0){
+                                game_players.remove(i);
+                            }
+                            else{
+                                game_players.get(i).setReady(0);
+                            }
+                        }
+                        mDatabase.child("Rooms").child(roomId).child("players").setValue(game_players).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
-                                ArrayList<Player>players=dataSnapshot.getValue(t);
-                                //checking if that player is present or removed by host
-                                Boolean isPresent = false;
-                                assert players != null;
-                                for (int i = 0; i < players.size(); i++) {
-                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
-                                        isPresent = true;
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Log.d("checkk","set value of ready completed");
+                                setContentView(R.layout.activity_online_game_play_end_game);
+                                replay=findViewById(R.id.onlinegameplay_endgame_replay);
+                                home=findViewById(R.id.onlinegameplay_endgame_home_button);
+
+                                replay.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        onOnlineReplayClicked();
                                     }
-                                }
-                                if (!isPresent) {
+                                });
+
+                                home.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        onOnlineHomeClicked();
+                                    }
+                                });
+
+                                endGameProgressBar = findViewById(R.id.online_game_end_progressbar);
+
+
+                                Heading=findViewById(R.id.onlinegameplay_endgame_title);
+                                Result=findViewById(R.id.onlinegameplay_endgame_final_score);
+
+                                Heading.setText(heading);
+                                Result.setText(result);
+
+                                FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                                    @Override
+                                    public void onSuccess(final InstanceIdResult instanceIdResult) {
+
+
+                                        onCreateValueEventListener=new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                                                ArrayList<Player>players=dataSnapshot.getValue(t);
+                                                //checking if that player is present or removed by host
+                                                Boolean isPresent = false;
+                                                assert players != null;
+                                                for (int i = 0; i < players.size(); i++) {
+                                                    Log.d("checkk","i = "+i);
+                                                    if (players.get(i).getDeviceToken().equals(instanceIdResult.getToken())) {
+                                                        isPresent = true;
+                                                    }
+                                                }
+                                                if (!isPresent) {
 //                                Toast.makeText(getApplicationContext(), "You are no longer member of the room", Toast.LENGTH_SHORT).show();
 //                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
 //                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    Toast toast=Toast.makeText(getApplicationContext(),"You have been removed by the host",Toast.LENGTH_LONG);
-                                    toast.show();
-                                    mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
-                                    OnlineGamePlay.AcOnlineGamePlay.finish();
-                                    finish();
+                                                    Toast toast=Toast.makeText(getApplicationContext(),"You have been removed by the host",Toast.LENGTH_LONG);
+                                                    toast.show();
+                                                    mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(this);
+                                                    OnlineGamePlay.AcOnlineGamePlay.finish();
+                                                    finish();
 //                                startActivity(intent);
-                                }
+                                                }
 
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        };
+                                        mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(onCreateValueEventListener);
+
+                                    }
+                                });
                             }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        };
-                        mDatabase.child("Rooms").child(roomId).child("players").addValueEventListener(onCreateValueEventListener);
+                        });
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
                 });
-
-            }
-
-        });
     }
 
     public void onOnlineReplayClicked(){
