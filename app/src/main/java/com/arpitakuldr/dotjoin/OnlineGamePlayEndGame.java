@@ -60,9 +60,9 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
 
-//        mOnlineEndInterstitialAd = new InterstitialAd(this);
-//        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
-//        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mOnlineEndInterstitialAd = new InterstitialAd(this);
+        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
+        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
         Intent intent = getIntent();
@@ -122,6 +122,12 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 
                                     Heading.setText(heading);
                                     Result.setText(result);
+                                    if(mOnlineEndInterstitialAd.isLoaded()){
+                                        mOnlineEndInterstitialAd.show();
+                                    }
+                                    else{
+                                        interstitialAdEvents();
+                                    }
 
                                     FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
                                         @Override
@@ -175,6 +181,9 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 
                     }
                 });
+
+
+
     }
 
     public void onOnlineReplayClicked(){
@@ -451,12 +460,10 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
         mOnlineEndInterstitialAd.setAdListener(new AdListener(){
 
             @Override
-            public void onAdClosed() {
-                OnlineGamePlay.AcOnlineGamePlay.finish();
-                Log.d("checkk","finishing OnlineGamePlay");
-                finish();
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                mOnlineEndInterstitialAd.show();
             }
-
         });
     }
 
