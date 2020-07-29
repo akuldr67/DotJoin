@@ -331,98 +331,82 @@ public class WaitingPlace extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("checkk","Click on Start Game detected");
-                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
-                     @Override
-                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                         Log.d("checkk", "SingleValueEvent Listener Added");
-                         mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                         Room room = dataSnapshot.getValue(Room.class);
-                         ArrayList<Player> players = room.getPlayers();
-                         Log.d("checkk", "Checking if players are less than 2");
-                         if (players.size() < 2) {
-                             Toast.makeText(getApplicationContext(), "Minimum 2 players required to start game", Toast.LENGTH_SHORT).show();
-                         } else if (players.size() > 4) {
-                             Toast.makeText(getApplicationContext(), "Maximum 4 players can play. Remove extra players", Toast.LENGTH_SHORT).show();
-                         } else {
-                             Log.d("checkk", "Found suitable player no");
-                             Log.d("checkk", "Started Creating Dialog to accept board size");
-                             //Dialog Box that accepts board size
+                final AlertDialog.Builder builder = new AlertDialog.Builder(WaitingPlace.this);
+                LayoutInflater inflater = WaitingPlace.this.getLayoutInflater();
+                View dialogView=inflater.inflate(R.layout.online_size_dialog,null);
+                builder.setView(dialogView);
+                final Button startGame = dialogView.findViewById(R.id.online_start_game_button);
+                final AlertDialog alertDialog = builder.create();
 
-                             final AlertDialog.Builder builder = new AlertDialog.Builder(WaitingPlace.this);
-                             LayoutInflater inflater = WaitingPlace.this.getLayoutInflater();
-                             View dialogView=inflater.inflate(R.layout.online_size_dialog,null);
-                             builder.setView(dialogView);
-                             final Button startGame = dialogView.findViewById(R.id.online_start_game_button);
-
-                             final AlertDialog alertDialog = builder.create();
-
-                             alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                                 @Override
-                                 public void onShow(DialogInterface dialog) {
-                                     startGame.setOnClickListener(new View.OnClickListener() {
-                                         @Override
-                                         public void onClick(View v) {
-                                             //Value Event Listener for room
-                                             mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                 @Override
-                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                     Log.d("checkk", "onDataChange started, SingleValueEventListener");
-                                                     mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-//                                                     mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-                                                     Room room = dataSnapshot.getValue(Room.class);
-                                                     ArrayList<Player> players = room.getPlayers();
-                                                     int flag = 1;
-                                                     for (int i = 0; i < players.size(); i++) {
-                                                         if (players.get(i).getReady() == 0) {
-                                                             flag = 0;
-                                                         }
-                                                     }
-                                                     if (flag == 1) {
-                                                         Log.d("checkk", "Initializing Board");
-                                                         Board board = new Board(boardSize, boardSize, 0, 0, 0);
-                                                         for (int i = 0; i < players.size(); i++) {
-                                                             players.get(i).setScore(0);
-                                                             if (i == 0)
-                                                                 players.get(i).setColor(R.drawable.colour_box_blue);
-                                                             else if (i == 1)
-                                                                 players.get(i).setColor(R.drawable.colour_box_red);
-                                                             else if (i == 2)
-                                                                 players.get(i).setColor(R.drawable.colour_box_green);
-                                                             else if (i == 3)
-                                                                 players.get(i).setColor(R.drawable.colour_box_yellow);
-                                                         }
-                                                         Log.d("checkk", "Initializing Game with players in room");
-                                                         Game game = new Game(-1, room.getPlayers().size(), board, players);
-                                                         room.setGame(game);
-                                                         Log.d("checkk", "Setting isGameStarted true");
-                                                         room.setIsGameStarted(true);
-                                                         Log.d("checkk", "Updating to server, updated room");
-                                                         alertDialog.dismiss();
-                                                         mDatabase.child("Rooms").child(roomId).setValue(room);
-                                                     } else {
-                                                         Toast.makeText(WaitingPlace.this, "All Players are not Ready!!", Toast.LENGTH_LONG).show();
-                                                     }
-                                                 }
-                                                 @Override
-                                                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                 }
-                                             });
-
-
-                                         }
-                                     });
-                                 }
-                             });
-                             alertDialog.show();
-                         }
-                     }
+                alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onShow(DialogInterface dialog) {
+                        startGame.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //Value Event Listener for room
+                                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        Log.d("checkk", "onDataChange started, SingleValueEventListener");
+                                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                                                    mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                        Room room = dataSnapshot.getValue(Room.class);
+                                        ArrayList<Player> players = room.getPlayers();
 
-                }
-            });
+                                        if (players.size() < 2) {
+                                            Toast.makeText(getApplicationContext(), "Minimum 2 players required to start game", Toast.LENGTH_SHORT).show();
+                                            alertDialog.dismiss();
+                                        } else if (players.size() > 4) {
+                                            Toast.makeText(getApplicationContext(), "Maximum 4 players can play. Remove extra players", Toast.LENGTH_SHORT).show();
+                                            alertDialog.dismiss();
+                                        } else {
+
+                                            int flag = 1;
+                                            for (int i = 0; i < players.size(); i++) {
+                                                if (players.get(i).getReady() == 0) {
+                                                    flag = 0;
+                                                }
+                                            }
+                                            if (flag == 1) {
+                                                Log.d("checkk", "Initializing Board");
+                                                Board board = new Board(boardSize, boardSize, 0, 0, 0);
+                                                for (int i = 0; i < players.size(); i++) {
+                                                    players.get(i).setScore(0);
+                                                    if (i == 0)
+                                                        players.get(i).setColor(R.drawable.colour_box_blue);
+                                                    else if (i == 1)
+                                                        players.get(i).setColor(R.drawable.colour_box_red);
+                                                    else if (i == 2)
+                                                        players.get(i).setColor(R.drawable.colour_box_green);
+                                                    else if (i == 3)
+                                                        players.get(i).setColor(R.drawable.colour_box_yellow);
+                                                }
+                                                Log.d("checkk", "Initializing Game with players in room");
+                                                Game game = new Game(-1, room.getPlayers().size(), board, players);
+                                                room.setGame(game);
+                                                Log.d("checkk", "Setting isGameStarted true");
+                                                room.setIsGameStarted(true);
+                                                Log.d("checkk", "Updating to server, updated room");
+                                                alertDialog.dismiss();
+                                                mDatabase.child("Rooms").child(roomId).setValue(room);
+                                            } else {
+                                                Toast.makeText(WaitingPlace.this, "All Players are not Ready!!", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                alertDialog.show();
             }
-            //Ending startGame Listener
+                //Ending startGame Listener
         });
 
         playerButtonViews.elementAt(0).setOnClickListener(new View.OnClickListener() {
