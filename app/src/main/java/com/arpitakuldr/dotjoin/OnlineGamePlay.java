@@ -583,7 +583,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                                                              onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
 //                                                             startActivity(intent);
                                                              mDatabase.child("Rooms").child(roomId).child("game").removeEventListener(mainValueEventListener);
-//                                                             alertDialog.dismiss();
+                                                             alertDialog.dismiss();
                                                              finish();
                                                          }
                                                          else{
@@ -598,7 +598,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                                                     onlineGamePlayLeaveProgressBar.setVisibility(View.GONE);
 //                                                    startActivity(intent);
                                                     mDatabase.child("Rooms").child(roomId).child("game").removeEventListener(mainValueEventListener);
-//                                                    alertDialog.dismiss();
+                                                    alertDialog.dismiss();
                                                     finish();
                                                 }
                                             }

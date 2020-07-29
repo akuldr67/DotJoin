@@ -262,6 +262,8 @@ public class MultiPlayerOffline extends AppCompatActivity {
                                                     resultIntent.putExtra("Heading",game.resultString());
                                                     resultIntent.putExtra("Result",result);
                                                     resultIntent.putExtra("Activity","MultiPlayerOffline");
+                                                    resultIntent.putExtra("noOfPlayers",noOfPlayers);
+                                                    resultIntent.putExtra("size",boardSize);
 //                                                    startActivity(resultIntent);
 
 

@@ -355,6 +355,8 @@ public class SinglePlayer extends AppCompatActivity {
         intent.putExtra("Heading",game.resultString());
         intent.putExtra("Result",result);
         intent.putExtra("Activity","Single");
+        intent.putExtra("difficulty",difficultyLevel);
+        intent.putExtra("size",boardSize);
 //        startActivity(intent);
 
 

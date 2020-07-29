@@ -397,7 +397,7 @@ public class WaitingPlace extends AppCompatActivity {
                                                          Log.d("checkk", "Setting isGameStarted true");
                                                          room.setIsGameStarted(true);
                                                          Log.d("checkk", "Updating to server, updated room");
-//                                                         alertDialog.dismiss();
+                                                         alertDialog.dismiss();
                                                          mDatabase.child("Rooms").child(roomId).setValue(room);
                                                      } else {
                                                          Toast.makeText(WaitingPlace.this, "All Players are not Ready!!", Toast.LENGTH_LONG).show();
@@ -661,7 +661,7 @@ public class WaitingPlace extends AppCompatActivity {
                                                 Log.d("checkk", "Finishing Waiting Place");
                                                 mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
                                                 activity_status=0;
-//                                                alertDialog.dismiss();
+                                                alertDialog.dismiss();
                                                 finish();
                                                 Log.d("checkk", "Starting MainActivity");
 //                                                startActivity(intent);

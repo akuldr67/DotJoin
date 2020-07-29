@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,8 @@ import java.io.FileOutputStream;
 public class SinglePlayerEndGame extends AppCompatActivity {
     private TextView Heading,Result;
     private String activity;
+    private int difficultyLevel,boardSize,noOfPlayers;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,28 @@ public class SinglePlayerEndGame extends AppCompatActivity {
         Result=findViewById(R.id.single_endgame_final_score);
         Heading.setText(heading);
         Result.setText(result);
+        if(activity.equals("Single")){
+            difficultyLevel=intent.getIntExtra("difficulty",-1);
+            if(difficultyLevel==-1){
+                Log.d("checkk","Did not get difficulty");
+            }
+
+            boardSize=intent.getIntExtra("size",-1);
+            if(boardSize==-1){
+                Log.d("checkk","Did not get size");
+            }
+        }
+        else if(activity.equals("MultiPlayerOffline")){
+            noOfPlayers=intent.getIntExtra("noOfPlayers",-1);
+            if(noOfPlayers==-1){
+                Log.d("checkk","Did not get noOfPlayers");
+            }
+
+            boardSize=intent.getIntExtra("size",-1);
+            if(boardSize==-1){
+                Log.d("checkk","Did not get size");
+            }
+        }
     }
 
     public void onHomeClicked(View view){
@@ -43,7 +68,7 @@ public class SinglePlayerEndGame extends AppCompatActivity {
             MultiPlayerOffline.AcMultiPlayerOffline.finish();
     }
 
-    public void onReplayClicked(View view){
+    public void onChangeConfClicked(View view){
         if(activity.equals("Single")){
             finish();
             SinglePlayer.AcSinglePlayer.finish();
@@ -55,6 +80,25 @@ public class SinglePlayerEndGame extends AppCompatActivity {
             MultiPlayerOffline.AcMultiPlayerOffline.finish();
             Intent intent = new Intent(SinglePlayerEndGame.this, MultiPlayerOfflineDialog.class);
             startActivity(intent);
+        }
+    }
+
+    public void onReplayClicked(View view){
+        if (activity.equals("Single")){
+            Intent intent = new Intent(SinglePlayerEndGame.this,SinglePlayer.class);
+            intent.putExtra("size",boardSize);
+            intent.putExtra("difficulty",difficultyLevel);
+            startActivity(intent);
+            finish();
+            SinglePlayer.AcSinglePlayer.finish();
+        }
+        else if(activity.equals("MultiPlayerOffline")){
+            Intent intent = new Intent(SinglePlayerEndGame.this, MultiPlayerOffline.class);
+            intent.putExtra("size",boardSize);
+            intent.putExtra("noOfPlayers",noOfPlayers);
+            startActivity(intent);
+            finish();
+            MultiPlayerOffline.AcMultiPlayerOffline.finish();
         }
     }
 
