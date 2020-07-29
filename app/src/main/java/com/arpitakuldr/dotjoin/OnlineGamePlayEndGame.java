@@ -50,7 +50,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     private Button replay,home;
     private ValueEventListener onCreateValueEventListener;
 
-    private InterstitialAd mOnlineEndInterstitialAd;
+    public InterstitialAd mOnlineEndInterstitialAd;
 
 
     @Override
@@ -60,9 +60,6 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
 
-        mOnlineEndInterstitialAd = new InterstitialAd(this);
-        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
-        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
         Intent intent = getIntent();
@@ -122,12 +119,6 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 
                                     Heading.setText(heading);
                                     Result.setText(result);
-                                    if(mOnlineEndInterstitialAd.isLoaded()){
-                                        mOnlineEndInterstitialAd.show();
-                                    }
-                                    else{
-                                        interstitialAdEvents();
-                                    }
 
                                     FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
                                         @Override
@@ -222,6 +213,10 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     }
 
     public void onOnlineHomeClicked(){
+        mOnlineEndInterstitialAd = new InterstitialAd(this);
+        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
+        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
+
         flag=0;
         mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(onCreateValueEventListener);
         endGameProgressBar.setVisibility(View.VISIBLE);
@@ -271,17 +266,11 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                                     endGameProgressBar.setVisibility(View.GONE);
 //                                startActivity(intent);
 
-//                                    if(mOnlineEndInterstitialAd.isLoaded()){
-//                                        mOnlineEndInterstitialAd.show();
-//                                        interstitialAdEvents();
-//                                    }
-//                                    else{
-                                        Log.d("check"," multi Player Online EndGame interstitial ad wasn't loaded");
-                                        OnlineGamePlay.AcOnlineGamePlay.finish();
-                                        Log.d("checkk","finishing OnlineGamePlay");
-                                        finish();
-//                                    }
-//                                    interstitialAdEvents();
+                                    if(mOnlineEndInterstitialAd.isLoaded()){
+                                        mOnlineEndInterstitialAd.show();
+                                    }
+                                    interstitialAdEvents();
+
                                 } else {
                                     Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
                                     endGameProgressBar.setVisibility(View.GONE);
@@ -292,17 +281,10 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                     else{
                         Log.d("checkk","Starting intent for MainActivity");
                         endGameProgressBar.setVisibility(View.GONE);
-//                        if(mOnlineEndInterstitialAd.isLoaded()){
-//                            mOnlineEndInterstitialAd.show();
-//                            interstitialAdEvents();
-//                        }
-//                        else{
-                            Log.d("check"," multi Player Online EndGame interstitial ad wasn't loaded");
-                            OnlineGamePlay.AcOnlineGamePlay.finish();
-                            Log.d("checkk","finishing OnlineGamePlay");
-                            finish();
-//                        }
-//                        interstitialAdEvents();
+                        if(mOnlineEndInterstitialAd.isLoaded()){
+                            mOnlineEndInterstitialAd.show();
+                        }
+                        interstitialAdEvents();
                     }
 
                 } else {
@@ -455,7 +437,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     }
 
 
-    private void interstitialAdEvents(){
+    public void interstitialAdEvents(){
         //listener for single player start interstitial ad
         mOnlineEndInterstitialAd.setAdListener(new AdListener(){
 
@@ -464,7 +446,24 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                 super.onAdLoaded();
                 mOnlineEndInterstitialAd.show();
             }
+
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                OnlineGamePlay.AcOnlineGamePlay.finish();
+                Log.d("checkk","finishing OnlineGamePlay");
+                finish();
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                OnlineGamePlay.AcOnlineGamePlay.finish();
+                Log.d("checkk","finishing OnlineGamePlay");
+                finish();
+            }
         });
+
     }
 
 
