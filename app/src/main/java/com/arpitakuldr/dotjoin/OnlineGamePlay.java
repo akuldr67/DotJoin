@@ -455,7 +455,7 @@ public class OnlineGamePlay extends AppCompatActivity {
                     }
                     //If its this Users turn
                     if (playerNo == activeGame.getCurrentPlayer()) {
-                        if(flag==0){
+                        if(flag==0 && playerNo == 0){
                             CountDownTimer startTimer = new CountDownTimer(2000,500) {
                                 @Override
                                 public void onTick(long millisUntilFinished) {

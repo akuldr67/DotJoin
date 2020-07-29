@@ -50,7 +50,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     private Button replay,home;
     private ValueEventListener onCreateValueEventListener;
 
-    public InterstitialAd mOnlineEndInterstitialAd;
+    private InterstitialAd mOnlineEndInterstitialAd;
 
 
     @Override
@@ -213,9 +213,9 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     }
 
     public void onOnlineHomeClicked(){
-        mOnlineEndInterstitialAd = new InterstitialAd(this);
-        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
-        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
+//        mOnlineEndInterstitialAd = new InterstitialAd(this);
+//        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
+//        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
 
         flag=0;
         mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(onCreateValueEventListener);
@@ -263,13 +263,31 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 //                                Intent intent = new Intent(OnlineGamePlayEndGame.this, MainActivity.class);
 //                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     Log.d("checkk","Starting Main Activity");
-                                    endGameProgressBar.setVisibility(View.GONE);
+//                                    endGameProgressBar.setVisibility(View.GONE);
 //                                startActivity(intent);
 
-                                    if(mOnlineEndInterstitialAd.isLoaded()){
-                                        mOnlineEndInterstitialAd.show();
-                                    }
-                                    interstitialAdEvents();
+//                                    if(mOnlineEndInterstitialAd.isLoaded()){
+//                                        endGameProgressBar.setVisibility(View.GONE);
+//                                        mOnlineEndInterstitialAd.show();
+//                                        interstitialAdEvents();
+//                                    }
+//                                    else{
+//                                        endGameProgressBar.setVisibility(View.GONE);
+//                                        OnlineGamePlay.AcOnlineGamePlay.finish();
+//                                        Log.d("checkk","finishing OnlineGamePlay");
+//                                        finish();
+//                                    }
+//                                    interstitialAdEvents();
+//                                    if(!mOnlineEndInterstitialAd.isLoaded()){
+//                                        endGameProgressBar.setVisibility(View.GONE);
+//                                        OnlineGamePlay.AcOnlineGamePlay.finish();
+//                                        Log.d("checkk","finishing OnlineGamePlay");
+//                                        finish();
+//                                    }
+                                    endGameProgressBar.setVisibility(View.GONE);
+                                    OnlineGamePlay.AcOnlineGamePlay.finish();
+                                    Log.d("checkk","finishing OnlineGamePlay");
+                                    finish();
 
                                 } else {
                                     Toast.makeText(OnlineGamePlayEndGame.this, "Unable to go to home page", Toast.LENGTH_SHORT).show();
@@ -280,11 +298,23 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                     }
                     else{
                         Log.d("checkk","Starting intent for MainActivity");
+
+//                        if(mOnlineEndInterstitialAd.isLoaded()){
+//                            endGameProgressBar.setVisibility(View.GONE);
+//                            mOnlineEndInterstitialAd.show();
+//                            interstitialAdEvents();
+//                        }
+//                        else{
+//                            endGameProgressBar.setVisibility(View.GONE);
+//                            OnlineGamePlay.AcOnlineGamePlay.finish();
+//                            Log.d("checkk","finishing OnlineGamePlay");
+//                            finish();
+//                        }
+
                         endGameProgressBar.setVisibility(View.GONE);
-                        if(mOnlineEndInterstitialAd.isLoaded()){
-                            mOnlineEndInterstitialAd.show();
-                        }
-                        interstitialAdEvents();
+                        OnlineGamePlay.AcOnlineGamePlay.finish();
+                        Log.d("checkk","finishing OnlineGamePlay");
+                        finish();
                     }
 
                 } else {
@@ -437,13 +467,14 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     }
 
 
-    public void interstitialAdEvents(){
+    private void interstitialAdEvents(){
         //listener for single player start interstitial ad
         mOnlineEndInterstitialAd.setAdListener(new AdListener(){
 
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
+                endGameProgressBar.setVisibility(View.GONE);
                 mOnlineEndInterstitialAd.show();
             }
 
@@ -458,6 +489,8 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
             @Override
             public void onAdFailedToLoad(int i) {
                 super.onAdFailedToLoad(i);
+                Log.d("check","Ad Failed to load");
+                endGameProgressBar.setVisibility(View.GONE);
                 OnlineGamePlay.AcOnlineGamePlay.finish();
                 Log.d("checkk","finishing OnlineGamePlay");
                 finish();
