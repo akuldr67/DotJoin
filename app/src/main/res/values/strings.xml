@@ -3,4 +3,49 @@
     <string name="create_a_room">Create A Room</string>
     <string name="join_a_room">Join A Room</string>
     <string name="instruction">NOTE - For Creating a Line between two dots, kindly Tap between them. </string>
+
+    <string name="bannerAdTest">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitialAdTest">ca-app-pub-3940256099942544/1033173712</string>
+
+    <string name="bannerAdMainActivityActual">ca-app-pub-5980384053078399/2846681387</string>
+    <string name="bannerAdMultiPlayerOfflineActual">ca-app-pub-5980384053078399/2010567277</string>
+    <string name="bannerAdSinglePlayerActual">ca-app-pub-5980384053078399/4616000571</string>
+    <string name="bannerAdMultiPlayerOnlineActual">ca-app-pub-5980384053078399/9868327252</string>
+    <string name="bannerAdOnlineGamePlayActual">ca-app-pub-5980384053078399/4424428889</string>
+    <string name="bannerAdWaitingPlaceActual">ca-app-pub-5980384053078399/9485183872</string>
+
+
+    <!--    uncomment for testing -> all BANNER TEST ADS-->
+    <string name="bannerAdMainActivityId">@string/bannerAdTest</string>
+    <string name="bannerAdMultiPlayerOfflineId">@string/bannerAdTest</string>
+    <string name="bannerAdSinglePlayerId">@string/bannerAdTest</string>
+    <string name="bannerAdMultiPlayerOnlineId">@string/bannerAdTest</string>
+    <string name="bannerAdOnlineGamePlayId">@string/bannerAdTest</string>
+    <string name="bannerAdWaitingPlaceId">@string/bannerAdTest</string>
+
+    <!--    uncomment for production -> all BANNER ACTUAL ADS-->
+<!--    <string name="bannerAdMainActivityId">@string/bannerAdMainActivityActual</string>-->
+<!--    <string name="bannerAdMultiPlayerOfflineId">@string/bannerAdMultiPlayerOfflineActual</string>-->
+<!--    <string name="bannerAdSinglePlayerId">@string/bannerAdSinglePlayerActual</string>-->
+<!--    <string name="bannerAdMultiPlayerOnlineId">@string/bannerAdMultiPlayerOnlineActual</string>-->
+<!--    <string name="bannerAdOnlineGamePlayId">@string/bannerAdOnlineGamePlayActual</string>-->
+<!--    <string name="bannerAdWaitingPlaceId">@string/bannerAdWaitingPlaceActual</string>-->
+
+
+    <string name="interstitialAdSinglePlayerActual">ca-app-pub-5980384053078399/3968191369</string>
+    <string name="interstitialAdMultiPlayerOfflineActual">ca-app-pub-5980384053078399/1823215035</string>
+    <string name="interstitialAdMultiPlayerOnlineActual">ca-app-pub-5980384053078399/4257806683</string>
+
+
+    <!--    uncomment for testing -> all INTERSTITIAL TEST ADS-->
+    <string name="interstitialAdSinglePlayerId">@string/interstitialAdTest</string>
+    <string name="interstitialAdMultiPlayerOfflineId">@string/interstitialAdTest</string>
+    <string name="interstitialAdMultiPlayerOnlineId">@string/interstitialAdTest</string>
+
+    <!--    uncomment for production -> all INTERSTITIAL ACTUAL ADS-->
+<!--    <string name="interstitialAdSinglePlayerId">@string/interstitialAdSinglePlayerActual</string>-->
+<!--    <string name="interstitialAdMultiPlayerOfflineId">@string/interstitialAdMultiPlayerOfflineActual</string>-->
+<!--    <string name="interstitialAdMultiPlayerOnlineId">@string/interstitialAdMultiPlayerOnlineActual</string>-->
+
+
 </resources>

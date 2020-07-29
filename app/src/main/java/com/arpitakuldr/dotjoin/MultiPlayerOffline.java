@@ -78,7 +78,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
 
 
         mOfflineInterstitialAd = new InterstitialAd(this);
-        mOfflineInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mOfflineInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOfflineId));
         mOfflineInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 

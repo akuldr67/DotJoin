@@ -61,7 +61,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
 
 //        mOnlineEndInterstitialAd = new InterstitialAd(this);
-//        mOnlineEndInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+//        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
 //        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
@@ -264,6 +264,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 
 //                                    if(mOnlineEndInterstitialAd.isLoaded()){
 //                                        mOnlineEndInterstitialAd.show();
+//                                        interstitialAdEvents();
 //                                    }
 //                                    else{
                                         Log.d("check"," multi Player Online EndGame interstitial ad wasn't loaded");
@@ -284,6 +285,7 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                         endGameProgressBar.setVisibility(View.GONE);
 //                        if(mOnlineEndInterstitialAd.isLoaded()){
 //                            mOnlineEndInterstitialAd.show();
+//                            interstitialAdEvents();
 //                        }
 //                        else{
                             Log.d("check"," multi Player Online EndGame interstitial ad wasn't loaded");

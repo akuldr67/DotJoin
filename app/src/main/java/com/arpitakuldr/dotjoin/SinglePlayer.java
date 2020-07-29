@@ -81,7 +81,7 @@ public class SinglePlayer extends AppCompatActivity {
 
 
         mSinglePlayerInterstitialAd = new InterstitialAd(this);
-        mSinglePlayerInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mSinglePlayerInterstitialAd.setAdUnitId(getString(R.string.interstitialAdSinglePlayerId));
         mSinglePlayerInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
