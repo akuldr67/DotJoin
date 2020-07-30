@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -46,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
     private AdView bannerAdView;
 
-    private InterstitialAd mInterstitialAd;
+    private InterstitialAd mOnlineEndInterstitialAd;
+    private String adCheckVariable;
 
 
     @Override
@@ -80,46 +83,16 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
 
         //**** showing interstitial ad start *****
-//        mInterstitialAd = new InterstitialAd(this);
-//        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
-//        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mOnlineEndInterstitialAd = new InterstitialAd(this);
+        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
+        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
         //*** showing interstitial ad end *****
-
 
 
 
 
         mDatabaseRef= FirebaseDatabase.getInstance().getReference();
         mDatabaseRef.child("Rooms");
-
-        //finding Layouts
-//        singlePlayer = findViewById(R.id.main_button_single_player);
-//        multiPlayerOffline=findViewById(R.id.main_button_multi_offline);
-//        multiPlayerOnline=findViewById(R.id.main_button_multi_online);
-
-        //Creating Intent for each button in respective onClick listeners
-
-        //singlePlayer
-//        singlePlayer.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent=new Intent(MainActivity.this,SinglePlayerDialog.class);
-//                startActivity(intent);
-
-//                mInterstitialAd.loadAd(new AdRequest.Builder().build());
-
-//                if(mInterstitialAd.isLoaded()){
-//                    mInterstitialAd.show();
-//                }
-//                else{
-//                    Log.d("check"," interstitial ad wasn't loaded");
-//                    Intent intent=new Intent(MainActivity.this,SinglePlayerDialog.class);
-//                    startActivity(intent);
-//                }
-//                interstitialAdEvents();
-//
-//            }
-//        });
 
 
 
@@ -163,6 +136,14 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             alertDialog.setCancelable(false);
             alertDialog.show();
         }
+
+        adCheckVariable=mSharedPreferences.getString("adCheckVariable","");
+        if(adCheckVariable.equals("")){
+            myEdit=mSharedPreferences.edit();
+            myEdit.putString("adCheckVariable","1");
+            myEdit.apply();
+        }
+
     }
 
 
@@ -238,18 +219,35 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
         startActivity(exitGameIntent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adCheckVariable=mSharedPreferences.getString("adCheckVariable","");
+        if(adCheckVariable.equals("2")){
+            if(mOnlineEndInterstitialAd.isLoaded()){
+                mOnlineEndInterstitialAd.show();
+                interstitialAdEvents();
+            }
+            myEdit=mSharedPreferences.edit();
+            myEdit.putString("adCheckVariable","1");
+            myEdit.apply();
+        }
 
-    //    private void interstitialAdEvents(){
-//        //listener for single player start interstitial ad
-//        mInterstitialAd.setAdListener(new AdListener(){
-//
-//            @Override
-//            public void onAdClosed() {
-//                Intent intent=new Intent(MainActivity.this,SinglePlayerDialog.class);
-//                startActivity(intent);
-//            }
-//
-//        });
-//    }
+    }
+
+
+    private void interstitialAdEvents(){
+        //listener for interstitial ad
+        mOnlineEndInterstitialAd.setAdListener(new AdListener(){
+
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+
+        });
+
+    }
 
 }

@@ -429,7 +429,7 @@ public class SinglePlayer extends AppCompatActivity {
 
 
     private void interstitialAdEvents(final Intent EndGameIntent){
-        //listener for single player start interstitial ad
+        //listener for interstitial ad
         mSinglePlayerInterstitialAd.setAdListener(new AdListener(){
 
             @Override

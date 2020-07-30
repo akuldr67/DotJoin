@@ -352,7 +352,7 @@ public class MultiPlayerOffline extends AppCompatActivity {
 
 
     private void interstitialAdEvents(final Intent EndGameIntent){
-        //listener for single player start interstitial ad
+        //listener for interstitial ad
         mOfflineInterstitialAd.setAdListener(new AdListener(){
 
             @Override

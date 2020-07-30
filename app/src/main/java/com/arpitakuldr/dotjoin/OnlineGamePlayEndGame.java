@@ -22,6 +22,9 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -63,6 +66,19 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 
 
         Intent intent = getIntent();
+
+
+//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+//            @Override
+//            public void onInitializationComplete(InitializationStatus initializationStatus) {
+//            }
+//        });
+//
+//        mOnlineEndInterstitialAd = new InterstitialAd(this);
+//        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
+//        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+
         final String heading = intent.getStringExtra("Heading");
         final String result = intent.getStringExtra("Result");
         roomId=intent.getStringExtra("RoomId");
@@ -213,10 +229,6 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
     }
 
     public void onOnlineHomeClicked(){
-//        mOnlineEndInterstitialAd = new InterstitialAd(this);
-//        mOnlineEndInterstitialAd.setAdUnitId(getString(R.string.interstitialAdMultiPlayerOnlineId));
-//        mOnlineEndInterstitialAd.loadAd(new AdRequest.Builder().build());
-
         flag=0;
         mDatabase.child("Rooms").child(roomId).child("players").removeEventListener(onCreateValueEventListener);
         endGameProgressBar.setVisibility(View.VISIBLE);
@@ -310,7 +322,6 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 //                            Log.d("checkk","finishing OnlineGamePlay");
 //                            finish();
 //                        }
-
                         endGameProgressBar.setVisibility(View.GONE);
                         OnlineGamePlay.AcOnlineGamePlay.finish();
                         Log.d("checkk","finishing OnlineGamePlay");
@@ -468,15 +479,15 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
 
 
     private void interstitialAdEvents(){
-        //listener for single player start interstitial ad
+        //listener for interstitial ad
         mOnlineEndInterstitialAd.setAdListener(new AdListener(){
 
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                endGameProgressBar.setVisibility(View.GONE);
-                mOnlineEndInterstitialAd.show();
-            }
+//            @Override
+//            public void onAdLoaded() {
+//                super.onAdLoaded();
+//                endGameProgressBar.setVisibility(View.GONE);
+//                mOnlineEndInterstitialAd.show();
+//            }
 
             @Override
             public void onAdClosed() {
@@ -486,15 +497,15 @@ public class OnlineGamePlayEndGame extends AppCompatActivity {
                 finish();
             }
 
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                Log.d("check","Ad Failed to load");
-                endGameProgressBar.setVisibility(View.GONE);
-                OnlineGamePlay.AcOnlineGamePlay.finish();
-                Log.d("checkk","finishing OnlineGamePlay");
-                finish();
-            }
+//            @Override
+//            public void onAdFailedToLoad(int i) {
+//                super.onAdFailedToLoad(i);
+//                Log.d("check","Ad Failed to load");
+//                endGameProgressBar.setVisibility(View.GONE);
+//                OnlineGamePlay.AcOnlineGamePlay.finish();
+//                Log.d("checkk","finishing OnlineGamePlay");
+//                finish();
+//            }
         });
 
     }

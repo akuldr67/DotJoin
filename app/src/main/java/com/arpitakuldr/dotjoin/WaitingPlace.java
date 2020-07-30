@@ -57,6 +57,8 @@ public class WaitingPlace extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private ArrayList<Player>players;
     private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor myEdit;
+    private String adCheckVariable;
     private int playerNo,boardSize,curr_player_no,activity_status;
     private Button exitRoom,startGame;
     private String roomId;
@@ -90,6 +92,15 @@ public class WaitingPlace extends AppCompatActivity {
 
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
+
+
+        mSharedPreferences = getSharedPreferences("com.arpitakuldr.dotjoin.file", Context.MODE_PRIVATE);
+        adCheckVariable=mSharedPreferences.getString("adCheckVariable","");
+        if(adCheckVariable.equals("1")){
+            myEdit=mSharedPreferences.edit();
+            myEdit.putString("adCheckVariable","2");
+            myEdit.apply();
+        }
 
 
         boardSize=4;
