@@ -43,7 +43,10 @@
                 android:text="CREATE ROOM"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="15sp"/>
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="20sp"
+                android:autoSizeStepGranularity="2sp"/>
 
 
 
@@ -74,7 +77,10 @@
                 android:layout_margin="20dp"
                 android:gravity="center"
                 android:textStyle="bold"
-                android:textSize="15sp"/>
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="5sp"
+                android:autoSizeMaxTextSize="30sp"
+                android:autoSizeStepGranularity="2sp"/>
         </LinearLayout>
     </LinearLayout>
 

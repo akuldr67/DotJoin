@@ -26,5 +26,9 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
     </style>
+    
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/starting_screen</item>
+    </style>
 
 </resources>

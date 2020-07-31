@@ -74,7 +74,10 @@
             android:background="@drawable/selected_button_background"
             android:textColor="#000000"
             android:text="HOME"
-            android:textSize="20sp" />
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="25sp"
+            android:autoSizeStepGranularity="2sp" />
 
         <Button
             android:id="@+id/onlinegameplay_endgame_replay"
@@ -85,7 +88,10 @@
             android:background="@drawable/selected_button_background"
             android:textColor="#000000"
             android:text="REPLAY"
-            android:textSize="20sp"/>
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="25sp"
+            android:autoSizeStepGranularity="2sp"/>
 
     </LinearLayout>
 
