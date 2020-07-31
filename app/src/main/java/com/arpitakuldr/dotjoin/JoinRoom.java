@@ -82,43 +82,50 @@ public class JoinRoom extends AppCompatActivity {
                                         Room room = dataSnapshot.child(roomId).getValue(Room.class);
                                         //Checking if room is full
                                         final int noOfPlayers=room.getPlayers().size();
-                                        if(noOfPlayers==4){
-                                            Toast.makeText(getApplicationContext(),"This Room is full",Toast.LENGTH_SHORT).show();
-                                            mProgressBar.setVisibility(View.GONE);
-                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                        if(!room.getIsGameStarted()) {
+                                            if (noOfPlayers == 4) {
+                                                Toast.makeText(getApplicationContext(), "This Room is full", Toast.LENGTH_SHORT).show();
+                                                mProgressBar.setVisibility(View.GONE);
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                            } else {
+                                                //Removing Listener to avoid infinite loop because of recursion
+                                                mDatabaseRef.child("Rooms").removeEventListener(this);
+                                                mSharedPreferences = getSharedPreferences("com.arpitakuldr.dotjoin.file", Context.MODE_PRIVATE);
+                                                final String name = mSharedPreferences.getString("UserName", "");
+                                                //Adding the user to the server
+
+                                                Player player = new Player(name, 0, 0, noOfPlayers, instanceIdResult.getToken(), 1, 1, 0);
+                                                ArrayList<Player> players = room.getPlayers();
+                                                players.add(player);
+                                                room.setPlayers(players);
+                                                mDatabaseRef.child("Rooms").child(roomId).child("players").child(String.valueOf(noOfPlayers)).setValue(player).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                mDatabaseRef.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            //Starting Waiting Room Activity
+                                                            Intent waitingRoomIntent = new Intent(JoinRoom.this, WaitingPlace.class);
+                                                            waitingRoomIntent.putExtra("RoomId", roomId);
+                                                            waitingRoomIntent.putExtra("PlayerNo", noOfPlayers);
+                                                            mProgressBar.setVisibility(View.GONE);
+                                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                            startActivity(waitingRoomIntent);
+                                                            finish();
+                                                            MultiPlayerOnline.AcMultiPlayerOnline.finish();
+                                                        } else {
+                                                            mProgressBar.setVisibility(View.GONE);
+                                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                            Toast.makeText(getApplicationContext(), "Unable to join, try Later", Toast.LENGTH_LONG).show();
+                                                        }
+                                                    }
+                                                });
+
+                                            }
                                         }
                                         else {
-                                            //Removing Listener to avoid infinite loop because of recursion
-                                            mDatabaseRef.child("Rooms").removeEventListener(this);
-                                            mSharedPreferences = getSharedPreferences("com.arpitakuldr.dotjoin.file", Context.MODE_PRIVATE);
-                                            final String name = mSharedPreferences.getString("UserName", "");
-                                            //Adding the user to the server
-
-                                            Player player = new Player(name, 0, 0, noOfPlayers,instanceIdResult.getToken(),1,1,0);
-                                            ArrayList<Player> players = room.getPlayers();
-                                            players.add(player);
-                                            room.setPlayers(players);
-                                            mDatabaseRef.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        //Starting Waiting Room Activity
-                                                        Intent waitingRoomIntent = new Intent(JoinRoom.this, WaitingPlace.class);
-                                                        waitingRoomIntent.putExtra("RoomId", roomId);
-                                                        waitingRoomIntent.putExtra("PlayerNo", noOfPlayers);
-                                                        mProgressBar.setVisibility(View.GONE);
-                                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                        startActivity(waitingRoomIntent);
-                                                        finish();
-                                                        MultiPlayerOnline.AcMultiPlayerOnline.finish();
-                                                    } else {
-                                                        mProgressBar.setVisibility(View.GONE);
-                                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                        Toast.makeText(getApplicationContext(), "Unable to join, try Later", Toast.LENGTH_LONG).show();
-                                                    }
-                                                }
-                                            });
-
+                                            mProgressBar.setVisibility(View.GONE);
+                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                            Toast.makeText(getApplicationContext(),"Currently a game is running. Join in next round!",Toast.LENGTH_LONG).show();
                                         }
                                     }
                                     else{
