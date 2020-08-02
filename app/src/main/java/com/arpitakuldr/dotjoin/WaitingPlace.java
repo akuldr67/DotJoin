@@ -59,11 +59,11 @@ public class WaitingPlace extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor myEdit;
     private String adCheckVariable;
-    private int playerNo,boardSize,curr_player_no,activity_status;
+    private int playerNo,boardSize,curr_player_no,activity_status,it;
     private Button exitRoom,startGame;
     private String roomId;
     private Vector<LinearLayout> playerViews;
-    private int flag_player_self_exited=0;
+    private int flag_player_self_exited=0,flag;
     private ValueEventListener waiting_main_listener,pause_listener;
     private Room room;
 
@@ -423,196 +423,157 @@ public class WaitingPlace extends AppCompatActivity {
         playerButtonViews.elementAt(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                        Room room = dataSnapshot.getValue(Room.class);
-                        players=room.getPlayers();
-                        players.remove(0);
-                        room.setPlayers(players);
-                        mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(WaitingPlace.this,"Player Removed successfully",Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Toast.makeText(WaitingPlace.this,"Unable to remove player",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                removePlayer(0);
             }
         });
 
         playerButtonViews.elementAt(1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                        Room room = dataSnapshot.getValue(Room.class);
-                        players=room.getPlayers();
-                        players.remove(1);
-                        room.setPlayers(players);
-                        mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(WaitingPlace.this,"Player Removed successfully",Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Toast.makeText(WaitingPlace.this,"Unable to remove player",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                removePlayer(1);
             }
         });
 
         playerButtonViews.elementAt(2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                        Room room = dataSnapshot.getValue(Room.class);
-                        players=room.getPlayers();
-                        players.remove(2);
-                        room.setPlayers(players);
-                        mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(WaitingPlace.this,"Player Removed successfully",Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Toast.makeText(WaitingPlace.this,"Unable to remove player",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                removePlayer(2);
             }
         });
 
         playerButtonViews.elementAt(3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                        Room room = dataSnapshot.getValue(Room.class);
-                        players=room.getPlayers();
-                        players.remove(3);
-                        room.setPlayers(players);
-                        mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(WaitingPlace.this,"Player Removed successfully",Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Toast.makeText(WaitingPlace.this,"Unable to remove player",Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                removePlayer(3);
             }
         });
 
         exitRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                flag_player_self_exited=1;
-                Log.d("checkk","Click on ExitRoom Detected");
-                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                mDatabase.child("Rooms").child(roomId).child("players").runTransaction(new Transaction.Handler() {
+                    @NonNull
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d("checkk","SingleValueEventListener, OnDataChange triggered");
-                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                        Room room = dataSnapshot.getValue(Room.class);
-                        Log.d("checkk","Getting Players and removing currentPlayer");
-                        players=room.getPlayers();
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                        ArrayList<Player>players=mutableData.getValue(t);
+                        if(players==null){
+                            return Transaction.success(mutableData);
+                        }
                         players.remove(playerNo);
-                        Log.d("checkk","Checking if this is the last player");
-                        if(players==null || players.size()<1){
-                            Log.d("checkk","Players has become null removing room");
-                            mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-//                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
-//                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        Log.d("checkk","Finishing Waiting Place");
-                                        mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-                                        activity_status=0;
-                                        finish();
-                                        Log.d("checkk","Starting MainActivity");
-//                                        startActivity(intent);
-                                    }
-                                    else{
-                                        Toast.makeText(WaitingPlace.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }else{
-                            Log.d("checkk","Its not the last player");
-                            room.setPlayers(players);
-                            Log.d("checkk","Updating room");
-                            mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-//                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
-//                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        Log.d("checkk","Starting MainActivity");
-//                                        startActivity(intent);
-                                        Log.d("checkk","Finishing WatingPlace");
-                                        mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-                                        activity_status=0;
-                                        finish();
-                                    }
-                                    else{
-                                        Toast.makeText(WaitingPlace.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+                        flag=0;
+                        if (players == null || players.size() < 1) {
+                            flag=1;
+                            return Transaction.success(mutableData);
+                        } else {
+                            flag=0;
+                            Log.d("checkk","all player not gone");
+                            Log.d("checkk","updating room with the player removed");
+                            mutableData.setValue(players);
+                            return Transaction.success(mutableData);
                         }
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if(databaseError==null){
+                            flag_player_self_exited=1;
+                            if(flag==1){
+                                Log.d("checkk", "Players has become null removing room");
+                                mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        flag_player_self_exited=1;
+                                        if (task.isSuccessful()) {
+//                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            Log.d("checkk", "Finishing Waiting Place");
+                                            mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                            activity_status=0;
+                                            finish();
+                                            Log.d("checkk", "Starting MainActivity");
+//                                                startActivity(intent);
+                                        } else {
+                                            Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                            else{
+                                activity_status=0;
+                                finish();
+                            }
 
+                        }
+                        else{
+                            Toast.makeText(WaitingPlace.this,"Error in removing",Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
+
+//                flag_player_self_exited=1;
+//                Log.d("checkk","Click on ExitRoom Detected");
+//                mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        Log.d("checkk","SingleValueEventListener, OnDataChange triggered");
+//                        mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                        Room room = dataSnapshot.getValue(Room.class);
+//                        Log.d("checkk","Getting Players and removing currentPlayer");
+//                        players=room.getPlayers();
+//                        players.remove(playerNo);
+//                        Log.d("checkk","Checking if this is the last player");
+//                        if(players==null || players.size()<1){
+//                            Log.d("checkk","Players has become null removing room");
+//                            mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//                                    if(task.isSuccessful()){
+////                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
+////                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                        Log.d("checkk","Finishing Waiting Place");
+//                                        mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+//                                        activity_status=0;
+//                                        finish();
+//                                        Log.d("checkk","Starting MainActivity");
+////                                        startActivity(intent);
+//                                    }
+//                                    else{
+//                                        Toast.makeText(WaitingPlace.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            });
+//                        }else{
+//                            Log.d("checkk","Its not the last player");
+//                            room.setPlayers(players);
+//                            Log.d("checkk","Updating room");
+//                            mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//                                    if(task.isSuccessful()){
+////                                        Intent intent = new Intent(WaitingPlace.this,MainActivity.class);
+////                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                        Log.d("checkk","Starting MainActivity");
+////                                        startActivity(intent);
+//                                        Log.d("checkk","Finishing WatingPlace");
+//                                        mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+//                                        activity_status=0;
+//                                        finish();
+//                                    }
+//                                    else{
+//                                        Toast.makeText(WaitingPlace.this,"Unable to remove you",Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
             }
         });
 
@@ -635,66 +596,127 @@ public class WaitingPlace extends AppCompatActivity {
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        mDatabase.child("Rooms").child(roomId).child("players").runTransaction(new Transaction.Handler() {
+                            @NonNull
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Log.d("checkk", "SingleValueEventListener, OnDataChange triggered");
-                                mDatabase.child("Rooms").child(roomId).removeEventListener(this);
-                                Room room = dataSnapshot.getValue(Room.class);
-                                Log.d("checkk", "Getting Players and removing currentPlayer");
-                                players = room.getPlayers();
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                                ArrayList<Player>players=mutableData.getValue(t);
+                                if(players==null){
+                                    return Transaction.success(mutableData);
+                                }
                                 players.remove(playerNo);
-                                Log.d("checkk", "Checking if this is the last player");
+                                flag=0;
                                 if (players == null || players.size() < 1) {
-                                    Log.d("checkk", "Players has become null removing room");
-                                    mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-//                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
-//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                Log.d("checkk", "Finishing Waiting Place");
-                                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-                                                activity_status=0;
-                                                alertDialog.dismiss();
-                                                finish();
-                                                Log.d("checkk", "Starting MainActivity");
-//                                                startActivity(intent);
-                                            } else {
-                                                Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
+                                    flag=1;
+                                    return Transaction.success(mutableData);
                                 } else {
-                                    Log.d("checkk", "Its not the last player");
-                                    room.setPlayers(players);
-                                    Log.d("checkk", "Updating room");
-                                    mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-//                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
-//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                Log.d("checkk", "Starting MainActivity");
-//                                                startActivity(intent);
-                                                Log.d("checkk", "Finishing WatingPlace");
-                                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
-                                                activity_status=0;
-                                                alertDialog.dismiss();
-                                                finish();
-                                            } else {
-                                                Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
+                                    flag=0;
+                                    Log.d("checkk","all player not gone");
+                                    Log.d("checkk","updating room with the player removed");
+                                    mutableData.setValue(players);
+                                    return Transaction.success(mutableData);
                                 }
                             }
 
                             @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                if(databaseError==null){
+                                    flag_player_self_exited=1;
+                                    if(flag==1){
+                                        Log.d("checkk", "Players has become null removing room");
+                                        mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+//                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    Log.d("checkk", "Finishing Waiting Place");
+                                                    mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+                                                    activity_status=0;
+                                                    alertDialog.dismiss();
+                                                    finish();
+                                                    Log.d("checkk", "Starting MainActivity");
+//                                                startActivity(intent);
+                                                } else {
+                                                    Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else{
+                                        activity_status=0;
+                                        alertDialog.dismiss();
+                                        finish();
+                                    }
 
+                                }
+                                else{
+                                    Toast.makeText(WaitingPlace.this,"Error in removing",Toast.LENGTH_LONG).show();
+                                }
                             }
                         });
+
+//                        mDatabase.child("Rooms").child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                Log.d("checkk", "SingleValueEventListener, OnDataChange triggered");
+//                                mDatabase.child("Rooms").child(roomId).removeEventListener(this);
+//                                Room room = dataSnapshot.getValue(Room.class);
+//                                Log.d("checkk", "Getting Players and removing currentPlayer");
+//                                players = room.getPlayers();
+//                                players.remove(playerNo);
+//                                Log.d("checkk", "Checking if this is the last player");
+//                                if (players == null || players.size() < 1) {
+//                                    Log.d("checkk", "Players has become null removing room");
+//                                    mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Void> task) {
+//                                            if (task.isSuccessful()) {
+////                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+////                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                                Log.d("checkk", "Finishing Waiting Place");
+//                                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+//                                                activity_status=0;
+//                                                alertDialog.dismiss();
+//                                                finish();
+//                                                Log.d("checkk", "Starting MainActivity");
+////                                                startActivity(intent);
+//                                            } else {
+//                                                Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        }
+//                                    });
+//                                } else {
+//                                    Log.d("checkk", "Its not the last player");
+//                                    room.setPlayers(players);
+//                                    Log.d("checkk", "Updating room");
+//                                    mDatabase.child("Rooms").child(roomId).setValue(room).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Void> task) {
+//                                            if (task.isSuccessful()) {
+////                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
+////                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                                Log.d("checkk", "Starting MainActivity");
+////                                                startActivity(intent);
+//                                                Log.d("checkk", "Finishing WatingPlace");
+//                                                mDatabase.child("Rooms").child(roomId).removeEventListener(waiting_main_listener);
+//                                                activity_status=0;
+//                                                alertDialog.dismiss();
+//                                                finish();
+//                                            } else {
+//                                                Toast.makeText(WaitingPlace.this, "Unable to remove you", Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        }
+//                                    });
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        });
                     }
                 });
 
@@ -934,4 +956,34 @@ void setUI(final int i){
         });
     }
 
+    void removePlayer(final int playerNo){
+
+        mDatabase.child("Rooms").child(roomId).child("players").runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                GenericTypeIndicator<ArrayList<Player>> t = new GenericTypeIndicator<ArrayList<Player>>() {};
+                ArrayList<Player>players=mutableData.getValue(t);
+                if(players==null){
+                    Log.d("checkk","Players is null");
+                    Transaction.success(mutableData);
+                }
+                players.remove(playerNo);
+                mutableData.setValue(players);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                if(databaseError==null){
+                    Toast.makeText(WaitingPlace.this,"Player Romoved Successfully",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Log.d("checkk","Transaction Error = "+databaseError.getMessage());
+                    Toast.makeText(WaitingPlace.this,"Unable to remove Player",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 }
