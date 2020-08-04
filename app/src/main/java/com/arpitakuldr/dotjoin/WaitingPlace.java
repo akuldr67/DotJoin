@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,7 +67,7 @@ public class WaitingPlace extends AppCompatActivity {
     private int flag_player_self_exited=0,flag;
     private ValueEventListener waiting_main_listener,pause_listener;
     private Room room;
-
+    private ProgressBar progressBar;
     private AdView bannerAdView;
 
     @Override
@@ -120,6 +121,7 @@ public class WaitingPlace extends AppCompatActivity {
         copyButton=findViewById(R.id.waiting_copy_button);
         exitRoom = findViewById(R.id.exit_room);
         startGame = findViewById(R.id.start_game);
+        progressBar = findViewById(R.id.waiting_progress_bar);
 
         playerTextViews=new Vector<TextView>();
         playerTextViews.add((TextView)findViewById(R.id.waiting_player1));
@@ -145,6 +147,8 @@ public class WaitingPlace extends AppCompatActivity {
         playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer3));
         playerReadyViews.add((ImageView)findViewById(R.id.readyPlayer4));
 
+
+        progressBar.setVisibility(View.VISIBLE);
 
         //Getting firebase Database Reference
         mDatabase= FirebaseDatabase.getInstance().getReference();
@@ -451,7 +455,7 @@ public class WaitingPlace extends AppCompatActivity {
         exitRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                progressBar.setVisibility(View.VISIBLE);
                 mDatabase.child("Rooms").child(roomId).child("players").runTransaction(new Transaction.Handler() {
                     @NonNull
                     @Override
@@ -484,6 +488,7 @@ public class WaitingPlace extends AppCompatActivity {
                                 mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
+                                        progressBar.setVisibility(View.INVISIBLE);
                                         flag_player_self_exited=1;
                                         if (task.isSuccessful()) {
 //                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
@@ -502,6 +507,7 @@ public class WaitingPlace extends AppCompatActivity {
                             }
                             else{
                                 activity_status=0;
+                                progressBar.setVisibility(View.INVISIBLE);
                                 finish();
                             }
 
@@ -587,6 +593,7 @@ public class WaitingPlace extends AppCompatActivity {
         builder.setView(dialogView);
         final Button yes = dialogView.findViewById(R.id.online_leave_dialog_YES);
         final Button no = dialogView.findViewById(R.id.online_leave_dialog_NO);
+        final ProgressBar progressBar1 = dialogView.findViewById(R.id.leaving_online_game_progress_bar);
 
         final AlertDialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
@@ -596,6 +603,7 @@ public class WaitingPlace extends AppCompatActivity {
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        progressBar1.setVisibility(View.VISIBLE);
                         mDatabase.child("Rooms").child(roomId).child("players").runTransaction(new Transaction.Handler() {
                             @NonNull
                             @Override
@@ -628,6 +636,7 @@ public class WaitingPlace extends AppCompatActivity {
                                         mDatabase.child("Rooms").child(roomId).setValue(null).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
+                                                progressBar1.setVisibility(View.INVISIBLE);
                                                 if (task.isSuccessful()) {
 //                                                Intent intent = new Intent(WaitingPlace.this, MainActivity.class);
 //                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -646,6 +655,7 @@ public class WaitingPlace extends AppCompatActivity {
                                     }
                                     else{
                                         activity_status=0;
+                                        progressBar1.setVisibility(View.INVISIBLE);
                                         alertDialog.dismiss();
                                         finish();
                                     }
@@ -881,6 +891,9 @@ void setUI(final int i){
             playerTextViews.elementAt(i).setVisibility(View.VISIBLE);
             playerViews.elementAt(i).setVisibility(View.VISIBLE);
             playerReadyViews.elementAt(i).setVisibility(View.VISIBLE);
+            if(progressBar.getVisibility()==View.VISIBLE){
+                progressBar.setVisibility(View.INVISIBLE);
+            }
         }
     });
 }

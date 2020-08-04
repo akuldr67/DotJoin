@@ -70,7 +70,7 @@ public class OnlineGamePlay extends AppCompatActivity {
     private Vector<Integer>highlightedBoxes,unhighlightedBoxes;
     private Vector<Vector<ImageView> >redDots;
     private Vector<Vector<ImageView> >greenDots;
-    private ProgressBar onlineGamePlayLeaveProgressBar;
+    private ProgressBar onlineGamePlayLeaveProgressBar,progressBar;
 
     private AdView bannerAdView;
 
@@ -153,6 +153,7 @@ public class OnlineGamePlay extends AppCompatActivity {
         rootLayout=findViewById(R.id.online_constraint);
         view =findViewById(R.id.online_view);
         redDot=findViewById(R.id.red_dot);
+        progressBar=findViewById(R.id.online_progress_bar);
 
         highlightedBoxes=new Vector<>();
         unhighlightedBoxes=new Vector<>();
@@ -213,6 +214,7 @@ public class OnlineGamePlay extends AppCompatActivity {
         p4.add((ImageView) findViewById(R.id.player4_red_dot_3));
 
         redDots.add(p1);redDots.add(p2);redDots.add(p3);redDots.add(p4);
+        progressBar.setVisibility(View.VISIBLE);
 
         //just trying
         chatButton = findViewById(R.id.chat);
@@ -262,6 +264,9 @@ public class OnlineGamePlay extends AppCompatActivity {
                             board = game.getBoard();
                             boardSize = board.getRows();
                             layoutUtils.drawBoard(boardSize, boardSize, OnlineGamePlay.this, rootLayout, imageWidth, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2),0);
+                            if(progressBar.getVisibility()==View.VISIBLE){
+                                progressBar.setVisibility(View.INVISIBLE);
+                            }
                             mainBoard = new Board(boardSize, boardSize, 100, 100 + ((imageHeight - imageWidth - bannerHeight) / 2), imageWidth);
                             Log.d("checkkk","mainBoard initialized with boardSize "+boardSize+" mainBoard vala total Edges "+mainBoard.getTotalEdges());
                             //Getting Last updated Edge

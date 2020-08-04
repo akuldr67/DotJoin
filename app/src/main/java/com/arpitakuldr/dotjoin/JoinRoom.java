@@ -41,7 +41,7 @@ public class JoinRoom extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private SharedPreferences mSharedPreferences;
 
-    private int noOfPlayers;
+    private int noOfPlayers,flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class JoinRoom extends AppCompatActivity {
         submit = findViewById(R.id.join_room_submit);
         mProgressBar = findViewById(R.id.join_room_progress);
         mDatabaseRef= FirebaseDatabase.getInstance().getReference();
-
+        flag=0;
 
         //**************************
         //*Join Room Click Listener*
@@ -107,6 +107,7 @@ public class JoinRoom extends AppCompatActivity {
                                                     if (noOfPlayers == 4) {
                                                         roomIsFullToast();
                                                         removeProgressBar();
+                                                        flag=1;
                                                     } else {
                                                         mSharedPreferences = getSharedPreferences("com.arpitakuldr.dotjoin.file", Context.MODE_PRIVATE);
                                                         final String name = mSharedPreferences.getString("UserName", "");
@@ -115,12 +116,14 @@ public class JoinRoom extends AppCompatActivity {
                                                         Player player = new Player(name, 0, 0, noOfPlayers, instanceIdResult.getToken(), 1, 1, 0);
                                                         ArrayList<Player> players = room.getPlayers();
                                                         players.add(player);
+                                                        flag=0;
                                                         mutableData.child("players").setValue(players);
                                                     }
                                                 }
                                                 else {
                                                     removeProgressBar();
                                                     gameRunningToast();
+                                                    flag=1;
                                                 }
                                                 return Transaction.success(mutableData);
                                             }
@@ -130,16 +133,18 @@ public class JoinRoom extends AppCompatActivity {
                                                 Log.d("checkk","b = "+b);
 
                                                 if(databaseError==null){
-                                                    //Starting Waiting Room Activity
-                                                    Log.d("checkk","Transaction success");
-                                                    Intent waitingRoomIntent = new Intent(JoinRoom.this, WaitingPlace.class);
-                                                    waitingRoomIntent.putExtra("RoomId", roomId);
-                                                    waitingRoomIntent.putExtra("PlayerNo", noOfPlayers);
-                                                    mProgressBar.setVisibility(View.GONE);
-                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                    startActivity(waitingRoomIntent);
-                                                    finish();
-                                                    MultiPlayerOnline.AcMultiPlayerOnline.finish();
+                                                    if(flag==0) {
+                                                        //Starting Waiting Room Activity
+                                                        Log.d("checkk", "Transaction success");
+                                                        Intent waitingRoomIntent = new Intent(JoinRoom.this, WaitingPlace.class);
+                                                        waitingRoomIntent.putExtra("RoomId", roomId);
+                                                        waitingRoomIntent.putExtra("PlayerNo", noOfPlayers);
+                                                        mProgressBar.setVisibility(View.GONE);
+                                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                        startActivity(waitingRoomIntent);
+                                                        finish();
+                                                        MultiPlayerOnline.AcMultiPlayerOnline.finish();
+                                                    }
                                                 }
                                                 else{
                                                     Log.d("checkk",databaseError.getMessage());
