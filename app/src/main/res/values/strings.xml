@@ -16,20 +16,20 @@
 
 
     <!--    uncomment for testing -> all BANNER TEST ADS-->
-    <string name="bannerAdMainActivityId">@string/bannerAdTest</string>
-    <string name="bannerAdMultiPlayerOfflineId">@string/bannerAdTest</string>
-    <string name="bannerAdSinglePlayerId">@string/bannerAdTest</string>
-    <string name="bannerAdMultiPlayerOnlineId">@string/bannerAdTest</string>
-    <string name="bannerAdOnlineGamePlayId">@string/bannerAdTest</string>
-    <string name="bannerAdWaitingPlaceId">@string/bannerAdTest</string>
+<!--    <string name="bannerAdMainActivityId">@string/bannerAdTest</string>-->
+<!--    <string name="bannerAdMultiPlayerOfflineId">@string/bannerAdTest</string>-->
+<!--    <string name="bannerAdSinglePlayerId">@string/bannerAdTest</string>-->
+<!--    <string name="bannerAdMultiPlayerOnlineId">@string/bannerAdTest</string>-->
+<!--    <string name="bannerAdOnlineGamePlayId">@string/bannerAdTest</string>-->
+<!--    <string name="bannerAdWaitingPlaceId">@string/bannerAdTest</string>-->
 
     <!--    uncomment for production -> all BANNER ACTUAL ADS-->
-<!--    <string name="bannerAdMainActivityId">@string/bannerAdMainActivityActual</string>-->
-<!--    <string name="bannerAdMultiPlayerOfflineId">@string/bannerAdMultiPlayerOfflineActual</string>-->
-<!--    <string name="bannerAdSinglePlayerId">@string/bannerAdSinglePlayerActual</string>-->
-<!--    <string name="bannerAdMultiPlayerOnlineId">@string/bannerAdMultiPlayerOnlineActual</string>-->
-<!--    <string name="bannerAdOnlineGamePlayId">@string/bannerAdOnlineGamePlayActual</string>-->
-<!--    <string name="bannerAdWaitingPlaceId">@string/bannerAdWaitingPlaceActual</string>-->
+    <string name="bannerAdMainActivityId">@string/bannerAdMainActivityActual</string>
+    <string name="bannerAdMultiPlayerOfflineId">@string/bannerAdMultiPlayerOfflineActual</string>
+    <string name="bannerAdSinglePlayerId">@string/bannerAdSinglePlayerActual</string>
+    <string name="bannerAdMultiPlayerOnlineId">@string/bannerAdMultiPlayerOnlineActual</string>
+    <string name="bannerAdOnlineGamePlayId">@string/bannerAdOnlineGamePlayActual</string>
+    <string name="bannerAdWaitingPlaceId">@string/bannerAdWaitingPlaceActual</string>
 
 
     <string name="interstitialAdSinglePlayerActual">ca-app-pub-5980384053078399/3968191369</string>
@@ -38,14 +38,14 @@
 
 
     <!--    uncomment for testing -> all INTERSTITIAL TEST ADS-->
-    <string name="interstitialAdSinglePlayerId">@string/interstitialAdTest</string>
-    <string name="interstitialAdMultiPlayerOfflineId">@string/interstitialAdTest</string>
-    <string name="interstitialAdMultiPlayerOnlineId">@string/interstitialAdTest</string>
+<!--    <string name="interstitialAdSinglePlayerId">@string/interstitialAdTest</string>-->
+<!--    <string name="interstitialAdMultiPlayerOfflineId">@string/interstitialAdTest</string>-->
+<!--    <string name="interstitialAdMultiPlayerOnlineId">@string/interstitialAdTest</string>-->
 
     <!--    uncomment for production -> all INTERSTITIAL ACTUAL ADS-->
-<!--    <string name="interstitialAdSinglePlayerId">@string/interstitialAdSinglePlayerActual</string>-->
-<!--    <string name="interstitialAdMultiPlayerOfflineId">@string/interstitialAdMultiPlayerOfflineActual</string>-->
-<!--    <string name="interstitialAdMultiPlayerOnlineId">@string/interstitialAdMultiPlayerOnlineActual</string>-->
+    <string name="interstitialAdSinglePlayerId">@string/interstitialAdSinglePlayerActual</string>
+    <string name="interstitialAdMultiPlayerOfflineId">@string/interstitialAdMultiPlayerOfflineActual</string>
+    <string name="interstitialAdMultiPlayerOnlineId">@string/interstitialAdMultiPlayerOnlineActual</string>
 
 
 </resources>
